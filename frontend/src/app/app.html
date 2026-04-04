@@ -1,0 +1,22 @@
+
+<!--<router-outlet></router-outlet>-->
+
+<h1>My Library</h1>
+
+@if (loading()) {
+<p>Loading books...</p>
+}
+
+<div class="book-grid">
+    @for (book of books(); track book.id) {
+    <div class="book-card">
+        <h3>{{ book.title }}</h3>
+        <p>By: {{ book.author }}</p>
+        <small>ISBN: {{ book.isbn }}</small>
+        <hr />
+        <p>Category: {{ book.category }}</p>
+    </div>
+    } @empty {
+    <p>No books found in the database.</p>
+    }
+</div>

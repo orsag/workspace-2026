@@ -1,0 +1,27 @@
+// This is your Prisma schema file, docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+}
+
+model Book {
+  id            String   @id @default(uuid())
+  title         String
+  author        String
+  isbn          String   @unique
+  publishedDate DateTime
+  description   String?
+  pageCount     Int
+  category      String
+}
