@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
+} from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -13,8 +24,26 @@ export class BookController {
   }
 
   @Get()
-  findAll() {
-    return this.bookService.findAll();
+  findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(12), ParseIntPipe) limit: number,
+    @Query('search') search?: string,
+    @Query('category') category?: string,
+    @Query('isBestSeller') isBestSeller?: string, // Comes as string 'true'
+    @Query('isNew') isNew?: string,
+    @Query('isAvailable') isAvailable?: string,
+    @Query('sortBy') sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'popularity',
+  ) {
+    return this.bookService.findAll({
+      page,
+      limit,
+      search,
+      category,
+      isBestSeller: isBestSeller === 'true',
+      isNew: isNew === 'true',
+      isAvailable: isAvailable === 'true',
+      sortBy,
+    });
   }
 
   @Get(':id')

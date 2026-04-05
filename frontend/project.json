@@ -13,14 +13,14 @@
         "outputPath": "dist/frontend",
         "browser": "frontend/src/main.ts",
         "tsConfig": "frontend/tsconfig.app.json",
-        "inlineStyleLanguage": "scss",
+        "inlineStyleLanguage": "css",
         "assets": [
           {
             "glob": "**/*",
             "input": "frontend/public"
           }
         ],
-        "styles": ["frontend/src/styles.scss"]
+        "styles": ["frontend/src/styles.css"]
       },
       "configurations": {
         "production": {

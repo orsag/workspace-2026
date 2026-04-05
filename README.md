@@ -7,9 +7,12 @@
 [Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
 
 ```sh
-npx nx g @nx/angular:component my-component --project=frontend
-npx nx g @nx/angular:service my-service --project=frontend
-npx nx g @nx/js:library shared-models --directory=libs
+cd frontend/src/app/pages/
+cd frontend/src/app/components/
+cd frontend/src/app/services/
+npx nx g @nx/angular:component component
+npx nx g @nx/angular:service service
+npx nx g @nx/js:library shared-models 
 npx prisma migrate dev --name init_sqlite
 npx prisma studio
 npx prisma generate
@@ -18,7 +21,20 @@ npx nest g service prisma --project backend
 npx nx reset
 npx nx serve frontend
 npx nx serve backend
-npx nx g @nx/angular:service services/book --project=frontend
+npx nx g @nx/angular:service services/book
+npx nx g @nx/angular:component dashboard
+```
+
+## Deep reset
+
+```shell
+npx prisma migrate reset
+npx prisma generate
+rm -rf .nx/cache
+rm -rf .angular/cache
+npx nx reset
+npx nx serve frontend
+echo "" > ~/.zsh_history && fc -R
 ```
 
 ## Run tasks

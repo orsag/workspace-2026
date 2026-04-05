@@ -1,0 +1,41 @@
+<div
+  [routerLink]="['/book', data.id]"
+  class="card h-[420px] w-full bg-base-100 shadow-sm border border-base-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+>
+  <figure class="px-4 pt-4">
+    <div class="relative w-full h-52 bg-base-200 rounded-xl overflow-hidden flex items-center justify-center group-hover:bg-primary/5 transition-colors">
+
+      <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
+           [priority]="isPriority"
+           width="120"
+           height="160"
+           class="h-40 w-auto object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-110"
+           [alt]="`Book Cover ${data.title}`">
+
+    </div>
+  </figure>
+
+  <div class="card-body p-5 flex flex-col overflow-hidden">
+    <div class="flex justify-between items-start mb-2 shrink-0">
+      <span class="badge badge-secondary badge-outline badge-sm uppercase tracking-wider font-semibold">
+        {{ data.category }}
+      </span>
+      <span class="text-xs text-base-content/50 font-mono">{{ data.pageCount }} pages</span>
+    </div>
+
+    <div class="space-y-1 shrink-0">
+      <h2 class="card-title text-sm font-bold line-clamp-1 group-hover:text-primary transition-colors leading-tight">
+        {{ data.title }}
+      </h2>
+      <p class="text-xs text-base-content/70 italic">by {{ data.author }}</p>
+    </div>
+
+    @if (data.description) {
+      <p class="text-xs text-base-content/60 mt-3 line-clamp-3 leading-relaxed">
+        {{ data.description }}
+      </p>
+    }
+
+    <div class="flex-grow"></div>
+  </div>
+</div>

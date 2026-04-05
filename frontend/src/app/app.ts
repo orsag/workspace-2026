@@ -1,32 +1,19 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Book } from '@test-monorepo/shared-models';
-import { BookService } from '../services/book';
 import { CommonModule } from '@angular/common';
+import { Navbar } from './components/navbar/navbar';
+import { Banner } from './components/banner/banner';
+import { Filter } from './components/filter/filter';
+import { ConfigurationService } from './services/configuration-service';
 
 @Component({
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, Navbar, Banner, Filter],
   selector: 'app-root',
   templateUrl: './app.html',
-  styleUrl: './app.scss',
+  styleUrl: './app.css',
 })
-export class App implements OnInit {
-  private bookService = inject(BookService);
+export class App {
+  config = inject(ConfigurationService);
 
-  // Use Signals for data (modern Angular)
-  books = signal<Book[]>([]);
-  loading = signal(true);
-
-  ngOnInit() {
-    this.bookService.getBooks().subscribe({
-      next: (data) => {
-        this.books.set(data);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Error fetching books', err);
-        this.loading.set(false);
-      },
-    });
-  }
+  showBanner = computed(() => this.config.flags().SHOW_DISCOUNT_BANNER);
 }

@@ -1,0 +1,52 @@
+<div class="navbar bg-base-100 shadow-sm">
+
+  <!-- MENU button and TITLE -->
+  <div class="flex-1 flex items-center gap-2">
+    <button
+      (click)="toggleSearchbar()"
+      class="btn btn-ghost btn-sm btn-square lg:flex"
+      [class.bg-base-200]="showFilter()"
+      aria-label="Toggle Sidebar">
+      <app-icon [name]="showFilter() ? 'Menu' : 'Menu'" class="opacity-70"></app-icon>
+    </button>
+
+    <a routerLink="/" class="btn btn-ghost text-xl px-2">BookShop</a>
+  </div>
+  <div class="flex gap-2">
+
+    <!-- SEARBAR -->
+    @if (showSearchbar()) {
+      <input type="text" placeholder="Search" class="input input-bordered w-34 md:w-auto" />
+    }
+
+    <!-- THEME -->
+    <app-theme-picker></app-theme-picker>
+
+    <!-- DROPDOWN AVATAR -->
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <div class="w-10 rounded-full">
+          <img
+            fetchpriority="low"
+            alt="User Avatar"
+            width="40"
+            height="40"
+            ngSrc="images/avatar.webp" />
+        </div>
+      </div>
+      <ul
+        tabindex="-1"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+        <li>
+          <a routerLink="/profile" class="justify-between">
+            Profile
+            <span class="badge">New</span>
+          </a>
+        </li>
+        <li><a routerLink="/features">Features</a></li>
+        <li><a routerLink="administration">Administration</a></li>
+        <li><a (click)="logout()" role="button" tabindex="0">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

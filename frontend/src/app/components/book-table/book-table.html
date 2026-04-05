@@ -1,0 +1,66 @@
+<div class="overflow-x-auto bg-base-100 rounded-xl border border-base-300 shadow-sm">
+  <table class="table table-xs table-zebra w-full">
+    <thead>
+    <tr class="bg-base-200/50">
+      <th>Title & Author</th>
+      <th>Category</th>
+      <th>Publisher & Date</th>
+      <th>Pages & ISBN</th>
+      <th>Stars</th>
+      <th>Price</th>
+      <th>Status</th>
+      <th class="text-right">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (book of data(); track book.id) {
+        <tr class="hover:bg-base-200/30 transition-colors group">
+          <td>
+            <div class="font-bold text-sm"><a [routerLink]="['/book', book.id]">{{ book.title }}</a></div>
+            <div class="text-[10px] opacity-50 italic">{{ book.author }}</div>
+          </td>
+          <td>
+            <span
+              class="text-[12px] font-bold tracking-widest text-base-content/40 transition-colors cursor-default">
+            {{ book.category }}
+            </span>
+          </td>
+          <td>
+            <div class="font-bold text-sm">{{ book.publisher }}</div>
+            <div class="text-[10px] opacity-50 italic">{{ book.publishedDate }}</div>
+          </td>
+          <td>
+            <div class="font-bold text-sm">{{ book.pageCount }}</div>
+            <div class="text-[10px] opacity-50 italic">{{ book.isbn }}</div>
+          </td>
+          <td>
+            <span class="badge badge-ghost badge-xs">{{ book.popularity }}</span>
+          </td>
+          <td>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm text-success">
+                {{ (book.price * (1 - book.discount/100)) | currency:'EUR' }}
+              </span>
+              @if (book.discount > 0) {
+                <span class="text-[10px] line-through opacity-40">
+                  {{ book.price | currency:'EUR' }}
+                </span>
+              }
+            </div>
+          </td>
+          <td>
+            @if (book.isSoldOut) {
+              <span>Sold out</span>
+            } @else if (book.isNewArticle) {
+              <span>New</span>
+            } @else if (book.isAvailable) {
+              <span>Available</span>
+            }
+          </td>
+          <th class="text-right">
+          </th>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

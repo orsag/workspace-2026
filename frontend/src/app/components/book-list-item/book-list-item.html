@@ -1,0 +1,25 @@
+<div class="flex items-center gap-4 bg-base-100 p-3 rounded-xl border border-base-300 hover:border-primary transition-colors group shadow-sm">
+  <div class="shrink-0">
+    <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
+         width="60" height="80"
+         class="rounded-md object-cover shadow-sm"
+         [priority]="isPriority"
+         [alt]="`Book Cover ${data.title}`">
+  </div>
+
+  <div class="flex-1 min-w-0">
+    <h3 class="font-bold text-base-content truncate group-hover:text-primary transition-colors">
+      {{ data.title }}
+    </h3>
+    <p class="text-xs text-base-content/60 italic">{{ data.author }}</p>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <div class="badge badge-outline badge-sm opacity-50 uppercase tracking-tighter">
+      {{ data.category }}
+    </div>
+    <button class="btn btn-ghost btn-sm btn-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>

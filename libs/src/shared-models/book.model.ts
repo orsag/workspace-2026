@@ -1,20 +1,22 @@
 export interface Book {
-  id: string; // UUID or Database ID
+  id: string;
   title: string;
   author: string;
   isbn: string;
+  publisher: string;
   publishedDate: Date;
-  description?: string; // Optional field
-  pageCount: number;
-  category: BookCategory;
-}
-
-export enum BookCategory {
-  FICTION = 'Fiction',
-  NON_FICTION = 'Non-Fiction',
-  SCI_FI = 'Sci-Fi',
-  BIOGRAPHY = 'Biography',
-  POETRY = 'Poetry',
+  pageCount: number; // default 0
+  category: string;
+  price: number;
+  discount: number; // default 0, between 0-1
+  popularity: number; // 0-10
+  availableCount: number;
+  isNewArticle: boolean;
+  isSoldOut: boolean;
+  isAvailable: boolean;
+  isBestSeller: boolean;
+  coverUrl?: string;
+  description?: string;
 }
 
 // You can also create a type for creating a new book (without the ID)

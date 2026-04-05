@@ -16,12 +16,24 @@ model User {
 }
 
 model Book {
-  id            String   @id @default(uuid())
-  title         String
-  author        String
-  isbn          String   @unique
-  publishedDate DateTime
-  description   String?
-  pageCount     Int
-  category      String
+  id             String   @id @default(uuid())
+  title          String
+  author         String
+  isbn           String   @unique
+  publisher      String
+  publishedDate  DateTime
+  pageCount      Int      @default(0)
+  category       String
+  price          Float
+  discount       Float    @default(0) // between 0-1
+  popularity     Int      @default(0) // 0-10
+  availableCount Int      @default(0)
+  isNewArticle   Boolean  @default(false)
+  isSoldOut      Boolean  @default(false)
+  isAvailable    Boolean  @default(true)
+  isBestSeller   Boolean  @default(false)
+  coverUrl       String?
+  description    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
