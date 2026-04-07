@@ -12,9 +12,23 @@
 
     <a routerLink="/" class="btn btn-ghost text-xl px-2">BookShop</a>
   </div>
-  <div class="flex gap-2">
 
-    <!-- SEARBAR -->
+  <div class="flex items-center gap-2">
+
+    <!-- LOGIN / LOGOUT -->
+    @if (!isLoggedIn()) {
+      <button (click)="handleLogin()" class="btn btn-ghost btn-sm gap-2 rounded-sm px-4">
+        <app-icon name="Login"></app-icon>
+        <span>Login</span>
+      </button>
+    } @else {
+      <button (click)="handleLogout()" class="btn btn-ghost btn-sm gap-2 rounded-sm px-4">
+        <app-icon name="Logout"></app-icon>
+        <span>Logout</span>
+      </button>
+    }
+
+    <!-- SEARCHBAR -->
     @if (showSearchbar()) {
       <input type="text" placeholder="Search" class="input input-bordered w-34 md:w-auto" />
     }
@@ -31,22 +45,62 @@
             alt="User Avatar"
             width="40"
             height="40"
-            ngSrc="images/avatar.webp" />
+            ngSrc="images/sova.webp" />
         </div>
       </div>
       <ul
         tabindex="-1"
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-        <li>
-          <a routerLink="/profile" class="justify-between">
-            Profile
-            <span class="badge">New</span>
-          </a>
-        </li>
-        <li><a routerLink="/features">Features</a></li>
-        <li><a routerLink="administration">Administration</a></li>
-        <li><a (click)="logout()" role="button" tabindex="0">Logout</a></li>
+
+        @if (isLoggedIn()) {
+          <li>
+            <a routerLink="/profile" class="justify-between" (click)="closeDropdown($event)">
+              Profile
+              <span class="badge text-sm">{{ userName()?.username }}</span>
+            </a>
+          </li>
+        }
+
+        <li><a routerLink="/features" (click)="closeDropdown($event)">Features</a></li>
+        <li><a routerLink="administration" (click)="closeDropdown($event)">Administration</a></li>
+        <li><a (click)="logout($event)" role="button" tabindex="0">Logout</a></li>
       </ul>
     </div>
   </div>
 </div>
+
+@if (showLoginModal()) {
+  <div class="modal" [class.modal-open]="showLoginModal()">
+    <div class="modal-box max-w-sm">
+      <h3 class="font-bold text-lg mb-4">Prihlásenie</h3>
+
+      <form (submit)="onLoginSubmit($event)" class="space-y-4">
+        <div class="form-control">
+          <label for="loginModalName" class="label"><span class="label-text">Meno</span></label>
+          <input id="loginModalName" type="text" placeholder="Vaše meno" class="input input-bordered w-full" required
+                 name="loginModalName" [(ngModel)]="modelUsername" />
+        </div>
+
+        <!--        <div class="form-control">-->
+        <!--          <label for="loginModalPassword" class="label"><span class="label-text">Heslo</span></label>-->
+        <!--          <input id="loginModalPassword" type="password" placeholder="••••••••" class="input input-bordered w-full" required />-->
+        <!--        </div>-->
+
+        <div class="modal-action">
+          <button type="button" (click)="showLoginModal.set(false)" class="btn btn-ghost">Zrušiť</button>
+          <button type="submit" class="btn btn-primary">Prihlásiť sa</button>
+        </div>
+      </form>
+    </div>
+
+    <div
+      class="modal-backdrop"
+      role="button"
+      tabindex="0"
+      aria-label="Zatvoriť okno"
+      (click)="showLoginModal.set(false)"
+      (keydown.enter)="showLoginModal.set(false)"
+      (keydown.space)="showLoginModal.set(false)">
+    </div>
+  </div>
+}

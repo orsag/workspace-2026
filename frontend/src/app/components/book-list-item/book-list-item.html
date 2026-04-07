@@ -1,25 +1,69 @@
-<div class="flex items-center gap-4 bg-base-100 p-3 rounded-xl border border-base-300 hover:border-primary transition-colors group shadow-sm">
-  <div class="shrink-0">
+<div class="flex items-start gap-4 bg-base-100 p-4 rounded-xl border border-base-300 hover:border-primary transition-colors group shadow-sm">
+
+  <div class="shrink-0 cursor-pointer" [routerLink]="['/book', data.id]">
     <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
-         width="60" height="80"
-         class="rounded-md object-cover shadow-sm"
+         width="80" height="110"
+         class="rounded-lg object-cover shadow-md"
          [priority]="isPriority"
-         [alt]="`Book Cover ${data.title}`">
+         [alt]="'Book Cover ' + data.title">
   </div>
 
-  <div class="flex-1 min-w-0">
-    <h3 class="font-bold text-base-content truncate group-hover:text-primary transition-colors">
+  <div class="w-1/4 shrink-0 flex flex-col gap-1">
+    <div class="flex flex-wrap gap-1 mb-1">
+      @if (data.isNewArticle) {
+        <span class="badge badge-secondary badge-xs font-bold uppercase">New</span>
+      }
+      @if (data.isBestSeller) {
+        <span class="badge badge-accent badge-xs font-bold uppercase">Bestseller</span>
+      }
+      @if (data.discount > 0) {
+        <span class="badge badge-error badge-xs font-bold text-white uppercase">Sale</span>
+      }
+    </div>
+
+    <h3 class="font-bold text-lg text-base-content leading-tight group-hover:text-primary transition-colors cursor-pointer break-words"
+        [routerLink]="['/book', data.id]">
       {{ data.title }}
     </h3>
-    <p class="text-xs text-base-content/60 italic">{{ data.author }}</p>
-  </div>
 
-  <div class="flex items-center gap-2">
-    <div class="badge badge-outline badge-sm opacity-50 uppercase tracking-tighter">
+    <p class="text-sm text-base-content/70 break-words">{{ data.author }}</p>
+
+    <div class="badge badge-outline badge-sm opacity-60 uppercase tracking-tighter ">
       {{ data.category }}
     </div>
-    <button class="btn btn-ghost btn-sm btn-circle">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+  </div>
+
+  <div class="flex-1 flex flex-col gap-3 min-w-0">
+    <p class="text-sm text-base-content/70">{{ data.description }}</p>
+
+    <div class="flex flex-row gap-2">
+      <div class="flex items-center gap-3 text-[11px] text-base-content/40 mt-1 uppercase font-semibold">
+        <span>{{ data.pageCount }} Strán</span>
+        <span>•</span>
+        <span>ISBN: {{ data.isbn }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-end justify-between h-full min-h-[110px]">
+    <div class="flex flex-col items-end gap-0.5">
+      @if (data.discount > 0) {
+        <span class="text-[10px] line-through opacity-40">
+          {{ (data.price / (1 - data.discount)) | currency:'EUR' }}
+        </span>
+      }
+
+      <span class="text-lg font-bold text-primary leading-none">
+        {{ data.price | currency:'EUR' }}
+      </span>
+
+      <span class="text-[10px] font-medium opacity-60">
+        {{ data.availableCount > 0 ? 'Skladom (' + data.availableCount + ' ks)' : 'Vypredané' }}
+      </span>
+    </div>
+
+    <button class="btn btn-primary btn-sm btn-circle mt-2 shadow-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     </button>
   </div>
 </div>

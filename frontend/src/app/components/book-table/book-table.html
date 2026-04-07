@@ -1,66 +1,112 @@
-<div class="overflow-x-auto bg-base-100 rounded-xl border border-base-300 shadow-sm">
-  <table class="table table-xs table-zebra w-full">
-    <thead>
-    <tr class="bg-base-200/50">
-      <th>Title & Author</th>
-      <th>Category</th>
-      <th>Publisher & Date</th>
-      <th>Pages & ISBN</th>
-      <th>Stars</th>
-      <th>Price</th>
-      <th>Status</th>
-      <th class="text-right">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-      @for (book of data(); track book.id) {
-        <tr class="hover:bg-base-200/30 transition-colors group">
-          <td>
-            <div class="font-bold text-sm"><a [routerLink]="['/book', book.id]">{{ book.title }}</a></div>
-            <div class="text-[10px] opacity-50 italic">{{ book.author }}</div>
-          </td>
-          <td>
-            <span
-              class="text-[12px] font-bold tracking-widest text-base-content/40 transition-colors cursor-default">
-            {{ book.category }}
-            </span>
-          </td>
-          <td>
-            <div class="font-bold text-sm">{{ book.publisher }}</div>
-            <div class="text-[10px] opacity-50 italic">{{ book.publishedDate }}</div>
-          </td>
-          <td>
-            <div class="font-bold text-sm">{{ book.pageCount }}</div>
-            <div class="text-[10px] opacity-50 italic">{{ book.isbn }}</div>
-          </td>
-          <td>
-            <span class="badge badge-ghost badge-xs">{{ book.popularity }}</span>
-          </td>
-          <td>
-            <div class="flex items-center gap-2">
+<table class="table table-sm table-zebra w-full table-pin-rows table-pin-cols">
+  <thead class="h-12">
+  <tr class="text-primary font-bold border-b-2 border-primary/20 backdrop-blur-sm">
+    <th></th>
+    <th>Title & Author</th>
+    <th>Publisher & Date</th>
+    <th>ISBN</th>
+    <th>Pages</th>
+    <th>Stars</th>
+    <th>Price</th>
+    <th>Status</th>
+    <th class="text-center">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (book of data(); track book.id; let i = $index) {
+      <tr class="hover:bg-base-200/30 transition-colors group">
+        <td><span class="font-bold">{{ i }}</span></td>
+        <td>
+          <div class="font-bold text-sm"><a [routerLink]="['/book', book.id]">{{ book.title }}</a></div>
+          <div class="text-[10px] opacity-50 italic">{{ book.author }}</div>
+        </td>
+        <td>
+          <div class="font-bold text-sm">{{ book.publisher }}</div>
+          <div class="text-[10px] opacity-50 italic">{{ book.publishedDate }}</div>
+        </td>
+        <td>
+          <div class="font-normal">{{ book.isbn }}</div>
+        </td>
+        <td>
+          <div class="font-normal">{{ book.pageCount }}</div>
+        </td>
+        <td>
+          <span class="badge badge-ghost badge-xs">{{ book.popularity }}</span>
+        </td>
+        <td>
+          <div class="flex items-center gap-2">
               <span class="font-bold text-sm text-success">
-                {{ (book.price * (1 - book.discount/100)) | currency:'EUR' }}
+                {{ (book.price * (1 - book.discount / 100)) | currency:'EUR' }}
               </span>
-              @if (book.discount > 0) {
-                <span class="text-[10px] line-through opacity-40">
+            @if (book.discount > 0) {
+              <span class="text-[10px] line-through opacity-40">
                   {{ book.price | currency:'EUR' }}
                 </span>
-              }
-            </div>
-          </td>
-          <td>
-            @if (book.isSoldOut) {
-              <span>Sold out</span>
-            } @else if (book.isNewArticle) {
-              <span>New</span>
-            } @else if (book.isAvailable) {
-              <span>Available</span>
             }
-          </td>
-          <th class="text-right">
-          </th>
-        </tr>
-      }
-    </tbody>
-  </table>
-</div>
+          </div>
+        </td>
+        <td>
+          <div class="flex items-center justify-start">
+            @if (book.availableCount <= 0) {
+              <span class="badge badge-error badge-xs font-bold uppercase py-2 px-2 text-[9px] text-white">
+                  Vypredané
+                </span>
+            } @else if (book.isNewArticle) {
+              <span class="badge badge-success badge-xs font-bold uppercase py-2 px-2 text-[9px]">
+                  Novinka
+                </span>
+            } @else {
+              <span class="badge badge-neutral badge-xs font-bold uppercase py-2 px-2 text-[9px] text-white">
+                  Skladom
+                </span>
+            }
+          </div>
+        </td>
+        <td class="text-right whitespace-nowrap">
+          <div class="flex justify-end gap-1">
+            <button
+              (click)="handleDelete(book)"
+              data-tip="Vymazať"
+              type="button"
+              class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
+              title="Vymazať">
+              <app-icon name="Trash"></app-icon>
+            </button>
+
+            <button
+              (click)="handleEdit(book)"
+              data-tip="Upraviť"
+              type="button"
+              class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
+              title="Upraviť">
+              <app-icon name="Edit"></app-icon>
+            </button>
+
+            <button
+              data-tip="Detail"
+              type="button"
+              class="btn btn-primary tooltip btn-xs btn-circle shadow-sm ml-1"
+              [routerLink]="['/book', book.id]"
+              title="Detail">
+              <app-icon name="RightArrow"></app-icon>
+            </button>
+          </div>
+        </td>
+      </tr>
+    }
+  </tbody>
+  <tfoot>
+  <tr>
+    <th></th>
+    <th>Title & Author</th>
+    <th>Publisher & Date</th>
+    <th>ISBN</th>
+    <th>Pages</th>
+    <th>Stars</th>
+    <th>Price</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+  </tfoot>
+</table>
+

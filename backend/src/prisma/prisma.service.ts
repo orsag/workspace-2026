@@ -2,7 +2,7 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, LogLevel } from '@nestjs/common';
 // Import from your specific generated path
 import { PrismaClient } from '../../../generated/prisma/client';
-import { myPrismaClient } from '../../../prisma/prisma';
+import { prisma } from '../../../prisma/prisma';
 
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
@@ -11,7 +11,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 
   constructor() {
     // Initialize the client here
-    this.client = myPrismaClient;
+    this.client = prisma;
   }
 
   async onModuleInit() {

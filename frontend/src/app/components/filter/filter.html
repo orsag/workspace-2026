@@ -1,5 +1,5 @@
 <aside
-  class="border-r border-base-300 bg-base-100 sticky top-[14px] h-[calc(100vh-64px)] transition-all duration-300 ease-in-out"
+  class="border-r border-base-300 bg-base-100 sticky top-1 h-[calc(100vh-64px)] transition-all duration-300 ease-in-out"
   [class.w-72]="showFilter()"
   [class.w-0]="!showFilter()"
   [class.opacity-0]="!showFilter()"
@@ -7,68 +7,108 @@
   [class.p-6]="showFilter()"
   [class.p-0]="!showFilter()">
 
-  <div class="min-w-[240px] flex flex-col gap-8 overflow-y-auto" [class.hidden]="!showFilter()">
+  <div class="min-w-60 flex flex-col h-full gap-6 overflow-y-auto no-scrollbar" [class.hidden]="!showFilter()">
 
-  <section>
-    <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40 mb-3">Search</h3>
-    <label class="input input-sm input-bordered flex items-center gap-2 bg-base-200/30">
-      <app-icon name="Search" class="opacity-40"></app-icon>
-      <input type="text" class="grow" placeholder="Title or author..." />
-    </label>
-  </section>
-
-  <section class="border-t border-base-200">
-    <div class="flex flex-col gap-4">
-      <label class="flex items-center justify-between cursor-pointer group">
-        <span class="label-text text-sm font-semibold">Available</span>
-        <input type="checkbox" class="toggle toggle-success toggle-sm" />
-      </label>
-      <label class="flex items-center justify-between cursor-pointer group">
-        <span class="label-text text-sm font-semibold">New Releases</span>
-        <input type="checkbox" class="toggle toggle-primary toggle-sm" />
-      </label>
-      <label class="flex items-center justify-between cursor-pointer group">
-        <span class="label-text text-sm font-semibold">Discounted</span>
-        <input type="checkbox" class="toggle toggle-primary toggle-sm" />
-      </label>
-
-      <label class="flex items-center justify-between cursor-pointer group">
-        <span class="label-text text-sm font-semibold">Bestsellers</span>
-        <input type="checkbox" class="toggle toggle-primary toggle-sm" />
-      </label>
+    <section>
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">Search</h3>
+        <button
+          type="button"
+          (click)="updateFilter('search', '')"
+          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 transition-all">
+          Clear
+        </button>
     </div>
-  </section>
+      <label class="input input-sm input-bordered flex items-center gap-2 bg-base-200/30">
+        <app-icon name="Search" class="opacity-40"></app-icon>
+        <input type="text" class="grow"
+               placeholder="Title or author..."
+               [value]="filters().search"
+               (input)="updateFilter('search', $any($event.target).value)" />
+      </label>
+    </section>
 
-  <section>
-    <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40 mb-3">Sort By</h3>
-    <div class="flex flex-col gap-2">
-      <button class="btn btn-sm btn-ghost justify-between font-medium px-2">
-        <span>🔥 Popularity</span>
-        <span class="badge badge-ghost badge-xs">↓</span>
+    <section class="border-base-200">
+      <div class="flex flex-col gap-2">
+        @for (toggle of ['available', 'newReleases', 'discounted', 'bestsellers']; track toggle) {
+          <label class="flex items-center justify-between cursor-pointer group">
+            <span
+              class="label-text text-sm font-semibold capitalize">{{ toggle.replace('Releases', ' Releases') }}</span>
+            <input
+              type="checkbox"
+              class="toggle toggle-sm"
+              [class.toggle-success]="toggle === 'available'"
+              [class.toggle-primary]="toggle !== 'available'"
+              [checked]="$any(filters())[toggle]"
+              (change)="updateFilter($any(toggle), $any($event.target).checked)" />
+          </label>
+        }
+      </div>
+    </section>
+
+    <section>
+      <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40 mb-3">Sort By</h3>
+      <div class="flex flex-col gap-2">
+        <button
+          (click)="updateSort('popularity')"
+          [class.btn-active]="filters().sortBy === 'popularity'"
+          class="btn btn-sm btn-ghost justify-between font-medium px-2">
+          <span>🔥 Popularity</span>
+          <span class="badge badge-ghost badge-xs">↓</span>
+        </button>
+
+        <button
+          (click)="updateSort('price')"
+          [class.btn-active]="filters().sortBy && filters().sortBy?.startsWith('price')"
+          class="btn btn-sm btn-ghost justify-between font-medium px-2">
+          <span>💰 Price</span>
+
+          <span class="badge badge-ghost badge-xs">
+          {{ filters().sortBy === 'price_desc' ? '↓' : '↑' }}
+      </span>
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex justify-between items-center mb-3">
+<!--        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">Categories</h3>-->
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">
+          Categories
+          <span class="badge badge-ghost badge-xs ml-2">{{ bookService.books().length }} / {{ bookService.total() }}</span>
+        </h3>
+        <button
+          type="button"
+          (click)="updateFilter('category', null)"
+          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 transition-all">
+          Clear
+        </button>
+      </div>
+      <div class="flex flex-col gap-1">
+        @for (cat of bookCategories; track cat) {
+          <label
+            class="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-base-200 cursor-pointer group transition-colors">
+            <input
+              type="radio"
+              name="bookCategory"
+              class="radio radio-xs border-base-300"
+              [checked]="filters().category === cat"
+              (change)="updateFilter('category', cat)" />
+            <div class="flex items-center gap-2">
+              <app-icon [name]="cat" class="opacity-40 group-hover:opacity-100 transition-opacity"></app-icon>
+              <span class="text-sm font-medium text-base-content/70 group-hover:text-base-content">{{ cat }}</span>
+            </div>
+          </label>
+        }
+      </div>
+    </section>
+
+    <div class="sticky bottom-0 bg-base-100 pt-4 pb-2 border-t border-base-200">
+      <button
+        (click)="onSubmit()"
+        class="btn btn-primary btn-block shadow-lg">
+        Filter
       </button>
-      <button class="btn btn-sm btn-ghost justify-between font-medium px-2">
-        <span>💰 Price</span>
-        <span class="badge badge-ghost badge-xs">↑</span>
-      </button>
     </div>
-  </section>
-
-  <section>
-    <div class="flex justify-between items-center mb-3">
-      <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">Categories</h3>
-      <span class="text-[10px] link link-hover opacity-50">Clear</span>
-    </div>
-    <div class="flex flex-col gap-1">
-      @for (cat of bookCategories; track cat) {
-        <label class="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-base-200 cursor-pointer group transition-colors">
-          <input type="checkbox" class="checkbox checkbox-xs border-base-300" />
-          <div class="flex items-center gap-2">
-            <app-icon [name]="cat" class="opacity-40 group-hover:opacity-100 transition-opacity"></app-icon>
-            <span class="text-sm font-medium text-base-content/70 group-hover:text-base-content">{{ cat }}</span>
-          </div>
-        </label>
-      }
-    </div>
-  </section>
   </div>
 </aside>

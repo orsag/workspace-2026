@@ -30,9 +30,11 @@ export class BookController {
     @Query('search') search?: string,
     @Query('category') category?: string,
     @Query('isBestSeller') isBestSeller?: string, // Comes as string 'true'
-    @Query('isNew') isNew?: string,
+    @Query('newReleases') newReleases?: string,
     @Query('isAvailable') isAvailable?: string,
-    @Query('sortBy') sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'popularity',
+    @Query('isDiscounted') isDiscounted?: string,
+    @Query('sortBy')
+    sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'popularity',
   ) {
     return this.bookService.findAll({
       page,
@@ -40,10 +42,16 @@ export class BookController {
       search,
       category,
       isBestSeller: isBestSeller === 'true',
-      isNew: isNew === 'true',
+      newReleases: newReleases === 'true',
       isAvailable: isAvailable === 'true',
+      isDiscounted: isDiscounted === 'true',
       sortBy,
     });
+  }
+
+  @Get('/sold')
+  findSoldOut() {
+    return this.bookService.findSoldOut();
   }
 
   @Get(':id')

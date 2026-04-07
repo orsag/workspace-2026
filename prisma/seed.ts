@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { myPrismaClient } from './prisma';
+import { prisma } from './prisma';
 
 async function main() {
   const books = Array.from({ length: 1000 }).map(() => {
@@ -8,7 +8,7 @@ async function main() {
     );
     const availableCount = faker.number.int({ min: 0, max: 50 });
     const isBestSeller = Math.random() > 0.85; // 15% chance
-    const isNewArticle = Math.random() > 0.8;  // 20% chance
+    const isNewArticle = Math.random() > 0.8; // 20% chance
 
     return {
       title: faker.book.title(),
@@ -44,11 +44,41 @@ async function main() {
     };
   });
 
-  await myPrismaClient.book.createMany({
+  console.log('👤 Seeding Admin...');
+  await prisma.user.create({
+    data: {
+      username: 'bossman',
+      email: 'admin@bookstore.sk',
+      isAdmin: true,
+      phoneNumber: '+421 900 000 000',
+      theme: 'dark',
+      favorites: [],
+      cartItems: [],
+    },
+  });
+
+  console.log('👥 Generating 10 random users...');
+  const users = Array.from({ length: 10 }).map(() => ({
+    username: faker.internet.username().toLowerCase(),
+    email: faker.internet.email().toLowerCase(),
+    isAdmin: false,
+    phoneNumber: faker.phone.number(),
+    theme: faker.helpers.arrayElement(['light', 'dark']),
+    favorites: [], // Empty as requested
+    cartItems: [], // Empty as requested
+    lastLogin: faker.date.recent(),
+  }));
+
+  await prisma.book.createMany({
     data: books,
   });
 
+  await prisma.user.createMany({
+    data: users,
+  });
+
   console.log('Seeded 1000 books.');
+  console.log('Seeded 10 users.');
 }
 
 main()
@@ -57,5 +87,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await myPrismaClient.$disconnect();
+    await prisma.$disconnect();
   });

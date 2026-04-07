@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { Prisma } from '@prisma-client';
+import { Prisma } from '../../../generated/prisma/client';
 
 @Injectable()
 export class BookService {
@@ -19,22 +19,22 @@ export class BookService {
     search?: string; // Title/Author search
     category?: string;
     isBestSeller?: boolean;
-    isNew?: boolean;
+    newReleases?: boolean;
     isAvailable?: boolean;
+    isDiscounted?: boolean;
     sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'popularity';
   }) {
     const {
       page = 1,
-      limit = 12,
+      limit = 20,
       search,
       category,
       isBestSeller,
-      isNew,
+      newReleases,
       isAvailable,
+      isDiscounted,
       sortBy,
     } = params;
-
-    console.log(JSON.stringify(params));
 
     const skip = (page - 1) * limit;
 
@@ -46,11 +46,15 @@ export class BookService {
 
     // 2. Handle Booleans (ensure we only filter if they are actually 'true')
     if (isBestSeller === true) where.isBestSeller = true;
-    if (isNew === true) where.isNewArticle = true;
+    if (newReleases === true) where.isNewArticle = true;
     if (isAvailable === true) where.isAvailable = true;
+    if (isDiscounted === true)
+      where.discount = {
+        gt: 0.0,
+      };
 
-    // 3. Handle Search (Only if search has actual characters)
     if (search && search.trim() !== '') {
+      // 3. Handle Search (Only if search has actual characters)
       where.OR = [
         { title: { contains: search } },
         { author: { contains: search } },
@@ -100,6 +104,14 @@ export class BookService {
         hasMore: page < Math.ceil(total / limit),
       },
     };
+  }
+
+  findSoldOut () {
+    return this.prisma.client.book.findMany({
+      where: { isSoldOut: true },
+      take: 100,
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   findOne(id: string) {

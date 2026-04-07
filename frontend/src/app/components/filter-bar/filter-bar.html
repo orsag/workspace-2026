@@ -1,0 +1,38 @@
+<div class="hidden sm:flex flex-wrap items-start gap-2 mb-8">
+
+  <button (click)="reset()" class="btn btn-sm rounded-full"
+          [class.btn-primary]="activeMode() === 'all'">
+    Všetko
+  </button>
+
+  <button (click)="setMode('bestsellers')" class="btn btn-sm rounded-full"
+          [class.btn-primary]="activeMode() === 'bestsellers'">
+    Bestsellery
+  </button>
+
+  <button (click)="setMode('newReleases')" class="btn btn-sm rounded-full"
+          [class.btn-primary]="activeMode() === 'newReleases'">
+    Najnovšie
+  </button>
+
+  <button (click)="setSort('price_desc')" class="btn btn-sm rounded-full"
+          [class.btn-primary]="activeSort() === 'price_desc'">
+    Najdrahšie
+  </button>
+
+  <button (click)="setSort('price_asc')" class="btn btn-sm rounded-full"
+          [class.btn-primary]="activeSort() === 'price_asc'">
+    Najlacnejšie
+  </button>
+
+  <button (click)="setMode('discounted')" class="btn btn-sm rounded-full"
+          [class.btn-primary]="activeMode() === 'discounted'">
+    Najvyššia zľava
+  </button>
+
+  <button (click)="setMode('soldOut')" class="btn btn-sm rounded-full"
+          [class.btn-primary]="activeMode() === 'soldOut'">
+    Vypredané
+  </button>
+
+</div>

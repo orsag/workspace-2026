@@ -1,34 +1,16 @@
-version: '3.8'
-
 services:
-  # 1. PostgreSQL Database
-  postgres:
-    image: postgres:16
+  db:
+    image: postgres:18.3-alpine
+    container_name: postgres_db
+    restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-  # 2. NestJS Backend
-  backend:
-    build:
-      context: .
-      dockerfile: apps/backend/Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL: "postgresql://user:password@postgres:5432/mydb?schema=public"
-    depends_on:
-      - postgres
-
-  # 3. Angular Frontend (Served via Nginx)
-  frontend:
-    build:
-      context: .
-      dockerfile: apps/frontend/Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
+volumes:
+  postgres_data:

@@ -1,76 +1,23 @@
 <main class="container mx-auto">
   <header class="flex justify-between items-center mb-8">
 
-    <div class="hidden sm:flex flex-wrap items-start gap-2 mb-8">
-      <button class="btn btn-primary btn-sm rounded-full px-4 normal-case">
-        Všetko
-      </button>
-
-      <button class="btn btn-outline btn-sm rounded-full px-4 normal-case border-base-300 hover:border-primary">
-        Bestsellery
-      </button>
-
-      <button class="btn btn-outline btn-sm rounded-full px-4 normal-case border-base-300 hover:border-primary">
-        Novinky
-      </button>
-
-      <button class="btn btn-outline btn-sm rounded-full px-4 normal-case border-base-300 hover:border-primary">
-        Najdrahšie
-      </button>
-
-      <button class="btn btn-outline btn-sm rounded-full px-4 normal-case border-base-300 hover:border-primary">
-        Najlacnejšie
-      </button>
-
-      <button class="btn btn-outline btn-sm rounded-full px-4 normal-case border-base-300 hover:border-primary">
-        Najvyššia zľava
-      </button>
-
-      <button class="btn btn-outline btn-sm rounded-full px-4 normal-case border-base-300 hover:border-primary">
-        Vypredané
-      </button>
-    </div>
+    <app-filter-bar></app-filter-bar>
 
     <div class="flex justify-end mb-6">
       <div class="join border border-base-300 bg-base-200 rounded-full overflow-hidden">
 
         <label
-          class="join-item btn btn-sm btn-ghost border-none has-[:checked]:bg-base-100 has-[:checked]:text-primary has-[:checked]:shadow-sm px-2">
+          class="join-item btn btn-sm btn-ghost border-none has-checked:bg-base-100 has-checked:text-primary has-checked:shadow-sm px-2">
           <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('grid')"
                  [checked]="viewLayout() === 'grid'" />
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="7" height="7" x="3" y="3" rx="1" />
-            <rect width="7" height="7" x="14" y="3" rx="1" />
-            <rect width="7" height="7" x="14" y="14" rx="1" />
-            <rect width="7" height="7" x="3" y="14" rx="1" />
-          </svg>
+          <app-icon name="Grid"></app-icon>
         </label>
 
         <label
-          class="join-item btn btn-sm btn-ghost border-none has-[:checked]:bg-base-100 has-[:checked]:text-primary has-[:checked]:shadow-sm px-2">
-          <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('table')"
-                 [checked]="viewLayout() === 'table'" />
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="18" height="18" x="3" y="3" rx="2" />
-            <path d="M3 9h18" />
-            <path d="M3 15h18" />
-            <path d="M9 3v18" />
-            <path d="M15 3v18" />
-          </svg>
-        </label>
-
-        <label
-          class="join-item btn btn-sm btn-ghost border-none has-[:checked]:bg-base-100 has-[:checked]:text-primary has-[:checked]:shadow-sm px-2">
+          class="join-item btn btn-sm btn-ghost border-none has-checked:bg-base-100 has-checked:text-primary has-checked:shadow-sm px-2">
           <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('list')"
                  [checked]="viewLayout() === 'list'" />
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" x2="21" y1="6" y2="6" />
-            <line x1="3" x2="21" y1="12" y2="12" />
-            <line x1="3" x2="21" y1="18" y2="18" />
-          </svg>
+          <app-icon name="List"></app-icon>
         </label>
 
       </div>
@@ -83,25 +30,31 @@
       <p class="mt-4 text-base-content/50">Fetching your books...</p>
     </div>
   } @else {
-    @switch (viewLayout()) {
-      @case ('grid') {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          @for (book of bookService.books(); track book.id; let i = $index) {
-            <app-book-card [data]="book" [isPriority]="i < 4"></app-book-card>
-          }
-        </div>
-      }
-      @case ('list') {
-        <div class="flex flex-col gap-3">
-          @for (book of bookService.books(); track book.id; let i = $index) {
-            <app-book-list-item [data]="book" [isPriority]="i < 4"></app-book-list-item>
-          }
-        </div>
-      }
-      @case ('table') {
-        <app-book-table [data]="bookService.books()"></app-book-table>
+    @if (bookService.soldOut()) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        @for (book of bookService.soldOutBooks(); track book.id; let i = $index) {
+          <app-book-card [data]="book" [isPriority]="i < 4"></app-book-card>
+        }
+      </div>
+    } @else {
+      @switch (viewLayout()) {
+        @case ('grid') {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            @for (book of bookService.books(); track book.id; let i = $index) {
+              <app-book-card [data]="book" [isPriority]="i < 4"></app-book-card>
+            }
+          </div>
+        }
+        @case ('list') {
+          <div class="flex flex-col gap-3">
+            @for (book of bookService.books(); track book.id; let i = $index) {
+              <app-book-list-item [data]="book" [isPriority]="i < 4"></app-book-list-item>
+            }
+          </div>
+        }
       }
     }
+
   }
 
   @if (!bookService.loading()) {

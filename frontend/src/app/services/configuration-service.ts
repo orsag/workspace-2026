@@ -42,11 +42,9 @@ export class ConfigurationService {
 
   toggleFlag(name: FeatureName) {
     this.flags.update((f) => ({ ...f, [name]: !f[name] }));
-    console.log(`Updated ${name}`);
   }
 
   setTheme(newTheme: string) {
     this.theme.set(newTheme);
-    console.log(`Updated theme: ${newTheme}`);
   }
 }
