@@ -24,61 +24,52 @@
     </div>
   </header>
 
-  @if (bookService.loading()) {
+  @if (store.isLoading()) {
     <div class="flex flex-col items-center justify-center min-h-[40vh]">
       <span class="loading loading-dots loading-lg text-primary"></span>
       <p class="mt-4 text-base-content/50">Fetching your books...</p>
     </div>
   } @else {
-    @if (bookService.soldOut()) {
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        @for (book of bookService.soldOutBooks(); track book.id; let i = $index) {
-          <app-book-card [data]="book" [isPriority]="i < 4"></app-book-card>
-        }
-      </div>
-    } @else {
-      @switch (viewLayout()) {
-        @case ('grid') {
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            @for (book of bookService.books(); track book.id; let i = $index) {
-              <app-book-card [data]="book" [isPriority]="i < 4"></app-book-card>
-            }
-          </div>
-        }
-        @case ('list') {
-          <div class="flex flex-col gap-3">
-            @for (book of bookService.books(); track book.id; let i = $index) {
-              <app-book-list-item [data]="book" [isPriority]="i < 4"></app-book-list-item>
-            }
-          </div>
-        }
+    @switch (viewLayout()) {
+      @case ('grid') {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          @for (book of store.books(); track book.id; let i = $index) {
+            <app-book-card [data]="book" [isPriority]="i < 4"></app-book-card>
+          }
+        </div>
+      }
+      @case ('list') {
+        <div class="flex flex-col gap-3">
+          @for (book of store.books(); track book.id; let i = $index) {
+            <app-book-list-item [data]="book" [isPriority]="i < 4"></app-book-list-item>
+          }
+        </div>
       }
     }
-
   }
 
-  @if (!bookService.loading()) {
+  @if (!store.isLoading()) {
     <div class="flex flex-col items-center gap-4 mt-12 pb-10">
       <div class="join bg-base-100 overflow-hidden">
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="bookService.currentPage() <= 1"
-                (click)="bookService.setPage(1)">First
+        <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
+                (click)="store.setPage(1)">First
         </button>
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="bookService.currentPage() <= 1"
-                (click)="bookService.setPage(bookService.currentPage() - 1)">{{ bookService.currentPage() - 1 }}
+        <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
+                (click)="store.setPage(store.filters.page() - 1)">{{ store.filters.page() - 1 }}
         </button>
         <button class="join-item btn btn-sm md:btn-md no-animation cursor-default">
-          Page {{ bookService.currentPage() }} of {{ bookService.totalPages() }}
+          Page {{ store.filters.page() }} of {{ store.totalPages() }}
         </button>
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="!bookService.hasMore()"
-                (click)="bookService.setPage(bookService.currentPage() + 1)">{{ bookService.currentPage() + 1 }}
+        <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
+                (click)="store.setPage(store.filters.page() + 1)">{{ store.filters.page() + 1 }}
         </button>
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="!bookService.hasMore()"
-                (click)="bookService.setPage(bookService.totalPages())">Last
+        <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
+                (click)="store.setPage(store.totalPages())">Last
         </button>
       </div>
 
       <span class="text-xs text-base-content/40">
-        Displaying {{ bookService.books().length }} of {{ bookService.total() }} total books
+        Displaying {{ store.books().length }} of {{ store.totalBooks() }} total books
       </span>
     </div>
   }

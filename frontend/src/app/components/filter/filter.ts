@@ -2,8 +2,9 @@ import { Component, signal } from '@angular/core';
 import { IconComponent } from '../icon/IconComponent';
 import { ConfigurationService } from '../../services/configuration-service';
 import { inject, computed } from '@angular/core';
-import { BookService } from '../../services/book-service';
 import { BookFilters } from '../../../types';
+import { AppStore } from '../../store/app-store';
+import { CATEGORIES } from '@test-monorepo/shared-models';
 
 @Component({
   selector: 'app-filter',
@@ -12,19 +13,22 @@ import { BookFilters } from '../../../types';
   styleUrl: './filter.css',
 })
 export class Filter {
-  bookService = inject(BookService);
+  store = inject(AppStore);
   config = inject(ConfigurationService);
-  showFilter = computed(() => this.config.flags().SHOW_FILTER);
 
+  showFilter = computed(() => this.config.flags().SHOW_FILTER);
+  isCoolingDown = signal(false);
   filters = signal<BookFilters>({
     search: '',
-    available: false,
-    newReleases: false,
-    discounted: false,
-    bestsellers: false,
-    sortBy: null,
     category: null,
+    sortBy: null,
+    isAvailable: false,
+    isBestSeller: false,
+    isNewRelease: false,
+    isDiscounted: false,
   });
+
+  bookCategories = CATEGORIES;
 
   // Update helper
   updateFilter<K extends keyof BookFilters>(key: K, value: BookFilters[K]) {
@@ -43,18 +47,13 @@ export class Filter {
   }
 
   onSubmit() {
-    this.bookService.getFilteredBooks(this.filters());
-  }
+    if (this.isCoolingDown()) return;
 
-  public bookCategories: string[] = [
-    'Fiction',
-    'Non-fiction',
-    'Fantasy',
-    'Sci-Fi',
-    'Romance',
-    'History',
-    'Biography',
-    'Self-help',
-    'Mystery',
-  ];
+    this.isCoolingDown.set(true);
+    this.store.updateFilters(this.filters());
+
+    setTimeout(() => {
+      this.isCoolingDown.set(false);
+    }, 3000);
+  }
 }

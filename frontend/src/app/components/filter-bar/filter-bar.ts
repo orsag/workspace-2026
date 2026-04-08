@@ -1,5 +1,13 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { BookService, QuickFilterState } from '../../services/book-service';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
+import { AppStore } from '../../store/app-store';
+import { QuickFilterState } from '../../../types';
 
 @Component({
   selector: 'app-filter-bar',
@@ -8,7 +16,9 @@ import { BookService, QuickFilterState } from '../../services/book-service';
   styleUrl: './filter-bar.css',
 })
 export class FilterBar {
-  bookService = inject(BookService); // this.bookService.getQuickFilterBooks()
+  store = inject(AppStore);
+  isCoolingDown = signal(false);
+  private isFirstRun = true;
 
   // 1. The Single Source of Truth
   protected filterState = signal<QuickFilterState>({
@@ -22,18 +32,12 @@ export class FilterBar {
 
   // 3. Simple State Transitions
   setMode(mode: QuickFilterState['mode']) {
-    this.filterState.update((state) => ({
-      ...state,
-      mode,
-      // If we switch to 'soldOut', we don't need to manually reset others
-      // because 'mode' is now a single string value!
-    }));
+    this.filterState.update((state) => ({ ...state, mode }));
   }
 
   setSort(sort: QuickFilterState['sortBy']) {
     this.filterState.update((state) => ({
       ...state,
-      // Toggle sort off if clicked again
       sortBy: state.sortBy === sort ? null : sort,
     }));
   }
@@ -43,9 +47,38 @@ export class FilterBar {
   }
 
   // 4. React to changes (The "Wiring")
-  // Whenever filterState changes, this effect triggers the service
+  // Whenever filterState changes, this effect triggers the update
   private filterEffect = effect(() => {
+    // 1. The Trigger: This makes the effect run whenever filterState changes
     const state = this.filterState();
-    this.bookService.getQuickFilterBooks(state);
+
+    // 2. Use untracked so the store update doesn't cause a loop
+    untracked(() => {
+      if (this.isFirstRun) {
+        this.isFirstRun = false;
+        return;
+      }
+      // 3. The Guard: Stop if we are in cooldown
+      if (this.isCoolingDown()) return;
+
+      this.isCoolingDown.set(true);
+
+      const filters = {
+        page: 1,
+        bestsellers: state.mode === 'bestsellers',
+        newReleases: state.mode === 'newReleases',
+        discounted: state.mode === 'discounted',
+        available: state.mode !== 'soldOut',
+        soldOut: state.mode === 'soldOut',
+        sortBy: state.sortBy,
+      };
+
+      // This change won't trigger the effect again because it's untracked
+      this.store.updateFilters(filters);
+
+      setTimeout(() => {
+        this.isCoolingDown.set(false);
+      }, 1500);
+    });
   });
 }

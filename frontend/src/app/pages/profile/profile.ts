@@ -6,7 +6,7 @@ import { AppStore } from '../../store/app-store';
 import { FormsModule } from '@angular/forms';
 import { BookCard } from '../../components/book-card/book-card';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { of, switchMap } from 'rxjs';
+import { distinctUntilChanged, of, switchMap } from 'rxjs';
 import { BookService } from '../../services/book-service';
 import { IconComponent } from '../../components/icon/IconComponent';
 
@@ -23,6 +23,13 @@ export class Profile {
 
   favoriteBooks = toSignal(
     toObservable(computed(() => this.store.user()?.favorites || [])).pipe(
+      // 1. Only emit if the IDs have actually changed (content-wise)
+      distinctUntilChanged(
+        (prev, curr) =>
+          prev.length === curr.length &&
+          prev.every((id, index) => id === curr[index]),
+      ),
+      // 2. Only switchMap to the API call if we have a fresh, different list of IDs
       switchMap((ids) =>
         ids.length > 0 ? this.bookService.getFavorites(ids) : of([]),
       ),

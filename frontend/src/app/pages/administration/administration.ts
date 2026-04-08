@@ -17,6 +17,7 @@ import {
   BookWithoutId,
 } from '@test-monorepo/shared-models';
 import { IconComponent } from '../../components/icon/IconComponent';
+import { AppStore } from '../../store/app-store';
 
 @Component({
   selector: 'app-administration',
@@ -25,6 +26,7 @@ import { IconComponent } from '../../components/icon/IconComponent';
   styleUrl: './administration.css',
 })
 export class Administration {
+  store = inject(AppStore);
   bookService = inject(BookService);
 
   protected selectedBook = signal<IBook | null>(null);

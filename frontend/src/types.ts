@@ -1,9 +1,26 @@
+import { Book as IBook } from '@test-monorepo/libs';
+
 export interface BookFilters {
   search: string;
-  available: boolean;
-  newReleases: boolean;
-  discounted: boolean;
-  bestsellers: boolean;
+  isAvailable: boolean;
+  isBestSeller: boolean;
+  isNewRelease: boolean;
+  isDiscounted: boolean;
   sortBy: 'popularity' | 'price_asc' | 'price_desc' | null;
   category: string | null;
+}
+
+export type QuickFilterState = {
+  mode: 'all' | 'bestsellers' | 'newReleases' | 'discounted' | 'soldOut';
+  sortBy: 'price_asc' | 'price_desc' | null;
+};
+
+export interface PaginatedBooks {
+  data: IBook[];
+  meta: {
+    total: number;
+    page: number;
+    lastPage: number;
+    count: number;
+  };
 }

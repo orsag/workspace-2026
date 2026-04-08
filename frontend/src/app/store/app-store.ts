@@ -7,21 +7,51 @@ import {
 } from '@ngrx/signals';
 import { computed, inject } from '@angular/core';
 import { User } from '@test-monorepo/shared-models';
+import { Book as IBook } from '@test-monorepo/shared-models';
 import { AuthService } from '../services/auth-service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap, catchError, EMPTY } from 'rxjs';
 import { ToastService } from '../services/toast-service';
+import { BookService } from '../services/book-service';
 
 export interface AppState {
   user: User | null;
+  // --- 📚 Book State ---
+  books: IBook[];
+  totalBooks: number;
   isLoading: boolean;
   error: string | null;
+  // --- 🔍 Filter State ---
+  filters: {
+    page: number;
+    limit: number;
+    search: string;
+    category: string | null;
+    sortBy: string | null;
+    isAvailable: boolean;
+    isBestSeller: boolean;
+    isNewRelease: boolean;
+    isDiscounted: boolean;
+  };
 }
 
 const initialState: AppState = {
   user: null,
+  books: [],
+  totalBooks: 0,
   isLoading: false,
   error: null,
+  filters: {
+    page: 1,
+    limit: 20,
+    search: '',
+    category: null,
+    sortBy: null,
+    isAvailable: false,
+    isBestSeller: false,
+    isNewRelease: false,
+    isDiscounted: false,
+  },
 };
 
 
@@ -30,20 +60,62 @@ export const AppStore = signalStore(
   withState(initialState),
 
   // 1. Computed Values (Like Selectors)
-  withComputed(({ user }) => ({
+  withComputed(({ user, books, filters }) => ({
     isLoggedIn: computed(() => !!user()),
     isAdmin: computed(() => user()?.isAdmin ?? false),
     favoriteCount: computed(() => user()?.favorites?.length ?? 0),
     cartCount: computed(() => user()?.cartItems?.length ?? 0),
+    totalPages: computed(() => Math.ceil(books().length / filters().limit)),
+    hasMorePage: computed(
+      () => filters.page() < Math.ceil(books().length / filters().limit),
+    ),
   })),
 
   // 2. Methods (Like Actions/Reducers)
   withMethods(
     (
       store,
+      bookService = inject(BookService),
       authService = inject(AuthService),
       toast = inject(ToastService),
     ) => ({
+      // Update filters without triggering a fetch automatically
+      updateFilters(newFilters: Partial<AppState['filters']>) {
+        patchState(store, (state) => ({
+          filters: { ...state.filters, ...newFilters, page: 1 },
+        }));
+        this.loadBooks();
+      },
+
+      // Explicitly call this ONLY when needed (e.g., on the Catalog page)
+      async loadBooks() {
+        patchState(store, { isLoading: true });
+
+        const params = store.filters();
+        bookService.fetchBooks(params).subscribe({
+          next: (res) =>
+            patchState(store, {
+              books: res.data,
+              totalBooks: res.meta.total,
+              isLoading: false,
+            }),
+          error: (err) =>
+            patchState(store, {
+              error: 'Failed to load books',
+              isLoading: false,
+            }),
+        });
+      },
+
+      setPage(page: number) {
+        patchState(store, (state) => ({
+          filters: {
+            ...state.filters,
+            page: page,
+          },
+        }));
+      },
+
       login: rxMethod<string>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),

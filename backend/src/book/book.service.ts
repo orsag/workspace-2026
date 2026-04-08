@@ -56,9 +56,9 @@ export class BookService {
     if (search && search.trim() !== '') {
       // 3. Handle Search (Only if search has actual characters)
       where.OR = [
-        { title: { contains: search } },
-        { author: { contains: search } },
-        { isbn: { contains: search } },
+        { title: { contains: search, mode: 'insensitive' } },
+        { author: { contains: search, mode: 'insensitive' } },
+        { isbn: { contains: search, mode: 'insensitive' } },
       ];
     }
 
