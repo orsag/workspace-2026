@@ -8,20 +8,25 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   template: `<span [innerHTML]="svgContent()" class="icon-container"></span>`,
   styles: [
     `
-      .icon-container {
+      :host {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        /* This is the magic: aligns the icon bottom to the text baseline */
         vertical-align: middle;
-        /* Sometimes -1px or -2px is needed depending on the font */
-        margin-top: -1px;
       }
+      .icon-container {
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
+      }
+      /* Remove the hardcoded 1rem and use inherit instead */
       :host ::ng-deep svg {
-        width: 1rem;
-        height: 1rem;
-        display: block; /* Prevents unwanted baseline spacing */
-        stroke-width: 2px; /* Keeps the lines crisp at smaller sizes */
+        width: inherit;
+        height: inherit;
+        display: block;
+        /* Ensure the stroke color comes from the parent's text color */
+        stroke: currentColor;
+        fill: none;
       }
     `,
   ],

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service'; // Adjust path
 import { LoginDto } from './dto/login.dto';
+import { User } from '@test-monorepo/libs';
 
 @Injectable()
 export class AuthService {
@@ -54,5 +55,27 @@ export class AuthService {
       message: `User ${username} logged out successfully`,
       timestamp: new Date(),
     };
+  }
+
+  async updateFavorites(username: string, favorites: string[]) {
+    return this.prisma.client.user.update({
+      where: { username: username.toLowerCase() },
+      data: { favorites: favorites }, // Postgres native array magic
+    });
+  }
+
+  async updateProfile(
+    username: string,
+    updates: { email: string; phoneNumber: string; theme: string },
+  ) {
+    return this.prisma.client.user.update({
+      where: { username: username.toLowerCase() },
+      data: {
+        email: updates.email,
+        phoneNumber: updates.phoneNumber,
+        theme: updates.theme,
+        // isAdmin and favorites are NEVER touched here
+      },
+    });
   }
 }

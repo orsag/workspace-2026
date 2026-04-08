@@ -54,6 +54,16 @@ export class BookController {
     return this.bookService.findSoldOut();
   }
 
+  @Post('list')
+  async getBooksByIds(@Body('ids') ids: string[]) {
+    // If no IDs are provided, return an empty array immediately
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+
+    return this.bookService.getBooksByIds(ids);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.bookService.findOne(id);

@@ -7,7 +7,7 @@
       class="btn btn-ghost btn-sm btn-square lg:flex"
       [class.bg-base-200]="showFilter()"
       aria-label="Toggle Sidebar">
-      <app-icon [name]="showFilter() ? 'Menu' : 'Menu'" class="opacity-70"></app-icon>
+      <app-icon [name]="showFilter() ? 'Menu' : 'Menu'" class="opacity-70 h-5 w-5"></app-icon>
     </button>
 
     <a routerLink="/" class="btn btn-ghost text-xl px-2">BookShop</a>
@@ -18,12 +18,12 @@
     <!-- LOGIN / LOGOUT -->
     @if (!isLoggedIn()) {
       <button (click)="handleLogin()" class="btn btn-ghost btn-sm gap-2 rounded-sm px-4">
-        <app-icon name="Login"></app-icon>
+        <app-icon name="Login" class="h-4 w-4"></app-icon>
         <span>Login</span>
       </button>
     } @else {
       <button (click)="handleLogout()" class="btn btn-ghost btn-sm gap-2 rounded-sm px-4">
-        <app-icon name="Logout"></app-icon>
+        <app-icon name="Logout" class="h-4 w-4"></app-icon>
         <span>Logout</span>
       </button>
     }

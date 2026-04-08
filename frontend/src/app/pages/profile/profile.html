@@ -1,1 +1,67 @@
-<p>profile works!</p>
+<div class="max-w-6xl mx-auto p-6">
+  <header class="mb-8 flex justify-between items-end border-b border-base-300 pb-4">
+    <div>
+      <h1 class="text-3xl font-bold">Editácia profilu</h1>
+      <p class="text-base-content/60">Spravujte svoje osobné údaje a obľúbené knihy</p>
+    </div>
+    <div class="space-x-2">
+      <button (click)="handleCancel()" class="btn btn-ghost">Zrušiť</button>
+      <button (click)="handleSave()" class="btn btn-primary px-8">Uložiť</button>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <section class="lg:col-span-1 space-y-4">
+      <div class="card bg-base-100 shadow-sm border border-base-300 gap-6 p-6">
+        <h3 class="font-bold mb-4 text-lg">Osobné údaje</h3>
+
+        <div class="form-control w-full">
+          <label for="username" class="label">
+            <span class="label-text">Používateľské meno</span>
+          </label>
+
+          <div class="flex items-center justify-between h-10 w-full px-4 rounded-lg bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
+            <span class="font-medium">{{ store.user()?.username }}</span>
+            <app-icon name="Lock" class="h-4 w-4"></app-icon>
+          </div>
+        </div>
+
+        <div class="form-control w-full">
+          <label for="email" class="label"><span class="label-text">Email</span></label>
+          <input id="email" type="email" [formField]="userForm.email" class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control w-full">
+          <label for="phone" class="label"><span class="label-text">Telefónne číslo</span></label>
+          <input id="phone" type="text" [formField]="userForm.phoneNumber" class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control w-full">
+          <label for="color-theme" class="label"><span class="label-text">Téma</span></label>
+          <select [formField]="userForm.theme" id="color-theme" class="select select-bordered w-full">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="lg:col-span-2">
+      <h3 class="font-bold mb-4 text-lg flex items-center gap-2 mt-6">
+        Moje obľúbené
+        <div class="badge badge-secondary">{{ store.favoriteCount() }}</div> </h3>
+
+      @if (favoriteBooks().length > 0) {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (book of favoriteBooks(); track book.id) {
+            <app-book-card [data]="book"></app-book-card> }
+        </div>
+      } @else {
+        <div class="bg-base-200 rounded-xl p-12 text-center border-2 border-dashed border-base-300">
+          <p class="text-base-content/50 italic">Zatiaľ nemáte žiadne obľúbené knihy.</p>
+        </div>
+      }
+    </section>
+  </div>
+</div>
+

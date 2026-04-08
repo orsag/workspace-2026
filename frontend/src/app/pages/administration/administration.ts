@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { BookTable} from '../../components/book-table/book-table';
-import { BookService } from '../../services/book';
+import { BookService } from '../../services/book-service';
 import { CommonModule } from '@angular/common';
 import {
   form,

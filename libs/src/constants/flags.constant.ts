@@ -35,11 +35,6 @@ export const FEATURES: FeatureFlag[] = [
     label: 'Show discount banner',
     defaultVal: false,
   },
-  {
-    name: 'SHOW_CATEGORY_SELECT',
-    label: 'Show category selector inside navigation bar',
-    defaultVal: true,
-  },
 ] as const;
 
 // This maps the 'name' literal values into a concrete interface
@@ -50,9 +45,6 @@ export interface AppFeatureFlags {
   SHOW_FILTER: boolean;
   SHOW_SEARCHBAR_HEADER: boolean;
   SHOW_DISCOUNT_BANNER: boolean;
-  SHOW_CATEGORY_SELECT: boolean;
 }
 
 export type FeatureName = keyof AppFeatureFlags;
-
-

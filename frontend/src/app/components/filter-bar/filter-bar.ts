@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { BookService, QuickFilterState } from '../../services/book';
+import { BookService, QuickFilterState } from '../../services/book-service';
 
 @Component({
   selector: 'app-filter-bar',

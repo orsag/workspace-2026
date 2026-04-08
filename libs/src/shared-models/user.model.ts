@@ -13,3 +13,16 @@ export interface User {
 }
 
 export type CreateUserDto = Omit<User, 'id'>;
+
+export type UserWithoutId = Omit<
+  User,
+  'id' | 'favorites' | 'isAdmin' | 'lastLogin' | 'cartItems' | 'createdAt' | 'updatedAt'
+>;
+
+// Initialisation
+export const EMPTY_USER: UserWithoutId = {
+  username: '',
+  email: '',
+  phoneNumber: '',
+  theme: 'light',
+};

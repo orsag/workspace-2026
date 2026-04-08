@@ -20,7 +20,7 @@
         </button>
     </div>
       <label class="input input-sm input-bordered flex items-center gap-2 bg-base-200/30">
-        <app-icon name="Search" class="opacity-40"></app-icon>
+        <app-icon name="Search" class="opacity-40 h-4 w-4"></app-icon>
         <input type="text" class="grow"
                placeholder="Title or author..."
                [value]="filters().search"
@@ -95,7 +95,7 @@
               [checked]="filters().category === cat"
               (change)="updateFilter('category', cat)" />
             <div class="flex items-center gap-2">
-              <app-icon [name]="cat" class="opacity-40 group-hover:opacity-100 transition-opacity"></app-icon>
+              <app-icon [name]="cat" class="opacity-40 group-hover:opacity-100 transition-opacity h-4 w-4"></app-icon>
               <span class="text-sm font-medium text-base-content/70 group-hover:text-base-content">{{ cat }}</span>
             </div>
           </label>

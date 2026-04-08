@@ -228,4 +228,9 @@ export class BookService {
         error: () => this.toast.show('Chyba', 'alert'),
       });
   }
+
+  // Fetches multiple books by their IDs for the favorites list
+  getFavorites(ids: string[]): Observable<IBook[]> {
+    return this.http.post<IBook[]>(`${this.apiUrl}/list`, { ids });
+  }
 }

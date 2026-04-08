@@ -6,9 +6,11 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { User } from '@test-monorepo/shared-models';
 
 @Controller('auth')
 export class AuthController {
@@ -29,5 +31,24 @@ export class AuthController {
   @Get()
   async getUser(@Query('username') username: string) {
     return this.authService.findByUsername(username);
+  }
+
+  @Patch('favorites')
+  async updateFavorites(
+    @Body() body: { username: string; favorites: string[] },
+  ) {
+    return this.authService.updateFavorites(body.username, body.favorites);
+  }
+
+  @Patch('update')
+  async updateProfile(
+    @Body()
+    body: {
+      username: string;
+      updates: { email: string; phoneNumber: string; theme: string };
+    },
+  ) {
+    // We only pass the specific allowed fields to the service
+    return this.authService.updateProfile(body.username, body.updates);
   }
 }

@@ -27,4 +27,18 @@ export class AuthService {
   validateUsername(username: string): boolean {
     return !!username && username.length >= 3;
   }
+
+  updateUserFavorites(username: string, favorites: string[]): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/favorites`, {
+      username,
+      favorites,
+    });
+  }
+
+  updateProfile(username: string, updates: Partial<User>): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/update`, {
+      username,
+      updates,
+    });
+  }
 }

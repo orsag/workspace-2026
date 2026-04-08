@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { IconComponent } from '../icon/IconComponent';
 import { ConfigurationService } from '../../services/configuration-service';
 import { inject, computed } from '@angular/core';
-import { BookService } from '../../services/book';
+import { BookService } from '../../services/book-service';
 import { BookFilters } from '../../../types';
 
 @Component({

@@ -30,6 +30,18 @@ export class ToastService {
     }, 3000);
   }
 
+  success(text: string) {
+    this.show(text, 'success');
+  }
+
+  alert(text: string) {
+    this.show(text, 'alert');
+  }
+
+  info(text: string) {
+    this.show(text, 'info');
+  }
+
   private remove(id: number) {
     this.toastsSignal.update((all) => all.filter((t) => t.id !== id));
   }

@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { BookService } from '../../services/book';
+import { BookService } from '../../services/book-service';
 import { BookCard } from '../../components/book-card/book-card';
 import { BookListItem } from '../../components/book-list-item/book-list-item';
 import { IconComponent } from '../../components/icon/IconComponent';

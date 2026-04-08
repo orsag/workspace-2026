@@ -106,13 +106,23 @@ export class BookService {
     };
   }
 
-  findSoldOut () {
+  findSoldOut() {
     return this.prisma.client.book.findMany({
       where: { isSoldOut: true },
       take: 100,
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  getBooksByIds (ids: string[]) {
+    return this.prisma.client.book.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  };
 
   findOne(id: string) {
     return this.prisma.client.book.findUnique({ where: { id } });
