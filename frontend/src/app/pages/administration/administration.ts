@@ -15,9 +15,11 @@ import {
   Book as IBook,
   EMPTY_BOOK,
   BookWithoutId,
+  ActionResponse,
 } from '@test-monorepo/shared-models';
 import { IconComponent } from '../../components/icon/IconComponent';
 import { AppStore } from '../../store/app-store';
+import { ToastService } from '../../services/toast-service';
 
 @Component({
   selector: 'app-administration',
@@ -28,6 +30,7 @@ import { AppStore } from '../../store/app-store';
 export class Administration {
   store = inject(AppStore);
   bookService = inject(BookService);
+  toast = inject(ToastService);
 
   protected selectedBook = signal<IBook | null>(null);
   protected isDeleteModalOpen = signal(false);
@@ -86,8 +89,16 @@ export class Administration {
     const bookId = this.selectedBook()?.id;
 
     if (bookId) {
-      this.bookService.delete(bookId);
+      this.bookService.delete(bookId).subscribe((res: ActionResponse) => {
+        if (res.warning) {
+          this.toast.alert(res.message);
+        } else {
+          this.toast.success(res.message);
+          this.store.loadBooks();
+        }
+      });
     }
+
     this.closeModals();
   }
 

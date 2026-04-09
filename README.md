@@ -13,6 +13,7 @@ cd frontend/src/app/services/
 npx nx g @nx/angular:component component
 npx nx g @nx/angular:service service
 npx nx g @nx/js:library shared-models 
+Already in sync, no schema change or pending migration was found.
 npx prisma migrate dev --name init_sqlite
 npx prisma studio
 npx prisma generate

@@ -5,15 +5,14 @@
     <th>Title & Author</th>
     <th>Publisher & Date</th>
     <th>ISBN</th>
-    <th>Pages</th>
-    <th>Stars</th>
+    <th>Available</th>
     <th>Price</th>
     <th>Status</th>
     <th class="text-center">Actions</th>
   </tr>
   </thead>
   <tbody>
-    @for (book of data(); track book.id; let i = $index) {
+    @for (book of books(); track book.id; let i = $index) {
       <tr class="hover:bg-base-200/30 transition-colors group">
         <td><span class="font-bold">{{ i }}</span></td>
         <td>
@@ -22,16 +21,13 @@
         </td>
         <td>
           <div class="font-bold text-sm">{{ book.publisher }}</div>
-          <div class="text-[10px] opacity-50 italic">{{ book.publishedDate }}</div>
+          <div class="text-[10px] opacity-50 italic">{{ book.publishedDate | date:'mediumDate' }}</div>
         </td>
         <td>
           <div class="font-normal">{{ book.isbn }}</div>
         </td>
         <td>
-          <div class="font-normal">{{ book.pageCount }}</div>
-        </td>
-        <td>
-          <span class="badge badge-ghost badge-xs">{{ book.popularity }}</span>
+          <div class="font-normal">{{ book.availableCount }}</div>
         </td>
         <td>
           <div class="flex items-center gap-2">
@@ -40,8 +36,8 @@
               </span>
             @if (book.discount > 0) {
               <span class="text-[10px] line-through opacity-40">
-                  {{ book.price | currency:'EUR' }}
-                </span>
+                {{ book.price | currency:'EUR' }}
+              </span>
             }
           </div>
         </td>
@@ -95,18 +91,5 @@
       </tr>
     }
   </tbody>
-  <tfoot>
-  <tr>
-    <th></th>
-    <th>Title & Author</th>
-    <th>Publisher & Date</th>
-    <th>ISBN</th>
-    <th>Pages</th>
-    <th>Stars</th>
-    <th>Price</th>
-    <th>Status</th>
-    <th>Actions</th>
-  </tr>
-  </tfoot>
 </table>
 

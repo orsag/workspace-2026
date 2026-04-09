@@ -44,3 +44,9 @@ export const EMPTY_BOOK: BookWithoutId = {
   coverUrl: '',
   description: '',
 };
+
+export interface ActionResponse {
+  success: boolean;
+  message: string;
+  warning?: boolean;
+}

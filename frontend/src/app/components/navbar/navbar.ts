@@ -6,6 +6,7 @@ import { ConfigurationService } from '../../services/configuration-service';
 import { IconComponent } from '../icon/IconComponent';
 import { AppStore } from '../../store/app-store';
 import { FormsModule } from '@angular/forms';
+import { CartStore } from '../../store/cart-store';
 
 @Component({
   selector: 'app-navbar',
@@ -24,10 +25,12 @@ export class Navbar {
   config = inject(ConfigurationService);
   private router = inject(Router);
   private store = inject(AppStore);
+  cartStore = inject(CartStore);
 
   modelUsername = '';
   userName = this.store.user;
   isLoggedIn = this.store.isLoggedIn;
+  isAdmin = this.store.isAdmin;
   protected showLoginModal = signal(false);
   showSearchbar = computed(() => this.config.flags().SHOW_SEARCHBAR_HEADER);
   showFilter = computed(() => this.config.flags().SHOW_FILTER);

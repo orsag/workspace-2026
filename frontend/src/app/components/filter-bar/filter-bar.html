@@ -36,10 +36,20 @@
     Najvyššia zľava
   </button>
 
-  <button (click)="setMode('soldOut')" class="btn btn-sm rounded-full"
-          [class.btn-primary]="activeMode() === 'soldOut'"
-          [disabled]="isCoolingDown()">
-    Vypredané
-  </button>
+  @if (cartStore.itemCount() > 0) {
+    <button routerLink="/shopping"
+            class="btn btn-sm btn-secondary text-white rounded-full"
+            [disabled]="isCoolingDown()">
+      Do košíka
+    </button>
+  }
+
+  @if (store.isLoggedIn()) {
+    <button routerLink="/profile"
+            class="btn btn-sm btn-accent text-white rounded-full"
+            [disabled]="isCoolingDown()">
+      Profil
+    </button>
+  }
 
 </div>

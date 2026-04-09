@@ -15,8 +15,7 @@
   </div>
 
   <div class="w-full bg-base-100 shadow-sm">
-    <app-book-table [data]="store.books()"
-                    (edit)="openEditModal($event)"
+    <app-book-table (edit)="openEditModal($event)"
                     (remove)="openDeleteConfirmation($event)">
     </app-book-table>
   </div>

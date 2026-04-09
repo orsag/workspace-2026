@@ -10,6 +10,57 @@
     </div>
   </header>
 
+  <section class="mb-12">
+    <h3 class="font-bold mb-4 text-lg flex items-center gap-2">
+      Moje objednávky
+      <div class="badge badge-outline">{{ orders().length }}</div>
+    </h3>
+
+    @if (orders().length > 0) {
+      <div class="overflow-x-auto bg-base-100 rounded-xl border border-base-300 shadow-sm">
+        <table class="table w-full">
+          <thead>
+          <tr class="bg-base-200">
+            <th>ID Objednávky</th>
+            <th>Dátum</th>
+            <th>Suma</th>
+            <th>Status</th>
+            <th class="text-right">Akcie</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (order of orders(); track order.id) {
+              <tr class="hover:bg-base-200/50 transition-colors">
+                <td class="font-mono text-xs">{{ order.id }}</td>
+                <td>{{ order.createdAt | date:'shortDate' }}</td>
+                <td class="font-bold">{{ order.totalAmount | currency:'EUR' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'badge-success': order.status === 'COMPLETED',
+                    'badge-warning': order.status === 'PENDING',
+                    'badge-error': order.status === 'CANCELLED'
+                  }">{{ order.status }}</span>
+                </td>
+                <td class="text-right">
+                  @if (order.status !== 'CANCELLED' && canCancel(order.createdAt)) {
+                    <button (click)="handleCancelOrder(order.id)"
+                            class="btn btn-ghost btn-xs text-error">
+                      Zrušiť do 14 dní
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="alert bg-base-100 border border-base-300 italic text-base-content/50">
+        Zatiaľ ste nevytvorili žiadne objednávky.
+      </div>
+    }
+  </section>
+
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <section class="lg:col-span-1 space-y-4">
       <div class="card bg-base-100 shadow-sm border border-base-300 gap-6 p-6">
@@ -20,7 +71,8 @@
             <span class="label-text">Používateľské meno</span>
           </label>
 
-          <div class="flex items-center justify-between h-10 w-full px-4 rounded-lg bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
+          <div
+            class="flex items-center justify-between h-10 w-full px-4 rounded-lg bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
             <span class="font-medium">{{ store.user()?.username }}</span>
             <app-icon name="Lock" class="h-4 w-4"></app-icon>
           </div>
@@ -49,12 +101,14 @@
     <section class="lg:col-span-2">
       <h3 class="font-bold mb-4 text-lg flex items-center gap-2 mt-6">
         Moje obľúbené
-        <div class="badge badge-secondary">{{ store.favoriteCount() }}</div> </h3>
+        <div class="badge badge-secondary">{{ store.favoriteCount() }}</div>
+      </h3>
 
       @if (favoriteBooks().length > 0) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           @for (book of favoriteBooks(); track book.id) {
-            <app-book-card [data]="book"></app-book-card> }
+            <app-book-card [data]="book"></app-book-card>
+          }
         </div>
       } @else {
         <div class="bg-base-200 rounded-xl p-12 text-center border-2 border-dashed border-base-300">

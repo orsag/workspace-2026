@@ -4,15 +4,19 @@ import {
   withMethods,
   withComputed,
   patchState,
+  withHooks,
 } from '@ngrx/signals';
-import { computed, inject } from '@angular/core';
+import { computed, effect, inject } from '@angular/core';
 import { User } from '@test-monorepo/shared-models';
 import { Book as IBook } from '@test-monorepo/shared-models';
 import { AuthService } from '../services/auth-service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, catchError, EMPTY } from 'rxjs';
+import { pipe, switchMap, tap, catchError, EMPTY, map, filter } from 'rxjs';
 import { ToastService } from '../services/toast-service';
 import { BookService } from '../services/book-service';
+
+// Key for LocalStorage
+const USER_STORAGE_KEY = 'currentUser';
 
 export interface AppState {
   user: User | null;
@@ -60,14 +64,17 @@ export const AppStore = signalStore(
   withState(initialState),
 
   // 1. Computed Values (Like Selectors)
-  withComputed(({ user, books, filters }) => ({
+  withComputed(({ user, totalBooks, filters }) => ({
     isLoggedIn: computed(() => !!user()),
     isAdmin: computed(() => user()?.isAdmin ?? false),
     favoriteCount: computed(() => user()?.favorites?.length ?? 0),
     cartCount: computed(() => user()?.cartItems?.length ?? 0),
-    totalPages: computed(() => Math.ceil(books().length / filters().limit)),
+    // FIX: Use totalBooks() instead of books().length
+    totalPages: computed(() => Math.ceil(totalBooks() / filters().limit)),
+
+    // FIX: Compare current page against the corrected totalPages calculation
     hasMorePage: computed(
-      () => filters.page() < Math.ceil(books().length / filters().limit),
+      () => filters.page() < Math.ceil(totalBooks() / filters().limit),
     ),
   })),
 
@@ -114,6 +121,7 @@ export const AppStore = signalStore(
             page: page,
           },
         }));
+        this.loadBooks();
       },
 
       login: rxMethod<string>(
@@ -123,8 +131,6 @@ export const AppStore = signalStore(
             authService.login(username).pipe(
               tap((user) => {
                 patchState(store, { user, isLoading: false });
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                console.log('SUCCESS', user);
               }),
               catchError((err) => {
                 patchState(store, {
@@ -147,11 +153,31 @@ export const AppStore = signalStore(
             return authService.logout(username).pipe(
               tap(() => {
                 patchState(store, { user: null, error: null });
-                localStorage.removeItem('currentUser');
-                console.log('LOGOUT', store.user);
               }),
             );
           }),
+        ),
+      ),
+
+      refreshUser: rxMethod<void>(
+        pipe(
+          // Map to the current username from the store
+          map(() => store.user()?.username),
+          // Only proceed if we actually have a logged-in user
+          filter((username): username is string => !!username),
+          switchMap((username) =>
+            authService.getUser(username).pipe(
+              tap((updatedUser) => {
+                patchState(store, { user: updatedUser });
+                // Persistence sync
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+              }),
+              catchError((err) => {
+                console.error('Failed to refresh user data', err);
+                return EMPTY;
+              }),
+            ),
+          ),
         ),
       ),
 
@@ -161,13 +187,6 @@ export const AppStore = signalStore(
 
       clearUser() {
         patchState(store, { user: null });
-      },
-
-      init() {
-        const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
-          patchState(store, { user: JSON.parse(savedUser) });
-        }
       },
 
       toggleFavorite: rxMethod<string>(
@@ -191,13 +210,6 @@ export const AppStore = signalStore(
             return authService
               .updateUserFavorites(currentUser.username, updatedFavorites)
               .pipe(
-                tap(() => {
-                  // Success: Persist to localStorage if needed
-                  localStorage.setItem(
-                    'currentUser',
-                    JSON.stringify(updatedUser),
-                  );
-                }),
                 catchError((err) => {
                   // Rollback: If backend fails, revert the state
                   patchState(store, { user: currentUser });
@@ -224,10 +236,6 @@ export const AppStore = signalStore(
               tap((updatedUser) => {
                 patchState(store, { user: updatedUser, isLoading: false });
                 toast.success('Profil bol úspešne aktualizovaný');
-                localStorage.setItem(
-                  'currentUser',
-                  JSON.stringify(updatedUser),
-                );
               }),
               catchError(() => {
                 const errorMessage = 'Aktualizácia profilu zlyhala';
@@ -241,4 +249,26 @@ export const AppStore = signalStore(
       ),
     }),
   ),
+
+  // 3. Automated Lifecycle & Persistence
+  withHooks({
+    onInit(store) {
+      // 1. Hydrate state from storage
+      const savedUser = localStorage.getItem(USER_STORAGE_KEY);
+      if (savedUser) {
+        patchState(store, { user: JSON.parse(savedUser) });
+      }
+
+      // 2. Automatically track the 'user' signal
+      // Whenever store.user() changes, this effect runs.
+      effect(() => {
+        const user = store.user();
+        if (user) {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+        } else {
+          localStorage.removeItem(USER_STORAGE_KEY);
+        }
+      });
+    },
+  }),
 );

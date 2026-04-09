@@ -7,20 +7,25 @@ import { Filter } from './components/filter/filter';
 import { ConfigurationService } from './services/configuration-service';
 import { ToastComponent } from './components/toast/toastComponent';
 import { AppStore } from './store/app-store';
+import { Footer } from './components/footer/footer';
 
 @Component({
-  imports: [RouterModule, CommonModule, Navbar, Banner, Filter, ToastComponent],
+  imports: [
+    RouterModule,
+    CommonModule,
+    Navbar,
+    Banner,
+    Filter,
+    ToastComponent,
+    Footer,
+  ],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App implements OnInit {
+export class App {
   config = inject(ConfigurationService);
   readonly store = inject(AppStore);
-
-  ngOnInit() {
-    this.store.init();
-  }
 
   showBanner = computed(() => this.config.flags().SHOW_DISCOUNT_BANNER);
 }

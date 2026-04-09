@@ -8,15 +8,18 @@ import {
 } from '@angular/core';
 import { AppStore } from '../../store/app-store';
 import { QuickFilterState } from '../../../types';
+import { CartStore } from '../../store/cart-store';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-filter-bar',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './filter-bar.html',
   styleUrl: './filter-bar.css',
 })
 export class FilterBar {
   store = inject(AppStore);
+  cartStore = inject(CartStore);
   isCoolingDown = signal(false);
   private isFirstRun = true;
 

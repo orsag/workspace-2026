@@ -19,27 +19,57 @@ model User {
   lastLogin   DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  orders      Order[]
 }
 
 model Book {
-  id             String   @id @default(uuid())
+  id             String      @id @default(uuid())
   title          String
   author         String
-  isbn           String   @unique
+  isbn           String      @unique
   publisher      String
   publishedDate  DateTime
-  pageCount      Int      @default(0)
+  pageCount      Int         @default(0)
   category       String
   price          Float
-  discount       Float    @default(0)
-  popularity     Int      @default(0)
-  availableCount Int      @default(0)
-  isNewArticle   Boolean  @default(false)
-  isSoldOut      Boolean  @default(false)
-  isAvailable    Boolean  @default(true)
-  isBestSeller   Boolean  @default(false)
+  discount       Float       @default(0)
+  popularity     Int         @default(0)
+  availableCount Int         @default(0)
+  isNewArticle   Boolean     @default(false)
+  isSoldOut      Boolean     @default(false)
+  isAvailable    Boolean     @default(true)
+  isBestSeller   Boolean     @default(false)
   coverUrl       String?
   description    String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  orderItems     OrderItem[]
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  orderId  String
+  order    Order  @relation(fields: [orderId], references: [id])
+  bookId   String
+  book     Book   @relation(fields: [bookId], references: [id])
+  quantity Int
+  price    Float // Price at the time of purchase
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  CANCELLED
 }

@@ -4,6 +4,7 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Prisma } from '../../../generated/prisma/client';
+import { ActionResponse } from '@test-monorepo/libs';
 
 @Injectable()
 export class BookService {
@@ -114,7 +115,7 @@ export class BookService {
     });
   }
 
-  getBooksByIds (ids: string[]) {
+  getBooksByIds(ids: string[]) {
     return this.prisma.client.book.findMany({
       where: {
         id: {
@@ -122,7 +123,7 @@ export class BookService {
         },
       },
     });
-  };
+  }
 
   findOne(id: string) {
     return this.prisma.client.book.findUnique({ where: { id } });
@@ -135,7 +136,29 @@ export class BookService {
     });
   }
 
-  remove(id: string) {
-    return this.prisma.client.book.delete({ where: { id } });
+  async remove(id: string): Promise<ActionResponse> {
+    // 1. Check if the book is part of any existing orders
+    const orderCount = await this.prisma.client.orderItem.count({
+      where: { bookId: id },
+    });
+
+    // 2. If it is linked to orders, forbid deletion and return a warning
+    if (orderCount > 0) {
+      return {
+        success: false,
+        message: `Knihu nie je možné vymazať, pretože sa nachádza v ${orderCount} objednávkach.`,
+        warning: true,
+      };
+    }
+
+    // 3. Otherwise, proceed with standard deletion
+    await this.prisma.client.book.delete({
+      where: { id },
+    });
+
+    return {
+      success: true,
+      message: 'Kniha bola úspešne odstránená.',
+    };
   }
 }

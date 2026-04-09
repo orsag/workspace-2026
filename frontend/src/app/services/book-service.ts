@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Book as IBook } from '@test-monorepo/libs';
+import { ActionResponse, Book as IBook } from '@test-monorepo/libs';
 import { Observable } from 'rxjs';
 import { PaginatedBooks } from '../../types';
 
@@ -34,8 +34,8 @@ export class BookService {
     return this.http.patch<IBook>(`${this.apiUrl}/${id}`, book);
   }
 
-  delete(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  delete(id: string): Observable<ActionResponse> {
+    return this.http.delete<ActionResponse>(`${this.apiUrl}/${id}`);
   }
 
   // Fetches multiple books by their IDs for the favorites list
