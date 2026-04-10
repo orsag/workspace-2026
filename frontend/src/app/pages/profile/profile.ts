@@ -10,6 +10,7 @@ import { distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { BookService } from '../../services/book-service';
 import { IconComponent } from '../../components/icon/IconComponent';
 import { OrderService } from '../../services/order-service';
+import { OrderStatus as OSEnum } from '@test-monorepo/shared-models';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +23,7 @@ export class Profile {
   bookService = inject(BookService);
   orderService = inject(OrderService);
   favorites = this.store.user()?.favorites;
+  OrderStatus = OSEnum;
 
   favoriteBooks = toSignal(
     toObservable(computed(() => this.store.user()?.favorites || [])).pipe(
@@ -80,8 +82,8 @@ export class Profile {
     toObservable(computed(() => this.store.user())).pipe(
       map((user) => user?.id), // observing whole object user
       distinctUntilChanged(), // only if changes
-      switchMap(
-        (userId) => (userId ? this.orderService.getUserOrders(userId) : of([])),
+      switchMap((userId) =>
+        userId ? this.orderService.getUserOrders(userId) : of([]),
       ),
     ),
     { initialValue: [] },

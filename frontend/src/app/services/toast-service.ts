@@ -21,7 +21,7 @@ export class ToastService {
   show(text: string, type: ToastType = 'info') {
     const id = Date.now();
 
-    // Add new toast to the list
+    // Add new common to the list
     this.toastsSignal.update((all) => [...all, { id, text, type }]);
 
     // Auto-remove after 3000ms

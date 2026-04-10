@@ -7,6 +7,8 @@ import { IconComponent } from '../icon/IconComponent';
 import { AppStore } from '../../store/app-store';
 import { FormsModule } from '@angular/forms';
 import { CartStore } from '../../store/cart-store';
+import { TranslocoService } from '@jsverse/transloco';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-navbar',
@@ -22,6 +24,7 @@ import { CartStore } from '../../store/cart-store';
   styleUrl: './navbar.css',
 })
 export class Navbar {
+  private translocoService = inject(TranslocoService);
   config = inject(ConfigurationService);
   private router = inject(Router);
   private store = inject(AppStore);
@@ -34,6 +37,18 @@ export class Navbar {
   protected showLoginModal = signal(false);
   showSearchbar = computed(() => this.config.flags().SHOW_SEARCHBAR_HEADER);
   showFilter = computed(() => this.config.flags().SHOW_FILTER);
+
+  // Convert the lang changes to a signal
+  activeLang = toSignal(this.translocoService.langChanges$, {
+    initialValue: this.translocoService.getActiveLang(),
+  });
+
+  // Toggle function
+  toggleLang() {
+    console.log('activeLang: ', this.activeLang());
+    const newLang = this.activeLang() === 'en' ? 'sk' : 'en';
+    this.translocoService.setActiveLang(newLang);
+  }
 
   logout(event: any): void {
     this.router.navigate(['/']);

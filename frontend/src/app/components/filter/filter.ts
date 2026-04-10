@@ -5,10 +5,11 @@ import { inject, computed } from '@angular/core';
 import { BookFilters } from '../../../types';
 import { AppStore } from '../../store/app-store';
 import { CATEGORIES } from '@test-monorepo/shared-models';
+import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-filter',
-  imports: [IconComponent],
+  imports: [IconComponent, TranslocoDirective, TranslocoPipe],
   templateUrl: './filter.html',
   styleUrl: './filter.css',
 })

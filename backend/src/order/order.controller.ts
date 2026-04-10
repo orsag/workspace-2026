@@ -13,6 +13,11 @@ export class OrderController {
     return this.orderService.create(tempUserId, createOrderDto);
   }
 
+  @Get('all')
+  findAllGlobal() {
+    return this.orderService.findAll(); // Assuming this returns everything
+  }
+
   @Get()
   findAll() {
     return this.orderService.findAll();
@@ -26,6 +31,12 @@ export class OrderController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(id, updateOrderDto);
+  }
+
+  // 2. Administration: Generic status update
+  @Patch(':id/status')
+  updateStatus(@Param('id') id: string, @Body('status') status: string) {
+    return this.orderService.updateStatus(id, status);
   }
 
   @Delete(':id')

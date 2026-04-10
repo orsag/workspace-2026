@@ -6,6 +6,7 @@ import {
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { OrderStatus } from '@test-monorepo/libs';
 
 @Injectable()
 export class OrderService {
@@ -129,6 +130,13 @@ export class OrderService {
     return this.prisma.client.order.update({
       where: { id },
       data: { status: 'CANCELLED' }, // Assuming your Enum or string is 'CANCELLED'
+    });
+  }
+
+  async updateStatus(id: string, status: string) {
+    return this.prisma.client.order.update({
+      where: { id },
+      data: { status: status as OrderStatus },
     });
   }
 }

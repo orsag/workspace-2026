@@ -15,6 +15,10 @@
   </div>
 
   <div class="w-full bg-base-100 shadow-sm">
+    <app-order-table></app-order-table>
+  </div>
+
+  <div class="w-full bg-base-100 shadow-sm">
     <app-book-table (edit)="openEditModal($event)"
                     (remove)="openDeleteConfirmation($event)">
     </app-book-table>
@@ -45,132 +49,5 @@
 }
 
 @if (isEditModalOpen()) {
-  <dialog class="modal modal-open">
-    <div class="modal-box max-w-2xl">
-      <h3 class="font-bold text-xl mb-6 text-primary">
-        {{ selectedBook() ? 'Upraviť knihu' : 'Pridať novú knihu' }}
-      </h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <!-- FULL WIDTH: Title -->
-        <div class="form-control md:col-span-2">
-          <label class="label" [attr.for]="'title-' + selectedBook()?.id">
-            <span class="label-text font-semibold">Názov</span>
-          </label>
-          <input
-            type="text"
-            [id]="'title-' + selectedBook()?.id"
-            [formField]="editForm.title"
-            class="input input-bordered w-full"
-            [class.input-error]="editForm.title().touched() && editForm.title().invalid()"
-          />
-          @if (editForm.title().touched() && editForm.title().invalid()) {
-            <span class="text-error text-xs mt-1">Názov musí mať aspoň 3 znaky</span>
-          }
-        </div>
-
-        <!-- Author -->
-        <div class="form-control">
-          <label class="label" [attr.for]="'author-' + selectedBook()?.id">
-            <span class="label-text font-semibold">Autor</span>
-          </label>
-          <input
-            type="text"
-            [id]="'author-' + selectedBook()?.id"
-            [formField]="editForm.author"
-            class="input input-bordered w-full"
-          />
-        </div>
-
-        <!-- ISBN -->
-        <div class="form-control">
-          <label class="label" [attr.for]="'isbn-' + selectedBook()?.id">
-            <span class="label-text font-semibold">ISBN</span>
-          </label>
-          <input
-            type="text"
-            [id]="'isbn-' + selectedBook()?.id"
-            [formField]="editForm.isbn"
-            class="input input-bordered w-full"
-            [class.input-error]="editForm.isbn().invalid()"
-          />
-        </div>
-
-        <!-- Price -->
-        <div class="form-control">
-          <label class="label" [attr.for]="'price-' + selectedBook()?.id">
-            <span class="label-text font-semibold">Cena (€)</span>
-          </label>
-          <input
-            type="number"
-            [id]="'price-' + selectedBook()?.id"
-            [formField]="editForm.price"
-            class="input input-bordered w-full"
-          />
-        </div>
-
-        <!-- Available count -->
-        <div class="form-control">
-          <label class="label" [attr.for]="'available-' + selectedBook()?.id">
-            <span class="label-text font-semibold">Skladom (ks)</span>
-          </label>
-          <input
-            type="number"
-            [id]="'available-' + selectedBook()?.id"
-            [formField]="editForm.availableCount"
-            class="input input-bordered w-full"
-          />
-        </div>
-
-        <!-- Category -->
-        <div class="form-control md:col-span-2">
-          <label class="label" [attr.for]="'category-' + selectedBook()?.id">
-            <span class="label-text font-semibold">Kategória</span>
-          </label>
-          <select
-            [id]="'category-' + selectedBook()?.id"
-            [formField]="editForm.category"
-            class="select select-bordered w-full"
-          >
-            <option value="" disabled selected>Vyberte kategóriu</option>
-            @for (cat of categories; track cat) {
-              <option [value]="cat">{{ cat }}</option>
-            }
-          </select>
-        </div>
-
-        <!-- FULL WIDTH: Description -->
-        <div class="form-control md:col-span-2">
-          <label class="label" [attr.for]="'description-' + selectedBook()?.id">
-            <span class="label-text font-semibold">Popis</span>
-          </label>
-          <textarea
-            [id]="'description-' + selectedBook()?.id"
-            [formField]="editForm.description"
-            class="textarea textarea-bordered w-full h-28"
-          ></textarea>
-        </div>
-
-      </div>
-
-      <div
-        class="modal-backdrop"
-        role="button"
-        tabindex="0"
-        aria-label="Zatvoriť okno"
-        (click)="closeModals()"
-        (keydown.enter)="closeModals()"
-        (keydown.space)="closeModals()">
-      </div>
-
-      <div class="modal-action">
-        <button class="btn btn-ghost" (click)="closeModals()">Zrušiť</button>
-        <button class="btn btn-primary px-10" [disabled]="editForm().invalid()" (click)="handleSave()">
-          {{ selectedBook() ? 'Uložiť zmeny' : 'Vytvoriť knihu' }}
-        </button>
-      </div>
-
-    </div>
-  </dialog>
+  <app-edit-modal [selectedBook]="selectedBook()" (closeModal)="closeModals()"></app-edit-modal>
 }

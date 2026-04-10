@@ -36,13 +36,13 @@
                 <td class="font-bold">{{ order.totalAmount | currency:'EUR' }}</td>
                 <td>
                   <span class="badge" [ngClass]="{
-                    'badge-success': order.status === 'COMPLETED',
-                    'badge-warning': order.status === 'PENDING',
-                    'badge-error': order.status === 'CANCELLED'
+                    'badge-success': order.status === OrderStatus.PAID,
+                    'badge-warning': order.status === OrderStatus.PENDING,
+                    'badge-error': order.status === OrderStatus.CANCELLED,
                   }">{{ order.status }}</span>
                 </td>
                 <td class="text-right">
-                  @if (order.status !== 'CANCELLED' && canCancel(order.createdAt)) {
+                  @if (order.status !== OrderStatus.CANCELLED && canCancel(order.createdAt)) {
                     <button (click)="handleCancelOrder(order.id)"
                             class="btn btn-ghost btn-xs text-error">
                       Zrušiť do 14 dní

@@ -1,0 +1,63 @@
+<table class="table table-sm table-zebra w-full table-pin-rows table-pin-cols">
+  <thead class="h-12">
+  <tr class="bg-base-200/50">
+    <th>Dátum objednávky</th>
+    <th>ID objednávky & Zákazník</th>
+    <th>Celková suma</th>
+    <th>Stav</th>
+    <th class="text-center">Akcie</th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (order of orders(); track order.id) {
+      <tr class="hover">
+        <td>
+          <div class="font-medium">{{ order.createdAt | date:'short' }}</div>
+        </td>
+        <td>
+          <div class="flex flex-col">
+            <span class="font-medium">{{ order.id }}</span>
+            <span class="text-xs opacity-50 font-mono">{{ order.userId }}</span>
+          </div>
+        </td>
+        <td class="font-mono font-semibold">
+          {{ order.totalAmount | currency:'EUR' }}
+        </td>
+        <td>
+          <div [class]="getStatusClass(order.status)">
+            {{ order.status }}
+          </div>
+        </td>
+        <td>
+          <div class="flex justify-center gap-2">
+            @if (order.status === 'PENDING') {
+              <button (click)="updateStatus(order.id, 'PAID')"
+                      class="btn btn-success btn-xs btn-outline">PAID</button>
+            }
+
+            @if (order.status !== 'PENDING') {
+              <button (click)="updateStatus(order.id, 'PENDING')"
+                      class="btn btn-ghost btn-xs border-base-300 hover:bg-warning/20">
+                SET PENDING
+              </button>
+            }
+
+            @if (order.status !== 'CANCELLED' && order.status !== 'SHIPPED') {
+              <button (click)="updateStatus(order.id, 'CANCELLED')"
+                      class="btn btn-warning btn-xs btn-outline">CANCEL</button>
+            }
+
+            <button (click)="removeOrder(order.id)"
+                    class="btn btn-error btn-xs btn-outline text-error">REMOVE</button>
+          </div>
+        </td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="5" class="text-center py-10 text-base-content/50">
+          No orders found in the system.
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

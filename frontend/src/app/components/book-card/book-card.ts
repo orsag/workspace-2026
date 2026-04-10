@@ -30,17 +30,26 @@ export class BookCard {
     () => this.store.user()?.favorites?.includes(this.data.id) ?? false,
   );
 
+  isInCart = computed(() => !!this.cartStore.itemsMap()[this.data.id]);
+
   toggleFavorite(bookId: string) {
     if (!this.store.isLoggedIn()) {
-      // Show a toast or redirect to login
+      // Show a common or redirect to login
       return;
     }
     // We will build this method in the Store next!
     this.store.toggleFavorite(bookId);
   }
 
-  onAddToCart() {
-    this.cartStore.addToCart(this.data);
-    console.log(`Added ${this.data.title} to cart!`);
+  handleCartAction() {
+    if (this.isInCart()) {
+      // If it's there, remove it
+      this.cartStore.removeItem(this.data.id);
+      console.log(`Removed ${this.data.title} from cart`);
+    } else {
+      // If it's not, add it
+      this.cartStore.addToCart(this.data);
+      console.log(`Added ${this.data.title} to cart`);
+    }
   }
 }

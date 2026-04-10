@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { OrderService, CreatedOrder } from '../../services/order-service';
 
 @Component({
   selector: 'app-shopping',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, RouterLink],
   templateUrl: './shopping.html',
   styleUrl: './shopping.css',
 })

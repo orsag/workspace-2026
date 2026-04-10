@@ -1,0 +1,31 @@
+{
+  "filters": {
+    "sections": {
+      "search": "Search",
+      "status": "Status",
+      "sort": "Sort By",
+      "categories": "Categories"
+    },
+    "placeholders": {
+      "search": "Title or author..."
+    },
+    "actions": {
+      "clear": "Clear",
+      "submit": "Apply Filter",
+      "waiting": "Wait..."
+    },
+    "status_types": {
+      "available": "Available",
+      "newReleases": "New Releases",
+      "discounted": "Discounted",
+      "bestsellers": "Bestsellers"
+    },
+    "sort_options": {
+      "popularity": "Popularity",
+      "price": "Price"
+    },
+    "stats": {
+      "showing": "{{current}} / {{total}}"
+    }
+  }
+}

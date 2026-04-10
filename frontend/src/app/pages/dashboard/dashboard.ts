@@ -1,4 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { BookCard } from '../../components/book-card/book-card';
 import { BookListItem } from '../../components/book-list-item/book-list-item';
 import { IconComponent } from '../../components/icon/IconComponent';

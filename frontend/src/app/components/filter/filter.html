@@ -5,24 +5,25 @@
   [class.opacity-0]="!showFilter()"
   [class.pointer-events-none]="!showFilter()"
   [class.p-6]="showFilter()"
-  [class.p-0]="!showFilter()">
+  [class.p-0]="!showFilter()"
+  *transloco="let t;">
 
   <div class="min-w-60 flex flex-col h-full gap-6 overflow-y-auto no-scrollbar" [class.hidden]="!showFilter()">
 
     <section>
       <div class="flex justify-between items-center mb-3">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">Search</h3>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">{{ t('filters.sections.search') }}</h3>
         <button
           type="button"
           (click)="updateFilter('search', '')"
           class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 transition-all">
-          Clear
+          {{ t('filters.actions.clear') }}
         </button>
       </div>
       <label class="input input-sm input-bordered flex items-center gap-2 bg-base-200/30">
         <app-icon name="Search" class="opacity-40 h-4 w-4"></app-icon>
         <input type="text" class="grow"
-               placeholder="Title or author..."
+               [placeholder]="t('filters.placeholders.search')"
                [value]="filters().search"
                (input)="updateFilter('search', $any($event.target).value)" />
       </label>
@@ -33,7 +34,7 @@
         @for (toggle of ['available', 'newReleases', 'discounted', 'bestsellers']; track toggle) {
           <label class="flex items-center justify-between cursor-pointer group">
             <span
-              class="label-text text-sm font-semibold capitalize">{{ toggle.replace('Releases', ' Releases') }}</span>
+              class="label-text text-sm font-semibold capitalize">{{ t(`filters.status_types.${toggle}`) }}</span>
             <input
               type="checkbox"
               class="toggle toggle-sm"
@@ -47,13 +48,13 @@
     </section>
 
     <section>
-      <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40 mb-3">Sort By</h3>
+      <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40 mb-3">{{ t('filters.sections.sort') }}</h3>
       <div class="flex flex-col gap-2">
         <button
           (click)="updateSort('popularity')"
           [class.btn-active]="filters().sortBy === 'popularity'"
           class="btn btn-sm btn-ghost justify-between font-medium px-2">
-          <span>🔥 Popularity</span>
+          <span>🔥 {{ t('filters.sort_options.popularity') }}</span>
           <span class="badge badge-ghost badge-xs">↓</span>
         </button>
 
@@ -61,7 +62,7 @@
           (click)="updateSort('price')"
           [class.btn-active]="filters().sortBy && filters().sortBy?.startsWith('price')"
           class="btn btn-sm btn-ghost justify-between font-medium px-2">
-          <span>💰 Price</span>
+          <span>💰 {{ t('filters.sort_options.price') }}</span>
 
           <span class="badge badge-ghost badge-xs">
           {{ filters().sortBy === 'price_desc' ? '↓' : '↑' }}
@@ -72,16 +73,15 @@
 
     <section>
       <div class="flex justify-between items-center mb-3">
-        <!--        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">Categories</h3>-->
         <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">
-          Categories
+          {{ t('filters.sections.categories') }}
           <span class="badge badge-ghost badge-xs ml-2">{{ store.books().length }} / {{ store.totalBooks() }}</span>
         </h3>
         <button
           type="button"
           (click)="updateFilter('category', null)"
           class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 transition-all">
-          Clear
+          {{ 'filters.actions.clear' | transloco }}
         </button>
       </div>
       <div class="flex flex-col gap-1">
@@ -110,12 +110,15 @@
         class="btn btn-primary btn-block shadow-lg">
 
         @if (isCoolingDown()) {
-          <span class="loading loading-spinner loading-xs"></span>
-          Čakajte...
+          <div>
+            <span class="loading loading-spinner loading-xs"></span>
+            {{ 'filters.actions.waiting' | transloco }}
+          </div>
         } @else {
-          Filter
+          <div>
+            {{ 'filters.actions.submit' | transloco }}
+          </div>
         }
-
       </button>
     </div>
   </div>

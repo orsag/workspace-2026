@@ -1,0 +1,31 @@
+{
+  "filters": {
+    "sections": {
+      "search": "Hľadať",
+      "status": "Stav",
+      "sort": "Zoradiť podľa",
+      "categories": "Kategórie"
+    },
+    "placeholders": {
+      "search": "Názov alebo autor..."
+    },
+    "actions": {
+      "clear": "Vymazať",
+      "submit": "Použiť filter",
+      "waiting": "Čakajte..."
+    },
+    "status_types": {
+      "available": "Dostupné",
+      "newReleases": "Novinky",
+      "discounted": "Zľavnené",
+      "bestsellers": "Bestsellery"
+    },
+    "sort_options": {
+      "popularity": "Popularita",
+      "price": "Cena"
+    },
+    "stats": {
+      "showing": "{{current}} / {{total}}"
+    }
+  }
+}
