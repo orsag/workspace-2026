@@ -8,6 +8,8 @@ import { appRoutes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from './transloco-loader';
+import { DebounceEventManagerPlugin } from './plugins/debounce-event.plugin';
+import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,5 +25,10 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader,
     }),
+    {
+      provide: EVENT_MANAGER_PLUGINS,
+      useClass: DebounceEventManagerPlugin,
+      multi: true,
+    },
   ],
 };

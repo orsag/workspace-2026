@@ -17,7 +17,8 @@
         "assets": [
           {
             "glob": "**/*",
-            "input": "frontend/public"
+            "input": "frontend/public",
+            "output": "/"
           }
         ],
         "styles": ["frontend/src/styles.css"]
@@ -27,8 +28,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "3mb"
+              "maximumWarning": "700kb",
+              "maximumError": "2mb"
             },
             {
               "type": "anyComponentStyle",

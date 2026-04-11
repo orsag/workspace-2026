@@ -113,6 +113,20 @@ Nx Console is an editor extension that enriches your developer experience. It le
 
 [Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
+## Spring effect
+Yes, this visual effect is very well known in web and mobile development! 
+It is officially called "Rubber-banding" or "Overscroll Bounce".
+
+It is natively built into macOS (when using a trackpad) and iOS/Android devices. However, standard Windows browsers usually do not have this effect (they just stop dead at the top).
+
+When you use a sticky navbar on a standard website, the native "rubber band" effect pulls the entire body of the HTML down. This pulls your sticky navbar away from the top of the screen, exposing the background color of the <body> element underneath, which looks ugly.
+
+To create a true "App-like" spring effect where the navbar stays perfectly locked to the top while the content underneath it springs and bounces, you need to use the App Shell Layout Pattern.
+
+Instead of letting the browser scroll the <body>, we lock the body to the exact height of the screen (h-screen overflow-hidden) and make a div inside it handle the scrolling.
+
+Now, on Mac/iOS/Android, when the user pulls down at the top of the page, the content will physically pull away from the bottom of the navbar and spring back, while the navbar stays perfectly frozen in place.
+
 ## Useful links
 
 Learn more:
@@ -129,3 +143,4 @@ And join the Nx community:
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
 - [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 - [Avatar](https://www.flaticon.com/free-icons/on)
+- [Globe](https://www.flaticon.com/free-icons/world)

@@ -1,5 +1,5 @@
-<div title="Change Theme" class="dropdown dropdown-end block">
-  <div tabindex="0" role="button" class="btn btn-ghost m-1 uppercase">
+<div title="Change Theme" class="dropdown dropdown-end block z-50">
+  <div tabindex="0" role="button" class="btn btn-ghost uppercase text-white hover:bg-white/20">
     <div
       [attr.data-theme]="currentTheme()"
       class="bg-base-100 grid shrink-0 grid-cols-2 gap-0.5 rounded-md p-1 shadow-sm"
@@ -12,7 +12,7 @@
     {{ currentTheme() }}
   </div>
 
-  <ul tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box top-px z-50 w-56 p-2 shadow-xl border border-base-300 max-h-[31rem] overflow-y-auto mt-14">
+  <ul tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[100] w-56 p-2 shadow-xl border border-base-300 max-h-[31rem] overflow-y-auto mt-4">
     <li class="menu-title text-xs">Theme</li>
     @for (theme of availableThemes(); track theme.name) {
       <li class="mb-1">

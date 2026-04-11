@@ -1,4 +1,91 @@
 {
+  "common": {
+    "success_logout": "Logout successful.",
+    "success_login": "Login successful.",
+    "failed_login": "Login failed, try again.",
+    "sold_out": "Sold out",
+    "sold_out_tooltip": "Oh no, we’re sorry — all copies of this book have already been sold, and neither we nor the publisher have it in stock anymore :(\nTheoretically, you might still get lucky in some other stores that haven’t sold their last copies yet.",
+    "legal": "© 2000-2026 BookShop. Internetové kníhkupectvo. Všetky práva vyhradené."
+  },
+  "footer": {
+    "apps": "BookShop Apps",
+    "audiobooks": "Audiobooks",
+    "stores": "Stores & Events",
+    "gift": "Gift Cards",
+    "podcast": "Podcast",
+    "blog": "Reads Blog",
+    "pickup": "In Store Pickup",
+    "membership": "Membership",
+    "mastercard": "Mastercard",
+    "services": {
+      "services": "Services",
+      "affiliate_program": "Affiliate Program",
+      "publisher_author_guidelines": "Publisher & Author Guidelines",
+      "bulk_order_discounts": "Bulk Order Discounts",
+      "mobile_apps": "Mobile Apps",
+      "membership": "Membership",
+      "bookfairs": "Bookfairs"
+    },
+    "about_us": {
+      "about_us": "About Us",
+      "about_bookshop": "About BookShop",
+      "careers_at_bookshop": "Careers at BookShop",
+      "bookshop_inc": "BookShop, Inc.",
+      "bookshop_kitchen": "BookShop Kitchen"
+    },
+    "quick_help": {
+      "quick_help": "Quick Help",
+      "help_center": "Help Center",
+      "shipping_returns": "Shipping & Returns",
+      "store_pickup": "Store Pickup",
+      "order_status": "Order Status",
+      "product_recalls": "Product Recalls",
+      "corrections_updates": "Corrections & Updates",
+      "gift_cards": "Gift Cards"
+    },
+    "shop_by_category": {
+      "shop_by_category": "Shop by Category",
+      "books": "Books",
+      "fiction": "Fiction",
+      "nonfiction": "Nonfiction",
+      "kids": "Kids",
+      "teens_ya": "Teens & YA",
+      "ebooks": "eBooks",
+      "audiobooks": "Audiobooks"
+    },
+    "privacy": "Submit your email address to receive BookShop offers & updates. You can view Privacy Policy",
+    "unsubscribe": "Unsubscribe from our emails at any time.",
+    "rewards": "Rewards",
+    "learn_more": "Learn More",
+    "sign_up_free": "Sign Up Free",
+    "follow_us": "Follow us",
+    "find_store": "Find a Store",
+    "stay_know": "Stay in the Know",
+    "here": "here",
+    "store_placeholder": "Store name, location, or ZIP",
+    "enroll": "Enroll in Rewards for <strong>FREE</strong>. Watch your savings add up!"
+  },
+  "banner": {
+    "title": "✨ Discover our latest stories on the blog →"
+  },
+  "administration": {
+    "first": "First",
+    "last": "Last",
+    "page": "Page",
+    "catalog": "Catalog",
+    "support": "Contact support",
+    "back_home": "Go back home",
+    "not_found": "Book Not Found",
+    "sorry": "Sorry, we couldn’t find the page you’re looking for.\nIt might have been moved to a different shelf or checked out indefinitely."
+  },
+  "pricing": {
+    "discount_price": "Super price",
+    "you_save": "Saves: "
+  },
+  "cart": {
+    "remove_from_cart": "Remove cart",
+    "add_to_cart": "Add cart"
+  },
   "filters": {
     "sections": {
       "search": "Search",
@@ -13,6 +100,16 @@
       "clear": "Clear",
       "submit": "Apply Filter",
       "waiting": "Wait..."
+    },
+    "bar": {
+      "all": "All",
+      "bestsellers": "Bestsellers",
+      "new_releases": "New releases",
+      "most_expensive": "Most expensive",
+      "cheapest": "Cheapest",
+      "highest_discount": "Highest discount",
+      "to_cart": "Add to cart",
+      "profile": "Profile"
     },
     "status_types": {
       "available": "Available",

@@ -10,10 +10,13 @@ import { AppStore } from '../../store/app-store';
 import { QuickFilterState } from '../../../types';
 import { CartStore } from '../../store/cart-store';
 import { RouterLink } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { FilterItem } from '../../../types';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-filter-bar',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective, NgOptimizedImage],
   templateUrl: './filter-bar.html',
   styleUrl: './filter-bar.css',
 })
@@ -22,6 +25,52 @@ export class FilterBar {
   cartStore = inject(CartStore);
   isCoolingDown = signal(false);
   private isFirstRun = true;
+
+  // Inside your component class:
+  filters = signal<FilterItem[]>([
+    {
+      label: 'bar.all',
+      icon: 'all',
+      style: 'outline',
+      isActive: () => this.activeMode() === 'all',
+      action: () => this.reset(),
+    },
+    {
+      label: 'bar.bestsellers',
+      icon: 'bestsellers',
+      style: 'outline',
+      isActive: () => this.activeMode() === 'bestsellers',
+      action: () => this.setMode('bestsellers'),
+    },
+    {
+      label: 'bar.new_releases',
+      icon: 'newreleases',
+      style: 'outline',
+      isActive: () => this.activeMode() === 'newReleases',
+      action: () => this.setMode('newReleases'),
+    },
+    {
+      label: 'bar.most_expensive',
+      icon: 'expensive',
+      style: 'outline',
+      isActive: () => this.activeSort() === 'price_desc',
+      action: () => this.setSort('price_desc'),
+    },
+    {
+      label: 'bar.cheapest',
+      icon: 'cheapest',
+      style: 'outline',
+      isActive: () => this.activeSort() === 'price_asc',
+      action: () => this.setSort('price_asc'),
+    },
+    {
+      label: 'bar.highest_discount',
+      icon: 'discount',
+      style: 'outline',
+      isActive: () => this.activeMode() === 'discounted',
+      action: () => this.setMode('discounted'),
+    },
+  ]);
 
   // 1. The Single Source of Truth
   protected filterState = signal<QuickFilterState>({
@@ -33,14 +82,16 @@ export class FilterBar {
   protected activeMode = computed(() => this.filterState().mode);
   protected activeSort = computed(() => this.filterState().sortBy);
 
-  // 3. Simple State Transitions
   setMode(mode: QuickFilterState['mode']) {
-    this.filterState.update((state) => ({ ...state, mode }));
+    this.filterState.set({
+      mode: mode,
+      sortBy: null,
+    });
   }
 
   setSort(sort: QuickFilterState['sortBy']) {
     this.filterState.update((state) => ({
-      ...state,
+      mode: 'all',
       sortBy: state.sortBy === sort ? null : sort,
     }));
   }
@@ -81,7 +132,7 @@ export class FilterBar {
 
       setTimeout(() => {
         this.isCoolingDown.set(false);
-      }, 1500);
+      }, 500);
     });
   });
 }

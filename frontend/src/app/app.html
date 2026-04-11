@@ -1,25 +1,35 @@
-<app-navbar class="sticky top-0 z-50"></app-navbar>
+<!-- 1. The main wrapper locks to exactly the window height and prevents body scrolling -->
+<div class="h-screen w-full flex flex-col overflow-hidden">
 
-@if (showBanner()) {
-  <app-banner></app-banner>
-}
+  <!-- 2. Navbar is no longer 'sticky', it's just a static block that sits at the top of the flex column -->
+  <app-navbar class="z-50 shrink-0"></app-navbar>
 
-<div class="flex flex-col min-h-screen">
+  <!-- 3. This div becomes the scrollable container.
+       overscroll-y-contain enforces the bounce effect natively inside this box -->
+  <div id="main-scroll-area" class="flex-1 overflow-y-auto overscroll-y-contain flex flex-col bg-base-200">
 
-  <div class="flex flex-grow relative">
+    @if (showBanner()) {
+      <app-banner></app-banner>
+    }
 
-    <aside class="sticky top-16 h-[calc(100vh-64px)] overflow-y-auto shrink-0 z-30">
-      <app-filter></app-filter>
-    </aside>
+    <div class="flex flex-grow relative">
 
-    <main class="flex-grow bg-base-200 p-6 min-w-0">
-      <router-outlet></router-outlet>
-      <app-toast />
-    </main>
+      <!-- 4. Top-16 changed to top-0, because the navbar is no longer in this scroll context -->
+      <aside class="sticky top-0 h-[calc(100vh-64px)] overflow-y-auto shrink-0 z-30 bg-base-100">
+        <app-filter></app-filter>
+      </aside>
+
+      <!-- Removed bg-base-200 here since it's on the parent scroll wrapper now -->
+      <main class="flex-grow p-6 min-w-0">
+        <router-outlet></router-outlet>
+        <app-toast />
+      </main>
+
+    </div>
+
+    <app-footer></app-footer>
 
   </div>
-
-  <app-footer></app-footer>
 
   <app-scroll-btn />
 </div>

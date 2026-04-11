@@ -8,6 +8,7 @@ import { Administration } from './pages/administration/administration';
 import { Shopping } from './pages/shopping/shopping';
 import { adminGuard } from './admin.guard';
 import { Success } from './pages/success/success';
+import { authGuard } from './auth.guard';
 
 export const appRoutes: Route[] = [
   { path: '', component: Dashboard },
@@ -16,9 +17,9 @@ export const appRoutes: Route[] = [
     redirectTo: '',
     pathMatch: 'full',
   },
-  { path: 'profile', component: Profile },
   { path: 'book/:id', component: Detail },
-  { path: 'features', component: Features },
+  { path: 'profile', component: Profile, canActivate: [authGuard] },
+  { path: 'features', component: Features, canActivate: [authGuard] },
   {
     path: 'administration',
     component: Administration,
@@ -26,6 +27,6 @@ export const appRoutes: Route[] = [
   },
   { path: 'shopping', component: Shopping },
   { path: 'success/:id', component: Success },
-  { path: 'not-ready', component: PageNotFound },
+  { path: 'wip', component: PageNotFound },
   { path: '**', component: PageNotFound },
 ];

@@ -40,19 +40,32 @@ export class ScrollBtnComponent {
 
   constructor() {
     effect((onCleanup) => {
+      // 1. Grab the new scrolling container by its ID
+      const scrollArea = document.getElementById('main-scroll-area');
+
+      if (!scrollArea) return; // Safety check
+
       const onScroll = () => {
-        this.isVisible.set(window.scrollY > 300);
+        // 2. Use .scrollTop instead of window.scrollY
+        this.isVisible.set(scrollArea.scrollTop > 300);
       };
 
-      window.addEventListener('scroll', onScroll);
-      onCleanup(() => window.removeEventListener('scroll', onScroll));
+      // 3. Attach the event listener to the div, not the window
+      scrollArea.addEventListener('scroll', onScroll);
+
+      onCleanup(() => scrollArea.removeEventListener('scroll', onScroll));
     });
   }
 
   scrollToTop() {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    const scrollArea = document.getElementById('main-scroll-area');
+
+    if (scrollArea) {
+      // 4. Scroll the specific div back to the top
+      scrollArea.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
   }
 }

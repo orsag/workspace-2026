@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Navbar } from './components/navbar/navbar';
-import { Banner } from './components/banner/banner';
+import { BannerComponent } from './components/banner/banner';
 import { Filter } from './components/filter/filter';
 import { ConfigurationService } from './services/configuration-service';
 import { ToastComponent } from './components/common/toastComponent';
@@ -15,8 +15,8 @@ import { ScrollBtnComponent } from './components/common/scrollToTop';
     RouterModule,
     CommonModule,
     Navbar,
-    Banner,
     Filter,
+    BannerComponent,
     ToastComponent,
     ScrollBtnComponent,
     Footer,

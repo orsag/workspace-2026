@@ -1,4 +1,91 @@
 {
+  "common": {
+    "success_logout": "Logout úspešný.",
+    "success_login": "Login úspešný.",
+    "failed_login": "Login neúspešný, skúste znova.",
+    "sold_out": "Vypredané",
+    "legal": "© 2000-2026 BookShop. Internetové kníhkupectvo. Všetky práva vyhradené.",
+    "sold_out_tooltip": "Ach, mrzí nás to, z tejto knihy sa už predali všetky výtlačky a nemáme ju na sklade my ani vydavateľ :( Teoreticky však môžete mať šťastie v niektorých iných obchodoch, ktoré ešte nepredali posledné kusy."
+  },
+  "footer": {
+    "apps": "Aplikácie BookShop",
+    "audiobooks": "Audioknihy",
+    "stores": "Predajne a podujatia",
+    "gift": "Darčekové karty",
+    "podcast": "Podcast",
+    "blog": "Blog Reads",
+    "pickup": "Osobný odber v predajni",
+    "membership": "Členstvo",
+    "mastercard": "Mastercard",
+    "services": {
+      "services": "Služby",
+      "affiliate_program": "Partnerský program",
+      "publisher_author_guidelines": "Pokyny pre vydavateľov a autorov",
+      "bulk_order_discounts": "Zľavy na hromadné objednávky",
+      "mobile_apps": "Mobilné aplikácie",
+      "membership": "Členstvo",
+      "bookfairs": "Knižné veľtrhy"
+    },
+    "about_us": {
+      "about_us": "O nás",
+      "about_bookshop": "O BookShop",
+      "careers_at_bookshop": "Kariéra v BookShop",
+      "bookshop_inc": "BookShop, Inc.",
+      "bookshop_kitchen": "BookShop Kitchen"
+    },
+    "quick_help": {
+      "quick_help": "Rýchla pomoc",
+      "help_center": "Centrum pomoci",
+      "shipping_returns": "Doprava a vrátenie tovaru",
+      "store_pickup": "Osobný odber",
+      "order_status": "Stav objednávky",
+      "product_recalls": "Stiahnutie produktov",
+      "corrections_updates": "Opravy a aktualizácie",
+      "gift_cards": "Darčekové karty"
+    },
+    "shop_by_category": {
+      "shop_by_category": "Nakupovať podľa kategórie",
+      "books": "Knihy",
+      "fiction": "Beletria",
+      "nonfiction": "Náučná literatúra",
+      "kids": "Deti",
+      "teens_ya": "Dospievajúci a YA",
+      "ebooks": "eKnihy",
+      "audiobooks": "Audioknihy"
+    },
+    "privacy": "Zadajte svoju e‑mailovú adresu a získajte ponuky a novinky od BookShop. Môžete si pozrieť Zásady ochrany osobných údajov",
+    "unsubscribe": "Z odberu e‑mailov sa môžete kedykoľvek odhlásiť.",
+    "rewards": "Odmeny",
+    "learn_more": "Zistiť viac",
+    "sign_up_free": "Zaregistrujte sa zadarmo",
+    "follow_us": "Nasleduj nás",
+    "find_store": "Nájdi obchod",
+    "stay_know": "Zostaňte informovaní",
+    "here": "tu",
+    "store_placeholder": "Názov, umiestnenie, PSC",
+    "enroll": "Zapojte sa do programu Odmeny úplne <strong>ZADARMO</strong>. Sledujte, ako sa vaše úspory zvyšujú!"
+  },
+  "banner": {
+    "title": "✨ Objavte naše najnovšie príbehy na blogu →"
+  },
+  "administration": {
+    "first": "Prvá",
+    "last": "Posledná",
+    "page": "Strana",
+    "catalog": "Katalóg",
+    "support": "Kontaktuj podporu",
+    "back_home": "Vráť sa domov",
+    "not_found": "Kniha sa nenašla",
+    "sorry": "Prepáčte, nenašli sme stránku, ktorú hľadáte.\nMožno bola presunutá na iné miesto alebo je nedostupná na neurčito."
+  },
+  "pricing": {
+    "discount_price": "Super cena",
+    "you_save": "Ušetríš: "
+  },
+  "cart": {
+    "remove_from_cart": "Odobrať",
+    "add_to_cart": "Do košíka"
+  },
   "filters": {
     "sections": {
       "search": "Hľadať",
@@ -13,6 +100,16 @@
       "clear": "Vymazať",
       "submit": "Použiť filter",
       "waiting": "Čakajte..."
+    },
+    "bar": {
+      "all": "Všetko",
+      "bestsellers": "Bestsellery",
+      "new_releases": "Najnovšie",
+      "most_expensive": "Najdrahšie",
+      "cheapest": "Najlacnejšie",
+      "highest_discount": "Najvyššia zľava",
+      "to_cart": "Do košíka",
+      "profile": "Profil"
     },
     "status_types": {
       "available": "Dostupné",

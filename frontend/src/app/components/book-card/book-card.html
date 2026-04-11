@@ -1,5 +1,6 @@
 <div
-  class="card h-[340px] w-full bg-base-100 shadow-sm border border-base-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+  *transloco="let t"
+  class="card h-[390px] w-full bg-base-100 border border-base-300 hover:-translate-y-1 transition-all duration-300 group"
 >
   <figure class="px-4 pt-4 cursor-pointer" [routerLink]="['/book', data.id]">
     <div class="relative w-full h-52 bg-base-200 rounded-xl overflow-hidden flex items-center justify-center group-hover:bg-primary/5 transition-colors">
@@ -11,23 +12,14 @@
            class="h-40 w-auto object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-110"
            [alt]="`Book Cover ${data.title}`">
 
-      <button
-        (click)="$event.stopPropagation(); handleCartAction()"
-        class="absolute top-2 left-2 p-2 rounded-full bg-base-100/80 backdrop-blur-sm shadow-sm transition-all hover:scale-110 active:scale-95 z-10 cursor-pointer"
-        [class.text-primary]="isInCart()"
-        [class.text-base-content]="!isInCart()"
-        [title]="isInCart() ? 'Odobrať z košíka' : 'Pridať do košíka'">
-
-        @if (isInCart()) {
-          <app-icon name="Check" class="text-success"></app-icon>
-        } @else {
-          <app-icon name="SmallCart"></app-icon>
-        }
-      </button>
+      <span class="absolute top-2 left-2 px-2 py-1 rounded-md bg-base-100/70 backdrop-blur-md border border-base-content/10 text-base-content text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+        {{ data.category }}
+      </span>
 
       <button
         (click)="$event.stopPropagation(); toggleFavorite(data.id)"
-        class="absolute top-2 right-2 p-2 rounded-full bg-base-100/80 backdrop-blur-sm shadow-sm transition-all hover:scale-110 active:scale-95 z-10"
+        class="favorite-btn absolute top-2 right-2 p-2 rounded-full bg-base-100/80 backdrop-blur-sm shadow-sm transition-all hover:scale-110 active:scale-95 z-10"
+        [class.fav]="isFavorite()"
         [class.text-error]="isFavorite()"
         [class.text-base-content]="!isFavorite()">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [attr.fill]="isFavorite() ? 'currentColor' : 'none'">
@@ -38,18 +30,51 @@
   </figure>
 
   <div class="card-body p-5 flex flex-col overflow-hidden">
-    <div class="flex justify-between items-start mb-2 shrink-0">
-      <span class="badge badge-secondary badge-outline badge-sm uppercase tracking-wider font-semibold">
-        {{ data.category }}
-      </span>
-      <span class="text-sm font-bold text-primary">{{ data.price | currency:'EUR' }}</span>
-    </div>
-
     <div class="space-y-1 shrink-0">
       <h2 class="card-title text-sm font-bold line-clamp-1 group-hover:text-primary transition-colors leading-tight">
         {{ data.title }}
       </h2>
       <p class="text-xs text-base-content/70 italic">by {{ data.author }}</p>
+    </div>
+
+    <div class="flex justify-between items-center shrink-0 mt-2">
+      <div class="flex flex-col gap-0.5">
+        @if (data.discount > 0) {
+          <span class="text-[10px] line-through opacity-40">
+            {{ (data.price / (1 - data.discount)) | currency:'EUR' }}
+          </span>
+        }
+
+        <span class="text-xl font-extrabold text-primary leading-none">
+          {{ data.price | currency:'EUR' }}
+        </span>
+
+        <span class="text-[10px] font-medium mt-0.5"
+              [class.text-success]="data.availableCount > 0"
+              [class.text-error]="data.availableCount === 0">
+          {{ data.availableCount > 0 ? 'Skladom (' + data.availableCount + ' ks)' : 'Vypredané' }}
+        </span>
+      </div>
+
+      @if (!data.isSoldOut) {
+        <button
+          (click)="$event.stopPropagation(); handleCartAction()"
+          class="btn btn-sm btn-outline transition-all duration-200 active:scale-95 px-4"
+          [class.text-base-content]="!isInCart()"
+          [class.btn-error]="isInCart()"
+        >
+          @if (isInCart()) {
+            <span>{{ t('cart.remove_from_cart') }}</span>
+          } @else {
+            <span>{{ t('cart.add_to_cart') }}</span>
+          }
+        </button>
+      } @else {
+        <div class="tooltip" [attr.data-tip]="t('common.sold_out_tooltip')">
+          <button class="btn btn-soft btn-sm" disabled>{{ t('common.sold_out') }}</button>
+        </div>
+      }
+
     </div>
 
     <div class="flex-grow"></div>

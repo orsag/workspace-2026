@@ -24,3 +24,12 @@ export interface PaginatedBooks {
     count: number;
   };
 }
+
+// Define a type for your filter/sort items
+export type FilterItem = {
+  label: string;
+  icon: string;
+  isActive: () => boolean;
+  action: () => void;
+  style: 'warning' | 'outline'; // To distinguish your specific button styles
+};

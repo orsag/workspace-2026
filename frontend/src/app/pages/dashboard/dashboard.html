@@ -5,31 +5,25 @@
 
     <div class="flex justify-end mb-6">
       <div class="join border border-base-300 bg-base-200 rounded-full overflow-hidden">
-
-        <label
-          class="join-item btn btn-sm btn-ghost border-none has-checked:bg-base-100 has-checked:text-primary has-checked:shadow-sm px-2">
-          <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('grid')"
-                 [checked]="viewLayout() === 'grid'" />
-          <app-icon name="Grid"></app-icon>
+        <label class="join-item btn btn-sm btn-ghost px-2 has-checked:bg-base-100 has-checked:text-primary">
+          <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('grid')" [checked]="viewLayout() === 'grid'" /> <app-icon name="Grid"></app-icon>
         </label>
-
-        <label
-          class="join-item btn btn-sm btn-ghost border-none has-checked:bg-base-100 has-checked:text-primary has-checked:shadow-sm px-2">
-          <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('list')"
-                 [checked]="viewLayout() === 'list'" />
-          <app-icon name="List"></app-icon>
+        <label class="join-item btn btn-sm btn-ghost px-2 has-checked:bg-base-100 has-checked:text-primary">
+          <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('list')" [checked]="viewLayout() === 'list'" /> <app-icon name="List"></app-icon>
         </label>
-
       </div>
     </div>
   </header>
 
-  @if (store.isLoading()) {
+  <!-- Main Loading Spinner: Only shows on initial load or fresh searches -->
+  @if (store.isLoading() && store.books().length === 0) {
     <div class="flex flex-col items-center justify-center min-h-[40vh]">
       <span class="loading loading-dots loading-lg text-primary"></span>
       <p class="mt-4 text-base-content/50">Fetching your books...</p>
     </div>
   } @else {
+
+    <!-- Render Grid or List -->
     @switch (viewLayout()) {
       @case ('grid') {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -39,38 +33,64 @@
         </div>
       }
       @case ('list') {
-        <div class="flex flex-col gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           @for (book of store.books(); track book.id; let i = $index) {
             <app-book-list-item [data]="book" [isPriority]="i < 4"></app-book-list-item>
+
+            @if (i !== store.books().length - 1) {
+              <div class="divider col-span-1 my-0 md:hidden"></div>
+            }
+            @if (i % 2 === 1 && i !== store.books().length - 1) {
+              <div class="divider col-span-full hidden md:flex my-0"></div>
+            }
           }
         </div>
       }
     }
-  }
 
-  @if (!store.isLoading()) {
+    <!-- Pagination & Load More Section -->
     <div class="flex flex-col items-center gap-4 mt-12 pb-10">
-      <div class="join bg-base-100 overflow-hidden">
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
-                (click)="store.setPage(1)">First
-        </button>
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
-                (click)="store.setPage(store.filters.page() - 1)">{{ store.filters.page() - 1 }}
-        </button>
-        <button class="join-item btn btn-sm md:btn-md no-animation cursor-default">
-          Page {{ store.filters.page() }} of {{ store.totalPages() }}
-        </button>
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
-                (click)="store.setPage(store.filters.page() + 1)">{{ store.filters.page() + 1 }}
-        </button>
-        <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
-                (click)="store.setPage(store.totalPages())">Last
-        </button>
-      </div>
 
-      <span class="text-xs text-base-content/40">
-        Displaying {{ store.books().length }} of {{ store.totalBooks() }} total books
-      </span>
+      @if (store.isLoading()) {
+        <!-- Small spinner shown only when appending the next page -->
+        <span class="loading loading-spinner loading-md text-primary mt-4"></span>
+        <p class="text-sm text-base-content/50">Loading more books...</p>
+      } @else {
+
+        <div class="join bg-base-100 overflow-hidden shadow-sm">
+          <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
+                  (click)="store.setPage(1)">First
+          </button>
+          <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
+                  (click)="store.setPage(store.filters.page() - 1)">{{ store.filters.page() - 1 }}
+          </button>
+
+          <!-- NEW: Load More Button -->
+          <button class="join-item btn btn-sm md:btn-md btn-primary"
+                  [disabled]="!store.hasMorePage()"
+                  (click)="store.loadMore()">
+            Load more books
+          </button>
+
+          <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
+                  (click)="store.setPage(store.filters.page() + 1)">{{ store.filters.page() + 1 }}
+          </button>
+          <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
+                  (click)="store.setPage(store.totalPages())">Last
+          </button>
+        </div>
+
+        <!-- Moved Stats underneath the buttons -->
+        <div class="flex flex-col items-center gap-1 text-center mt-2">
+          <span class="text-xs font-semibold text-base-content/70">
+            Page {{ store.filters.page() }} of {{ store.totalPages() }}
+          </span>
+          <span class="text-xs text-base-content/40">
+            Displaying {{ store.books().length }} of {{ store.totalBooks() }} total books
+          </span>
+        </div>
+
+      }
     </div>
   }
 </main>

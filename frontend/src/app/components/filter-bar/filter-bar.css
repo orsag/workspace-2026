@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.btn-shadow {
+  @apply shadow-2xl shadow-black/30;
+}

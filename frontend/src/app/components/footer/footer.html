@@ -1,30 +1,181 @@
-<footer class="footer sm:footer-horizontal bg-base-100 text-base-content p-10 border-t border-base-300 shadow-inner">
-  <aside>
-    <div class="text-primary mb-2">
-      <app-icon name="LogoFooter"></app-icon>
+<footer *transloco="let t" class="bg-base-100 border-t border-base-300 text-base-content pt-12 pb-16 px-4 md:px-8 shadow-inner mt-auto">
+  <div class="max-w-[1400px] mx-auto">
+
+    <!-- ================= TOP SECTION: ICONS ================= -->
+    <div class="grid grid-cols-3 md:grid-cols-5 lg:flex lg:flex-row lg:justify-between gap-y-10 gap-x-4 items-start text-center mb-12">
+
+      <!-- Icon 1 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.apps') }}</span>
+      </a>
+
+      <!-- Icon 2 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.audiobooks') }}</span>
+      </a>
+
+      <!-- Icon 3 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v6"/><path d="M9 10h6"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.blog') }}</span>
+      </a>
+
+      <!-- Icon 4 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M12 2v20"/><path d="M17 5v14"/><path d="M22 10v4"/><path d="M7 5v14"/><path d="M2 10v4"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.podcast') }}</span>
+      </a>
+
+      <!-- Icon 5 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.membership') }}</span>
+      </a>
+
+      <!-- Icon 6 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.pickup') }}</span>
+      </a>
+
+      <!-- Icon 7 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 8v12"/><path d="M19 8c-1.5 0-3-1.5-3-3a3 3 0 0 0-6 0c0 1.5-1.5 3-3 3"/><path d="M12 8c1.5 0 3-1.5 3-3a3 3 0 0 0-6 0c0 1.5 1.5 3 3 3"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.gift') }}</span>
+      </a>
+
+      <!-- Icon 8 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.stores') }}</span>
+      </a>
+
+      <!-- Icon 9 -->
+      <a routerLink="wip" class="flex flex-col items-center gap-4 cursor-pointer group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        <span class="text-[11px] font-bold uppercase tracking-wider">{{ t('footer.mastercard') }}</span>
+      </a>
+
     </div>
-    <p class="font-bold text-lg">BookShop Ltd.</p>
-    <p class="opacity-70">Poskytujeme úžasné knihy od roku 2026</p>
-  </aside>
 
-  <nav>
-    <h6 class="footer-title opacity-100 text-primary">Služby</h6>
-    <a class="link link-hover transition-all hover:text-primary">Branding</a>
-    <a class="link link-hover transition-all hover:text-primary">Design</a>
-  </nav>
+    <!-- DIVIDER -->
+    <hr class="border-base-300 my-10" />
 
-  <nav>
-    <form>
-      <h6 class="footer-title">Newsletter</h6>
-      <fieldset class="form-control flex flex-col w-80 gap-4">
-        <label for="footerEmail" class="label">
-          <span class="label-text">Najlepšie novinky sú tie knižné. Získajte ich ako prví. (Pre osoby staršie ako 16 rokov.):</span>
-        </label>
-        <div class="join">
-          <input id="footerEmail" type="text" placeholder="username@gmail.com" class="input input-bordered join-item w-full" />
-          <button class="btn btn-primary join-item">Odoberať</button>
+    <!-- ================= BOTTOM SECTION: COLUMNS ================= -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-x-6 gap-y-12">
+
+      <!-- COL 1: Services -->
+      <div class="lg:col-span-2 flex flex-col">
+        <h3 class="font-bold text-sm mb-4 uppercase tracking-wider">{{ t('footer.services.services') }}</h3>
+        <ul class="flex flex-col gap-3 text-[13px] text-base-content/80">
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.services.affiliate_program') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary leading-tight">{{ t('footer.services.publisher_author_guidelines') }}<br>Guidelines</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.services.bulk_order_discounts') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.services.mobile_apps') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.services.membership') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.services.bookfairs') }}</a></li>
+        </ul>
+      </div>
+
+      <!-- COL 2: About Us -->
+      <div class="lg:col-span-2 flex flex-col">
+        <h3 class="font-bold text-sm mb-4 uppercase tracking-wider">{{ t('footer.about_us.about_us') }}</h3>
+        <ul class="flex flex-col gap-3 text-[13px] text-base-content/80">
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.about_us.about_bookshop') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.about_us.careers_at_bookshop') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.about_us.bookshop_inc') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.about_us.bookshop_kitchen') }}</a></li>
+        </ul>
+      </div>
+
+      <!-- COL 3: Quick Help -->
+      <div class="lg:col-span-2 flex flex-col">
+        <h3 class="font-bold text-sm mb-4 uppercase tracking-wider">{{ t('footer.quick_help.quick_help') }}</h3>
+        <ul class="flex flex-col gap-3 text-[13px] text-base-content/80">
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.quick_help.help_center') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.quick_help.shipping_returns') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.quick_help.store_pickup') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.quick_help.order_status') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.quick_help.product_recalls') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.quick_help.corrections_updates') }}</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.quick_help.gift_cards') }}</a></li>
+        </ul>
+      </div>
+
+      <!-- COL 4: Shop by Category -->
+      <div class="lg:col-span-2 flex flex-col">
+        <h3 class="font-bold text-sm mb-4 uppercase tracking-wider">{{ t('footer.shop_by_category.shop_by_category') }}</h3>
+        <ul class="flex flex-col gap-3 text-[13px] text-base-content/80">
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.shop_by_category.books') }}Books</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.shop_by_category.fiction') }}Fiction</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.shop_by_category.nonfiction') }}Nonfiction</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.shop_by_category.kids') }}Kids</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.shop_by_category.teens_ya') }}Teens & YA</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.shop_by_category.ebooks') }}eBooks</a></li>
+          <li><a routerLink="wip" class="hover:underline hover:text-primary">{{ t('footer.shop_by_category.audiobooks') }}Audiobooks</a></li>
+        </ul>
+      </div>
+
+      <!-- COL 5: Stay in the Know & Rewards -->
+      <div class="lg:col-span-2 flex flex-col">
+        <h3 class="font-bold text-sm mb-4 uppercase tracking-wider">{{ t('footer.stay_know') }}</h3>
+
+        <div class="join w-full">
+          <!-- Force rounded-none to match the rigid boxed look of the original image -->
+          <input class="input input-bordered input-sm join-item w-full rounded-none focus:outline-none focus:border-primary" placeholder="Email Address" />
+          <button class="btn btn-sm btn-neutral join-item rounded-none px-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
-      </fieldset>
-    </form>
-  </nav>
+
+        <p class="text-[11px] text-base-content/60 mt-3 leading-relaxed">
+          {{ t('footer.privacy') }}
+          <a routerLink="wip" class="underline hover:text-primary font-semibold">{{ t('footer.here') }}</a>. {{ t('footer.unsubscribe') }}
+        </p>
+
+        <!-- Rewards Sub-section -->
+        <h3 class="font-bold text-sm mb-2 mt-8 uppercase tracking-wider">{{ t('footer.rewards') }}</h3>
+        <p class="text-[12px] text-base-content/80 leading-relaxed mb-2"><span [innerHTML]="t('footer.enroll')"></span></p>
+        <div class="flex gap-4 text-[12px] font-bold underline">
+          <a routerLink="wip" class="hover:text-primary">{{ t('footer.learn_more') }}</a>
+          <a routerLink="wip" class="hover:text-primary">{{ t('footer.sign_up_free') }}</a>
+        </div>
+      </div>
+
+      <!-- COL 6: Find a Store & Follow Us -->
+      <div class="lg:col-span-2 flex flex-col">
+        <h3 class="font-bold text-sm mb-4 uppercase tracking-wider">{{ t('footer.find_store') }}</h3>
+
+        <div class="join w-full">
+          <input class="input input-bordered input-sm join-item w-full rounded-none focus:outline-none focus:border-primary" [placeholder]="t('footer.store_placeholder')" />
+          <button class="btn btn-sm btn-neutral join-item rounded-none px-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+
+        <!-- Follow Us Sub-section -->
+        <h3 class="font-bold text-sm mb-4 mt-8 uppercase tracking-wider">{{ t('footer.follow_us') }}</h3>
+        <div class="flex flex-wrap gap-2">
+
+          <!-- Social Circles -->
+          <a routerLink="wip" class="btn btn-circle btn-sm btn-neutral">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a routerLink="wip" class="btn btn-circle btn-sm btn-neutral">
+            <!-- X / Twitter SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.873 11.633Z"/></svg>
+          </a>
+          <a routerLink="wip" class="btn btn-circle btn-sm btn-neutral">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          </a>
+          <a routerLink="wip" class="btn btn-circle btn-sm btn-neutral">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </footer>

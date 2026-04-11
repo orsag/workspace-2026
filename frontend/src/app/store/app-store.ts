@@ -14,6 +14,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap, catchError, EMPTY, map, filter } from 'rxjs';
 import { ToastService } from '../services/toast-service';
 import { BookService } from '../services/book-service';
+import { TranslocoService } from '@jsverse/transloco';
 
 // Key for LocalStorage
 const USER_STORAGE_KEY = 'currentUser';
@@ -85,6 +86,7 @@ export const AppStore = signalStore(
       bookService = inject(BookService),
       authService = inject(AuthService),
       toast = inject(ToastService),
+      translocoService = inject(TranslocoService),
     ) => ({
       // Update filters without triggering a fetch automatically
       updateFilters(newFilters: Partial<AppState['filters']>) {
@@ -94,15 +96,16 @@ export const AppStore = signalStore(
         this.loadBooks();
       },
 
-      // Explicitly call this ONLY when needed (e.g., on the Catalog page)
-      async loadBooks() {
+      // Explicitly call this ONLY when needed
+      async loadBooks(append = false) {
         patchState(store, { isLoading: true });
 
         const params = store.filters();
         bookService.fetchBooks(params).subscribe({
           next: (res) =>
             patchState(store, {
-              books: res.data,
+              // If append is true, concat the arrays. Otherwise, replace.
+              books: append ? [...store.books(), ...res.data] : res.data,
               totalBooks: res.meta.total,
               isLoading: false,
             }),
@@ -112,6 +115,13 @@ export const AppStore = signalStore(
               isLoading: false,
             }),
         });
+      },
+
+      loadMore() {
+        patchState(store, (state) => ({
+          filters: { ...state.filters, page: state.filters.page + 1 },
+        }));
+        this.loadBooks(true);
       },
 
       setPage(page: number) {
@@ -130,6 +140,10 @@ export const AppStore = signalStore(
           switchMap((username) =>
             authService.login(username).pipe(
               tap((user) => {
+                const message = translocoService.translate(
+                  'common.success_logout',
+                );
+                toast.success(message);
                 patchState(store, { user, isLoading: false });
               }),
               catchError((err) => {
@@ -137,6 +151,10 @@ export const AppStore = signalStore(
                   error: err.error?.message || 'Login failed',
                   isLoading: false,
                 });
+                const message = translocoService.translate(
+                  'common.failed_login',
+                );
+                toast.alert(message);
                 return EMPTY;
               }),
             ),
@@ -152,6 +170,10 @@ export const AppStore = signalStore(
 
             return authService.logout(username).pipe(
               tap(() => {
+                const message = translocoService.translate(
+                  'common.success_logout',
+                );
+                toast.success(message);
                 patchState(store, { user: null, error: null });
               }),
             );

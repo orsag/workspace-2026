@@ -1,15 +1,20 @@
-<div class="flex items-start gap-4 bg-base-100 p-4 rounded-xl border border-base-300 hover:border-primary transition-colors group shadow-sm">
+<!-- Removed borders/backgrounds, added max-h-[400px], smaller gap-3 -->
+<div class="flex items-stretch gap-3 group max-h-[400px] py-1" *transloco="let t">
 
+  <!-- LEFT: Bigger Picture (120x175 instead of 80x110) -->
   <div class="shrink-0 cursor-pointer" [routerLink]="['/book', data.id]">
     <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
-         width="80" height="110"
-         class="rounded-lg object-cover shadow-md"
+         width="120" height="175"
+         class="object-cover shadow-sm hover:shadow-md transition-shadow"
          [priority]="isPriority"
          [alt]="'Book Cover ' + data.title">
   </div>
 
-  <div class="w-1/4 shrink-0 flex flex-col gap-1">
-    <div class="flex flex-wrap gap-1 mb-1">
+  <!-- RIGHT: All elements in a flex column -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- Row 1: Badges & Category -->
+    <div class="flex flex-wrap gap-1 mb-1.5 items-center">
       @if (data.isNewArticle) {
         <span class="badge badge-secondary badge-xs font-bold uppercase">New</span>
       }
@@ -19,53 +24,68 @@
       @if (data.discount > 0) {
         <span class="badge badge-error badge-xs font-bold text-white uppercase">Sale</span>
       }
+      <!-- Moved category here to save vertical space -->
+      <div class="badge badge-outline badge-xs opacity-60 uppercase tracking-tighter">
+        {{ data.category }}
+      </div>
     </div>
 
-    <h3 class="font-bold text-lg text-base-content leading-tight group-hover:text-primary transition-colors cursor-pointer break-words"
+    <!-- Row 2: Title & Author -->
+    <h3 class="font-bold text-lg text-base-content leading-tight group-hover:text-primary transition-colors cursor-pointer line-clamp-2"
         [routerLink]="['/book', data.id]">
       {{ data.title }}
     </h3>
+    <p class="text-sm text-base-content/70 mt-0.5 truncate">{{ data.author }}</p>
 
-    <p class="text-sm text-base-content/70 break-words">{{ data.author }}</p>
-
-    <div class="badge badge-outline badge-sm opacity-60 uppercase tracking-tighter ">
-      {{ data.category }}
+    <!-- Row 3: Metadata -->
+    <div class="flex items-center gap-2 text-[11px] text-base-content/40 mt-1 uppercase font-semibold">
+      <span>{{ data.pageCount }} Strán</span>
+      <span>•</span>
+      <span>ISBN: {{ data.isbn }}</span>
     </div>
-  </div>
 
-  <div class="flex-1 flex flex-col gap-3 min-w-0">
-    <p class="text-sm text-base-content/70">{{ data.description }}</p>
+    <!-- Row 4: Description (Truncated so it doesn't break max-height) -->
+    <p class="text-sm text-base-content/70 mt-2 line-clamp-2">
+      {{ data.description }}
+    </p>
 
-    <div class="flex flex-row gap-2">
-      <div class="flex items-center gap-3 text-[11px] text-base-content/40 mt-1 uppercase font-semibold">
-        <span>{{ data.pageCount }} Strán</span>
-        <span>•</span>
-        <span>ISBN: {{ data.isbn }}</span>
-      </div>
-    </div>
-  </div>
+    <!-- Row 5: Price & Button (mt-auto pushes this to the absolute bottom) -->
+    <div class="mt-auto pt-3 flex flex-wrap items-end justify-between gap-2">
 
-  <div class="flex flex-col items-end justify-between h-full min-h-[110px]">
-    <div class="flex flex-col items-end gap-0.5">
-      @if (data.discount > 0) {
-        <span class="text-[10px] line-through opacity-40">
-          {{ (data.price / (1 - data.discount)) | currency:'EUR' }}
+      <!-- Price Details -->
+      <div class="flex flex-col gap-0.5">
+        @if (data.discount > 0) {
+          <span class="text-[10px] line-through opacity-40">
+            {{ (data.price / (1 - data.discount)) | currency:'EUR' }}
+          </span>
+        }
+
+        <span class="text-xl font-extrabold text-primary leading-none">
+          {{ data.price | currency:'EUR' }}
         </span>
+
+        <span class="text-[10px] font-medium mt-0.5"
+              [class.text-success]="data.availableCount > 0"
+              [class.text-error]="data.availableCount === 0">
+          {{ data.availableCount > 0 ? 'Skladom (' + data.availableCount + ' ks)' : 'Vypredané' }}
+        </span>
+      </div>
+
+      <!-- Button -->
+      @if (!data.isSoldOut) {
+        <button class="btn btn-primary btn-sm" (click)="$event.stopPropagation(); handleCartAction()">
+          @if (isInCart()) {
+            <span>{{ t('cart.remove_from_cart') }}</span>
+          } @else {
+            <span>{{ t('cart.add_to_cart') }}</span>
+          }
+        </button>
+      } @else {
+        <div class="tooltip" [attr.data-tip]="t('common.sold_out_tooltip')">
+          <button class="btn btn-soft btn-sm" disabled>{{ t('common.sold_out') }}</button>
+        </div>
       }
-
-      <span class="text-lg font-bold text-primary leading-none">
-        {{ data.price | currency:'EUR' }}
-      </span>
-
-      <span class="text-[10px] font-medium opacity-60">
-        {{ data.availableCount > 0 ? 'Skladom (' + data.availableCount + ' ks)' : 'Vypredané' }}
-      </span>
     </div>
 
-    @if (data.availableCount > 0) {
-      <button class="btn btn-primary"  (click)="$event.stopPropagation(); onAddToCart()">
-        Pridať do košíka
-      </button>
-    }
   </div>
 </div>

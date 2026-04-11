@@ -7,8 +7,9 @@ import { IconComponent } from '../icon/IconComponent';
 import { AppStore } from '../../store/app-store';
 import { FormsModule } from '@angular/forms';
 import { CartStore } from '../../store/cart-store';
-import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { BookFilters } from '../../../types';
 
 @Component({
   selector: 'app-navbar',
@@ -19,6 +20,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     NgOptimizedImage,
     IconComponent,
     FormsModule,
+    TranslocoDirective,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
@@ -34,6 +36,7 @@ export class Navbar {
   userName = this.store.user;
   isLoggedIn = this.store.isLoggedIn;
   isAdmin = this.store.isAdmin;
+  searchQuery = signal('');
   protected showLoginModal = signal(false);
   showSearchbar = computed(() => this.config.flags().SHOW_SEARCHBAR_HEADER);
   showFilter = computed(() => this.config.flags().SHOW_FILTER);
@@ -80,5 +83,26 @@ export class Navbar {
       this.store.login(this.modelUsername);
     }
     this.showLoginModal.set(false);
+  }
+
+  // Handle the input event
+  onSearchChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    // 1. Update the local UI signal
+    this.searchQuery.set(value);
+
+    // 2. Update ONLY the search parameter in the store
+    this.store.updateFilters({
+      search: value,
+    });
+  }
+
+  onClearSearchbar(): void {
+    this.searchQuery.set('');
+    this.store.updateFilters({
+      search: this.searchQuery(),
+    });
   }
 }

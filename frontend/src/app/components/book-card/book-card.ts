@@ -2,10 +2,10 @@ import { Component, computed, inject, Input } from '@angular/core';
 import { Book } from '@test-monorepo/shared-models';
 import { RouterLink } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { CurrencyPipe } from '@angular/common';
 import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
-import { IconComponent } from '../icon/IconComponent';
+import { PriceTagComponent } from '../common/price-tag.component';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-book-card',
@@ -13,8 +13,7 @@ import { IconComponent } from '../icon/IconComponent';
     CommonModule,
     RouterLink,
     NgOptimizedImage,
-    CurrencyPipe,
-    IconComponent,
+    TranslocoDirective,
   ],
   templateUrl: './book-card.html',
   styleUrl: './book-card.css',

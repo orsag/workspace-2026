@@ -6,7 +6,7 @@ import { ToastService } from '../../services/toast-service';
   standalone: true,
   template: `
     @if (toastService.toasts().length > 0) {
-      <div class="toast toast-top toast-center z-9999">
+      <div class="toast toast-top toast-right z-9999">
         @for (toast of toastService.toasts(); track toast.id) {
           <div
             class="alert shadow-lg border-none animate-in fade-in slide-in-from-top-4 duration-300"

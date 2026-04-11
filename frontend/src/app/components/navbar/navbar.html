@@ -1,27 +1,53 @@
-<div class="navbar bg-base-100 shadow-sm">
+@let navBg = '/images/navbar.svg';
+@let logo = '/images/astar.svg';
 
-  <!-- MENU button and TITLE -->
-  <div class="flex-1 flex items-center gap-2">
-    <button
-      (click)="toggleSearchbar()"
-      class="btn btn-ghost btn-sm btn-square lg:flex"
-      [class.bg-base-200]="showFilter()"
-      aria-label="Toggle Sidebar">
-      <app-icon [name]="showFilter() ? 'Menu' : 'Menu'" class="opacity-70 h-5 w-5"></app-icon>
-    </button>
+<div class="navbar shadow-2xl h-18 relative bg-neutral text-white">
 
-    <a routerLink="/" class="btn btn-ghost text-xl px-2">BookShop</a>
+  <div class="absolute inset-0 z-0 pointer-events-none opacity-30 overflow-hidden rounded-b-lg"
+       [style.backgroundImage]="'url(' + navBg + ')'"
+       style="background-position: bottom; background-repeat: repeat-x; background-size: contain;">
   </div>
 
-  <div class="flex items-center gap-2">
+  <!-- MENU button and TITLE (Added z-10 so the bg doesn't block clicks) -->
+  <div class="flex-1 flex items-center gap-2 pl-4 z-10">
+    <button type="button" class="shrink-0 cursor-pointer rounded-lg hover:opacity-80 transition-opacity" (click)="toggleSearchbar()">
+      <img [ngSrc]="logo" width="50" height="50" class="rounded-lg object-cover shadow-md" alt="Bookshop logo">
+    </button>
 
-    <button
-      (click)="toggleLang()"
-      class="btn btn-ghost btn-sm gap-2 rounded-sm px-3 font-bold hover:bg-base-200 transition-colors"
-      [title]="activeLang() === 'en' ? 'Prepnúť do slovenčiny' : 'Switch to English'">
+    <a routerLink="/" title="Bookshop"
+       class="btn btn-ghost hover:bg-white/20 text-2xl px-2 text-[oklch(68.5%_0.169_237.323)]">
+      BookShop
+    </a>
+  </div>
 
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 9.198 15.287 6 17.5" />
+  <div class="flex items-center gap-2 z-10">
+
+    <!-- SEARCHBAR -->
+    @if (showSearchbar()) {
+      <div class="relative" *transloco="let t">
+        <!-- Fixed input background to be semi-transparent white instead of base-200 so text-white is readable -->
+        <input type="text" [value]="searchQuery()" (input.debounce.500)="onSearchChange($event)"
+               [placeholder]="t('filters.placeholders.search')"
+               class="input input-sm w-34 md:w-auto transition-all bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20 focus:border-white/40 focus:outline-none" />
+
+        @if (searchQuery()) {
+          <button (click)="onClearSearchbar()"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost hover:bg-white/20 btn-xs btn-circle text-white">
+            ✕
+          </button>
+        }
+      </div>
+    }
+
+    <!-- LANG BUTTON: Replaced hover:bg-base-200 with hover:bg-white/20 -->
+    <button (click)="toggleLang()"
+            class="btn btn-ghost hover:bg-white/20 btn-sm gap-2 rounded-sm px-3 font-bold transition-colors text-white"
+            [title]="activeLang() === 'en' ? 'Prepnúť do slovenčiny' : 'Switch to English'">
+
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 9.198 15.287 6 17.5" />
       </svg>
 
       <span class="uppercase text-xs">{{ activeLang() === 'en' ? 'SK' : 'EN' }}</span>
@@ -29,35 +55,28 @@
 
     <!-- LOGIN / LOGOUT -->
     @if (!isLoggedIn()) {
-      <button (click)="handleLogin()" class="btn btn-ghost btn-sm gap-2 rounded-sm px-4">
+      <button (click)="handleLogin()" class="btn btn-ghost hover:bg-white/20 btn-sm gap-2 rounded-sm px-4 text-white">
         <app-icon name="Login" class="h-4 w-4"></app-icon>
         <span>Login</span>
       </button>
     } @else {
-      <button (click)="handleLogout()" class="btn btn-ghost btn-sm gap-2 rounded-sm px-4">
+      <button (click)="handleLogout()" class="btn btn-ghost hover:bg-white/20 btn-sm gap-2 rounded-sm px-4 text-white">
         <app-icon name="Logout" class="h-4 w-4"></app-icon>
         <span>Logout</span>
       </button>
     }
 
-    <!-- SEARCHBAR -->
-    @if (showSearchbar()) {
-      <input type="text" placeholder="Search" class="input input-bordered w-34 md:w-auto" />
-    }
-
     <!-- CART ICON -->
-    <button
-      routerLink="/shopping"
-      class="btn btn-ghost btn-sm btn-square relative group"
-      aria-label="View Shopping Cart">
+    <button routerLink="/shopping" class="btn btn-ghost hover:bg-white/20 btn-sm btn-square relative group text-white"
+            aria-label="View Shopping Cart">
       <div class="indicator">
         @if (cartStore.itemCount() > 0) {
-          <span class="indicator-item badge badge-primary badge-xs font-bold border-none shadow-sm scale-90 mt-1">
-        {{ cartStore.itemCount() }}
-      </span>
+          <span
+            class="indicator-item badge badge-primary badge-xs font-bold border-none shadow-sm scale-90 mt-1 text-white">
+          {{ cartStore.itemCount() }}
+        </span>
         }
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-opacity"
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-opacity"
              fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -70,20 +89,13 @@
 
     <!-- DROPDOWN AVATAR -->
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+      <div tabindex="0" role="button" class="btn btn-ghost hover:bg-white/20 btn-circle avatar">
         <div class="w-10 rounded-full">
-          <img
-            fetchpriority="low"
-            alt="User Avatar"
-            width="40"
-            height="40"
-            ngSrc="images/sova.webp" />
+          <img fetchpriority="low" alt="User Avatar" width="40" height="40" ngSrc="images/sova.webp" />
         </div>
       </div>
-      <ul
-        tabindex="-1"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-
+      <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-base-content">
+        <!-- Kept text-base-content on the dropdown UL so the dropdown menu adapts to the current theme naturally -->
         @if (isLoggedIn() && isAdmin()) {
           <li><a routerLink="administration" (click)="closeDropdown($event)">Administration</a></li>
         }

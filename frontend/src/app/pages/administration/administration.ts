@@ -8,10 +8,18 @@ import { AppStore } from '../../store/app-store';
 import { ToastService } from '../../services/toast-service';
 import { EditModalComponent } from './edit-modal';
 import { OrderTable } from '../../components/order-table/order-table';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-administration',
-  imports: [BookTable, CommonModule, IconComponent, EditModalComponent, OrderTable],
+  imports: [
+    BookTable,
+    CommonModule,
+    IconComponent,
+    EditModalComponent,
+    OrderTable,
+    TranslocoDirective,
+  ],
   templateUrl: './administration.html',
   styleUrl: './administration.css',
 })

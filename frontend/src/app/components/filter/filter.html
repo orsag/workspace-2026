@@ -20,7 +20,7 @@
           {{ t('filters.actions.clear') }}
         </button>
       </div>
-      <label class="input input-sm input-bordered flex items-center gap-2 bg-base-200/30">
+      <label class="input input-md input-bordered flex items-center gap-2 bg-base-200/30">
         <app-icon name="Search" class="opacity-40 h-4 w-4"></app-icon>
         <input type="text" class="grow"
                [placeholder]="t('filters.placeholders.search')"
@@ -30,7 +30,7 @@
     </section>
 
     <section class="border-base-200">
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-3">
         @for (toggle of ['available', 'newReleases', 'discounted', 'bestsellers']; track toggle) {
           <label class="flex items-center justify-between cursor-pointer group">
             <span
@@ -49,11 +49,11 @@
 
     <section>
       <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40 mb-3">{{ t('filters.sections.sort') }}</h3>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-row gap-2">
         <button
           (click)="updateSort('popularity')"
           [class.btn-active]="filters().sortBy === 'popularity'"
-          class="btn btn-sm btn-ghost justify-between font-medium px-2">
+          class="btn btn-sm rounded-full btn-ghost justify-between font-medium px-2 rou">
           <span>🔥 {{ t('filters.sort_options.popularity') }}</span>
           <span class="badge badge-ghost badge-xs">↓</span>
         </button>
@@ -61,7 +61,7 @@
         <button
           (click)="updateSort('price')"
           [class.btn-active]="filters().sortBy && filters().sortBy?.startsWith('price')"
-          class="btn btn-sm btn-ghost justify-between font-medium px-2">
+          class="btn btn-sm rounded-full btn-ghost justify-between font-medium px-2">
           <span>💰 {{ t('filters.sort_options.price') }}</span>
 
           <span class="badge badge-ghost badge-xs">
@@ -84,18 +84,18 @@
           {{ 'filters.actions.clear' | transloco }}
         </button>
       </div>
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col">
         @for (cat of bookCategories; track cat) {
           <label
-            class="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-base-200 cursor-pointer group transition-colors">
+            [class.bg-base-300]="filters().category === cat"
+            class="flex items-center gap-5 px-2 py-2 rounded-lg hover:bg-base-200 cursor-pointer group transition-colors">
             <input
               type="radio"
               name="bookCategory"
-              class="radio radio-xs border-base-300"
+              class="radio radio-sm radio-neutral"
               [checked]="filters().category === cat"
               (change)="updateFilter('category', cat)" />
             <div class="flex items-center gap-2">
-              <app-icon [name]="cat" class="opacity-40 group-hover:opacity-100 transition-opacity h-4 w-4"></app-icon>
               <span class="text-sm font-medium text-base-content/70 group-hover:text-base-content">{{ cat }}</span>
             </div>
           </label>

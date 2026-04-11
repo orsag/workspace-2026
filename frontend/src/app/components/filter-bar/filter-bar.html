@@ -1,54 +1,46 @@
-<div class="hidden sm:flex flex-wrap items-start gap-2 mb-8">
+<div class="hidden sm:flex flex-wrap items-start gap-3 mb-8" *transloco="let t">
+  @for (filter of filters(); track filter.label) {
+    <button (click)="filter.action()"
+            class="btn btn-sm rounded-full transition-all disabled:[&_img]:opacity-50 disabled:[&_img]:grayscale"
+            [class.btn-success]="filter.isActive()"
+            [class.btn-soft]="!filter.isActive()"
+            [disabled]="isCoolingDown()">
 
-  <button (click)="reset()" class="btn btn-sm rounded-full"
-          [class.btn-primary]="activeMode() === 'all'"
-          [disabled]="isCoolingDown()">
-    Všetko
-  </button>
+      @if (filter.icon === 'all') {
+        <img ngSrc="/images/worldwide.png" width="20" height="20" alt="Everything" />
+      } @else if (filter.icon === 'bestsellers') {
+        <img ngSrc="/images/star.png" width="20" height="20" alt="Bestsellers" />
+      } @else if (filter.icon === 'newreleases') {
+        <img ngSrc="/images/books.png" width="20" height="20" alt="Bestsellers" />
+      } @else if (filter.icon === 'expensive') {
+        <img ngSrc="/images/diamond.png" width="20" height="20" alt="Bestsellers" />
+      } @else if (filter.icon === 'cheapest') {
+        <img ngSrc="/images/piggybank.png" width="20" height="20" alt="Bestsellers" />
+      } @else if (filter.icon === 'discount') {
+        <img ngSrc="/images/discount.png" width="20" height="20" alt="Bestsellers" />
+      }
 
-  <button (click)="setMode('bestsellers')" class="btn btn-sm rounded-full"
-          [class.btn-primary]="activeMode() === 'bestsellers'"
-          [disabled]="isCoolingDown()">
-    Bestsellery
-  </button>
+      {{ t('filters.' + filter.label) }}
 
-  <button (click)="setMode('newReleases')" class="btn btn-sm rounded-full"
-          [class.btn-primary]="activeMode() === 'newReleases'"
-          [disabled]="isCoolingDown()">
-    Najnovšie
-  </button>
-
-  <button (click)="setSort('price_desc')" class="btn btn-sm rounded-full"
-          [class.btn-primary]="activeSort() === 'price_desc'"
-          [disabled]="isCoolingDown()">
-    Najdrahšie
-  </button>
-
-  <button (click)="setSort('price_asc')" class="btn btn-sm rounded-full"
-          [class.btn-primary]="activeSort() === 'price_asc'"
-          [disabled]="isCoolingDown()">
-    Najlacnejšie
-  </button>
-
-  <button (click)="setMode('discounted')" class="btn btn-sm rounded-full"
-          [class.btn-primary]="activeMode() === 'discounted'"
-          [disabled]="isCoolingDown()">
-    Najvyššia zľava
-  </button>
+    </button>
+  }
 
   @if (cartStore.itemCount() > 0) {
     <button routerLink="/shopping"
-            class="btn btn-sm btn-secondary text-white rounded-full"
+            class="btn btn-soft btn-sm rounded-full transition-all"
             [disabled]="isCoolingDown()">
-      Do košíka
+        <img ngSrc="/images/cart.png" width="20" height="20" alt="Bestsellers" />
+      {{ t('filters.bar.to_cart') }} ({{ cartStore.itemCount() }})
     </button>
   }
 
   @if (store.isLoggedIn()) {
     <button routerLink="/profile"
-            class="btn btn-sm btn-accent text-white rounded-full"
+            class="btn btn-soft btn-sm rounded-full transition-all"
+            [class.ml-auto]="cartStore.itemCount() === 0"
             [disabled]="isCoolingDown()">
-      Profil
+      <img ngSrc="/images/user.png" width="20" height="20" alt="Bestsellers" />
+      {{ t('filters.bar.profile') }}
     </button>
   }
 
