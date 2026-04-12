@@ -1,45 +1,31 @@
 <div class="container mx-auto p-6">
   <div class="flex flex-col lg:flex-row gap-8">
 
-    <section class="flex-grow">
-      <h2 class="text-3xl font-bold mb-6 flex items-center gap-2">
-        <span class="text-primary">📚</span> Knižný katalóg
-      </h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        @for (book of appStore.books(); track book.id) {
-          <div class="card card-compact bg-base-100 shadow-xl border border-base-200 transition-transform hover:scale-[1.02]">
-            <figure class="h-48">
-              <img [src]="book.coverUrl" [alt]="book.title" class="w-full h-full object-cover" />
-            </figure>
-            <div class="card-body">
-              <h2 class="card-title text-lg leading-tight h-12 overflow-hidden">{{ book.title }}</h2>
-              <p class="text-primary font-bold text-xl">{{ book.price }} €</p>
-              <div class="card-actions justify-end mt-2">
-                <button class="btn btn-primary btn-sm" (click)="cartStore.addToCart(book)">
-                  Pridaj do košíka
-                </button>
-              </div>
-            </div>
-          </div>
-        }
-      </div>
-    </section>
-
-    <aside class="w-full lg:w-96">
-      <div class="card bg-base-200 shadow-2xl sticky top-6">
+    <section class="flex-grow shopping-list">
+      <div class="card bg-base-100 shadow-xl border border-base-200">
         <div class="card-body p-6">
-          <h2 class="card-title text-2xl mb-4 border-bottom border-base-300 pb-2">Tvoj košík</h2>
+
+          <div class="flex justify-between items-center mb-4 border-b border-base-300 pb-2">
+            <h2 class="card-title text-2xl m-0">Tvoj košík</h2>
+            @if (cartStore.items().length > 0) {
+              <button class="btn btn-outline btn-error btn-sm" (click)="cartStore.clearCart()">
+                Vyprázdniť košík
+              </button>
+            }
+          </div>
 
           @if (cartStore.items().length === 0) {
             <div class="py-10 text-center">
               <div class="text-5xl mb-4">🛒</div>
-              <p class="text-base-content/60 italic">Tvoj košík je prázdny.</p>
+              <p class="text-base-content/60 italic mb-6">Tvoj košík je prázdny.</p>
+              <button class="btn btn-secondary uppercase font-bold tracking-widest" routerLink="/">
+                Späť k nákupu
+              </button>
             </div>
           } @else {
-            <div class="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+            <div class="space-y-4 pr-2">
               @for (item of cartStore.items(); track item.book.id) {
-                <div class="flex items-center justify-between gap-3 bg-base-100 p-3 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between gap-3 bg-base-100 p-3 rounded-lg shadow-sm border border-base-200">
                   <div class="flex-grow min-w-0">
                     <p class="font-semibold truncate text-sm">{{ item.book.title }}</p>
                     <p class="text-xs text-base-content/70">{{ item.book.price | currency:'EUR' }} </p>
@@ -51,7 +37,7 @@
                       <button class="btn btn-xs join-item" (click)="cartStore.updateQuantity(item.book.id, -1)">-</button>
                       <button class="btn btn-xs join-item no-animation cursor-default">{{ item.quantity }}</button>
                       <button class="btn btn-xs join-item" (click)="cartStore.updateQuantity(item.book.id, 1)"
-                      [disabled]="item.quantity >= item.book.availableCount">+</button>
+                              [disabled]="item.quantity >= item.book.availableCount">+</button>
                     </div>
                     <button class="btn btn-ghost btn-xs text-error" (click)="cartStore.removeItem(item.book.id)">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -63,33 +49,105 @@
 
             <div class="divider my-4"></div>
 
-            <div class="space-y-2">
-              <div class="flex justify-between text-sm">
-                <span>Cena</span>
-                <span>{{ cartStore.subtotal().toFixed(2) }} €</span>
+            <div class="space-y-3 w-full ml-auto">
+
+              <!-- Cena bez DPH -->
+              <div class="flex justify-between items-center gap-8 text-base">
+                <span class="text-base-content/70">Cena</span>
+                <span class="font-bold">{{ cartStore.subtotal().toFixed(2) }} €</span>
               </div>
-              <div class="flex justify-between text-sm">
-                <span>VAT (5%)</span>
-                <span>{{ cartStore.tax().toFixed(2) }} €</span>
+
+              <!-- DPH -->
+              <div class="flex justify-between items-center gap-8 text-base">
+                <span class="text-base-content/70">VAT (5%)</span>
+                <span class="font-bold">{{ cartStore.tax().toFixed(2) }} €</span>
               </div>
-              <div class="flex justify-between font-bold text-xl mt-4 text-primary">
+
+              <!-- Celková suma -->
+              <div class="flex justify-between items-center gap-8 font-bold text-2xl mt-4 text-primary">
                 <span>Spolu</span>
                 <span>{{ cartStore.grandTotal().toFixed(2) }} €</span>
               </div>
+
             </div>
 
-            <button
-              class="btn btn-success btn-block mt-6 font-bold uppercase tracking-widest shadow-lg"
-              (click)="handleCheckout()">
-              Objednať & Zaplatiť
-            </button>
-
-            <button
-              class="btn btn-secondary btn-block mt-6 font-bold uppercase tracking-widest shadow-lg"
-              routerLink="/">
-              Pokračovať v nákupe
-            </button>
+            <div class="flex flex-col sm:flex-row gap-4 mt-8">
+              <button
+                class="btn btn-secondary flex-1 font-bold uppercase tracking-widest shadow-lg"
+                routerLink="/">
+                Pokračovať v nákupe
+              </button>
+              <button
+                class="btn btn-success flex-1 font-bold uppercase tracking-widest shadow-lg"
+                (click)="handleCheckout()">
+                Objednať & Zaplatiť
+              </button>
+            </div>
           }
+        </div>
+      </div>
+    </section>
+
+    <!-- Pravý stĺpec: Akordeón (FAQ) -->
+    <aside class="w-full lg:w-96">
+      <div class="sticky top-6">
+        <h3 class="text-xl font-bold mb-4 px-1">Často kladené otázky</h3>
+
+        <div class="space-y-3">
+          <!-- Sekcia 1 -->
+          <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-sm">
+            <input type="radio" name="faq-accordion" checked="checked" />
+            <div class="collapse-title text-base font-medium">
+              How do I create an account?
+            </div>
+            <div class="collapse-content text-sm text-base-content/80">
+              <p>To create an account, simply click on the "Sign Up" or "Register" button at the top right of the screen and follow the provided instructions to enter your details.</p>
+            </div>
+          </div>
+
+          <!-- Sekcia 2 -->
+          <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-sm">
+            <input type="radio" name="faq-accordion" />
+            <div class="collapse-title text-base font-medium">
+              I forgot my password. What should I do?
+            </div>
+            <div class="collapse-content text-sm text-base-content/80">
+              <p>Click on the "Forgot Password" link on the login page. Enter your registered email address, and we will send you a secure link to reset your password.</p>
+            </div>
+          </div>
+
+          <!-- Sekcia 3 -->
+          <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-sm">
+            <input type="radio" name="faq-accordion" />
+            <div class="collapse-title text-base font-medium">
+              How do I update my profile information?
+            </div>
+            <div class="collapse-content text-sm text-base-content/80">
+              <p>Once logged in, navigate to your "Account Settings" or "Profile" page. From there, you can edit your personal details, shipping address, and preferences.</p>
+            </div>
+          </div>
+
+          <!-- Sekcia 4 -->
+          <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-sm">
+            <input type="radio" name="faq-accordion" />
+            <div class="collapse-title text-base font-medium">
+              How do I return books and items?
+            </div>
+            <div class="collapse-content text-sm text-base-content/80">
+              <p>To return an item, go to your "Order History" and select "Request Return" next to the eligible item within 30 days of purchase. We will provide a printable return shipping label and instructions on how to pack your books securely.</p>
+            </div>
+          </div>
+
+          <!-- Sekcia 5 -->
+          <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-sm">
+            <input type="radio" name="faq-accordion" />
+            <div class="collapse-title text-base font-medium">
+              How do I get free shipping?
+            </div>
+            <div class="collapse-content text-sm text-base-content/80">
+              <p>We offer free standard shipping on all orders over 50 €. Once your cart subtotal reaches this amount, the free shipping option will automatically become available and selected for you during checkout.</p>
+            </div>
+          </div>
         </div>
       </div>
     </aside>

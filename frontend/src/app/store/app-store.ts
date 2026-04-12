@@ -11,16 +11,27 @@ import { User } from '@test-monorepo/shared-models';
 import { Book as IBook } from '@test-monorepo/shared-models';
 import { AuthService } from '../services/auth-service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, catchError, EMPTY, map, filter } from 'rxjs';
+import {
+  pipe,
+  switchMap,
+  tap,
+  catchError,
+  EMPTY,
+  map,
+  filter,
+  finalize,
+} from 'rxjs';
 import { ToastService } from '../services/toast-service';
 import { BookService } from '../services/book-service';
 import { TranslocoService } from '@jsverse/transloco';
 
 // Key for LocalStorage
 const USER_STORAGE_KEY = 'currentUser';
+const TOKEN_STORAGE_KEY = 'accessToken';
 
 export interface AppState {
   user: User | null;
+  token: string | null;
   // --- 📚 Book State ---
   books: IBook[];
   totalBooks: number;
@@ -42,6 +53,7 @@ export interface AppState {
 
 const initialState: AppState = {
   user: null,
+  token: null,
   books: [],
   totalBooks: 0,
   isLoading: false,
@@ -139,47 +151,74 @@ export const AppStore = signalStore(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap((username) =>
             authService.login(username).pipe(
-              tap((user) => {
-                const message = translocoService.translate(
-                  'common.success_logout',
-                );
+              tap(({ user, access_token }) => { // Destructure the response
+                const message = translocoService.translate('common.success_login');
                 toast.success(message);
-                patchState(store, { user, isLoading: false });
+
+                // Save both to state
+                patchState(store, {
+                  user,
+                  token: access_token, // Make sure 'token' is in your AppState interface
+                  isLoading: false,
+                  error: null
+                });
               }),
               catchError((err) => {
-                patchState(store, {
-                  error: err.error?.message || 'Login failed',
-                  isLoading: false,
-                });
-                const message = translocoService.translate(
-                  'common.failed_login',
-                );
-                toast.alert(message);
+                const errorMessage = 'Prihlásenie zlyhalo';
+                toast.alert(errorMessage);
+                patchState(store, { error: errorMessage, isLoading: false });
                 return EMPTY;
-              }),
-            ),
+              })
+            )
           ),
         ),
       ),
 
       logout: rxMethod<void>(
         pipe(
-          switchMap(() => {
-            const username = store.user()?.username;
-            if (!username) return EMPTY;
+          // 1. Get the username from the store signal before we wipe it
+          map(() => store.user()?.username),
+          filter((username): username is string => !!username),
 
-            return authService.logout(username).pipe(
+          switchMap((username) =>
+            authService.logout(username).pipe(
               tap(() => {
-                const message = translocoService.translate(
-                  'common.success_logout',
-                );
+                const message = translocoService.translate('common.success_logout');
                 toast.success(message);
-                patchState(store, { user: null, error: null });
               }),
-            );
-          }),
-        ),
+              catchError(() => {
+                // Even if backend fails, we proceed with local cleanup
+                return EMPTY;
+              }),
+              finalize(() => {
+                // 2. ALWAYS wipe the local state and storage
+                patchState(store, { user: null, token: null, error: null });
+                localStorage.removeItem(USER_STORAGE_KEY);
+                localStorage.removeItem(TOKEN_STORAGE_KEY);
+              })
+            )
+          )
+        )
       ),
+
+      // logout: rxMethod<void>(
+      //   pipe(
+      //     switchMap(() => {
+      //       const username = store.user()?.username;
+      //       if (!username) return EMPTY;
+      //
+      //       return authService.logout(username).pipe(
+      //         tap(() => {
+      //           const message = translocoService.translate(
+      //             'common.success_logout',
+      //           );
+      //           toast.success(message);
+      //           patchState(store, { user: null, error: null });
+      //         }),
+      //       );
+      //     }),
+      //   ),
+      // ),
 
       refreshUser: rxMethod<void>(
         pipe(
@@ -275,20 +314,24 @@ export const AppStore = signalStore(
   // 3. Automated Lifecycle & Persistence
   withHooks({
     onInit(store) {
-      // 1. Hydrate state from storage
       const savedUser = localStorage.getItem(USER_STORAGE_KEY);
-      if (savedUser) {
-        patchState(store, { user: JSON.parse(savedUser) });
+      const savedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+
+      if (savedUser && savedToken) {
+        patchState(store, {
+          user: JSON.parse(savedUser),
+          token: savedToken,
+        });
       }
 
-      // 2. Automatically track the 'user' signal
-      // Whenever store.user() changes, this effect runs.
       effect(() => {
-        const user = store.user();
-        if (user) {
-          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+        const { user, token } = store;
+        if (user() && token()) {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user()));
+          localStorage.setItem(TOKEN_STORAGE_KEY, token()!);
         } else {
           localStorage.removeItem(USER_STORAGE_KEY);
+          localStorage.removeItem(TOKEN_STORAGE_KEY);
         }
       });
     },

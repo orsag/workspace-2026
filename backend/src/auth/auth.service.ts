@@ -6,15 +6,18 @@ import {
 import { PrismaService } from '../prisma/prisma.service'; // Adjust path
 import { LoginDto } from './dto/login.dto';
 import { User } from '@test-monorepo/libs';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async login(loginDto: LoginDto) {
     const username = loginDto.username.toLowerCase();
-
-    const user = await this.prisma.client.user.findUnique({
+    const user: User = await this.prisma.client.user.findUnique({
       where: { username },
     });
 
@@ -22,11 +25,19 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Update last login timestamp in Postgres
-    return this.prisma.client.user.update({
+    // Create JWT Payload
+    const payload = { sub: user.id, username: user.username };
+
+    // Update last login and return the expected response
+    const updatedUser = await this.prisma.client.user.update({
       where: { id: user.id },
       data: { lastLogin: new Date() },
     });
+
+    return {
+      user: updatedUser,
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async findByUsername(username: string) {

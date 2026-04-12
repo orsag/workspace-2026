@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '@test-monorepo/shared-models';
 import { Observable } from 'rxjs';
 
+export interface LoginResponse {
+  user: User;
+  access_token: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -10,8 +15,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = '/api/auth';
 
-  login(username: string): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/login`, { username });
+  login(username: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { username });
   }
 
   getUser(username: string): Observable<User> {

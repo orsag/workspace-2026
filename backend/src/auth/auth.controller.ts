@@ -7,10 +7,12 @@ import {
   HttpStatus,
   Query,
   Patch,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { User } from '@test-monorepo/shared-models';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,10 +24,12 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @UseGuards(JwtAuthGuard) // Protects this specific route
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Body() body: { username: string }) {
-    return this.authService.logout(body.username);
+  async logout(@Request() req) {
+    // req.user is now available thanks to the guard
+    return this.authService.logout(req.user.username);
   }
 
   @Get()
@@ -33,22 +37,19 @@ export class AuthController {
     return this.authService.findByUsername(username);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('favorites')
-  async updateFavorites(
-    @Body() body: { username: string; favorites: string[] },
-  ) {
-    return this.authService.updateFavorites(body.username, body.favorites);
+  async updateFavorites(@Request() req, @Body() body: { favorites: string[] }) {
+    return this.authService.updateFavorites(req.user.username, body.favorites);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('update')
   async updateProfile(
+    @Request() req, // Get the verified user from the token
     @Body()
-    body: {
-      username: string;
-      updates: { email: string; phoneNumber: string; theme: string };
-    },
+    body: { updates: { email: string; phoneNumber: string; theme: string } },
   ) {
-    // We only pass the specific allowed fields to the service
-    return this.authService.updateProfile(body.username, body.updates);
+    return this.authService.updateProfile(req.user.username, body.updates);
   }
 }

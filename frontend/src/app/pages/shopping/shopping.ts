@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
 import { Router, RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
@@ -12,7 +11,6 @@ import { OrderService, CreatedOrder } from '../../services/order-service';
   styleUrl: './shopping.css',
 })
 export class Shopping {
-  protected readonly appStore = inject(AppStore);
   protected readonly cartStore = inject(CartStore);
   private orderService = inject(OrderService);
   private router = inject(Router);
