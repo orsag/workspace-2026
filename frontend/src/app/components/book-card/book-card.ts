@@ -20,7 +20,6 @@ import { TranslocoDirective } from '@jsverse/transloco';
 })
 export class BookCard {
   @Input({ required: true }) data!: Book;
-  @Input() isPriority = false;
   private readonly cartStore = inject(CartStore);
   readonly store = inject(AppStore);
 

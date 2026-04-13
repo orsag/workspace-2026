@@ -11,7 +11,7 @@ export interface BookFilters {
 }
 
 export type QuickFilterState = {
-  mode: 'all' | 'bestsellers' | 'newReleases' | 'discounted' | 'soldOut';
+  mode: 'all' | 'bestSellers' | 'newReleases' | 'discounted' | 'soldOut';
   sortBy: 'price_asc' | 'price_desc' | null;
 };
 

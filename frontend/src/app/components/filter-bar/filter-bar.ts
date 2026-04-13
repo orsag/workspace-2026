@@ -6,7 +6,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { AppStore } from '../../store/app-store';
+import { AppState, AppStore } from '../../store/app-store';
 import { QuickFilterState } from '../../../types';
 import { CartStore } from '../../store/cart-store';
 import { RouterLink } from '@angular/router';
@@ -39,8 +39,8 @@ export class FilterBar {
       label: 'bar.bestsellers',
       icon: 'bestsellers',
       style: 'outline',
-      isActive: () => this.activeMode() === 'bestsellers',
-      action: () => this.setMode('bestsellers'),
+      isActive: () => this.activeMode() === 'bestSellers',
+      action: () => this.setMode('bestSellers'),
     },
     {
       label: 'bar.new_releases',
@@ -117,16 +117,38 @@ export class FilterBar {
 
       this.isCoolingDown.set(true);
 
-      const filters = {
-        page: 1,
-        bestsellers: state.mode === 'bestsellers',
-        newReleases: state.mode === 'newReleases',
-        discounted: state.mode === 'discounted',
-        available: state.mode !== 'soldOut',
-        soldOut: state.mode === 'soldOut',
-        sortBy: state.sortBy,
-      };
+      let filters:Partial<AppState['filters']>;
 
+      if (state.sortBy === 'price_asc' || state.sortBy === 'price_desc') {
+        filters = {
+          page: 1,
+          isBestSeller: false,
+          isNewRelease: false,
+          isDiscounted: false,
+          isAvailable: false,
+          sortBy: state.sortBy,
+        };
+      } else if (state.mode === 'all') {
+        filters = {
+          page: 1,
+          isBestSeller: false,
+          isNewRelease: false,
+          isDiscounted: false,
+          isAvailable: false,
+          sortBy: null,
+        };
+      } else {
+        filters = {
+          page: 1,
+          isBestSeller: state.mode === 'bestSellers',
+          isNewRelease: state.mode === 'newReleases',
+          isDiscounted: state.mode === 'discounted',
+          isAvailable: false,
+          sortBy: state.sortBy,
+        };
+      }
+
+      // console.log(filters);
       // This change won't trigger the effect again because it's untracked
       this.store.updateFilters(filters);
 

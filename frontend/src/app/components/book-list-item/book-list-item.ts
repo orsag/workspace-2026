@@ -14,7 +14,6 @@ import { TranslocoDirective } from '@jsverse/transloco';
 export class BookListItem {
   cartStore = inject(CartStore);
   @Input({ required: true }) data!: Book;
-  @Input() isPriority = false;
 
   isInCart = computed(() => !!this.cartStore.itemsMap()[this.data.id]);
 

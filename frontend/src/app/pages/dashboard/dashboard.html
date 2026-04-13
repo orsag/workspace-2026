@@ -28,14 +28,14 @@
       @case ('grid') {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           @for (book of store.books(); track book.id; let i = $index) {
-            <app-book-card [data]="book" [isPriority]="i < 4"></app-book-card>
+            <app-book-card [data]="book"></app-book-card>
           }
         </div>
       }
       @case ('list') {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           @for (book of store.books(); track book.id; let i = $index) {
-            <app-book-list-item [data]="book" [isPriority]="i < 4"></app-book-list-item>
+            <app-book-list-item [data]="book"></app-book-list-item>
 
             @if (i !== store.books().length - 1) {
               <div class="divider col-span-1 my-0 md:hidden"></div>

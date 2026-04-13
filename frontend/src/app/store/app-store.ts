@@ -112,7 +112,7 @@ export const AppStore = signalStore(
       async loadBooks(append = false) {
         patchState(store, { isLoading: true });
 
-        const params = store.filters();
+        const params: Partial<AppState['filters']> = store.filters();
         bookService.fetchBooks(params).subscribe({
           next: (res) =>
             patchState(store, {
@@ -121,7 +121,7 @@ export const AppStore = signalStore(
               totalBooks: res.meta.total,
               isLoading: false,
             }),
-          error: (err) =>
+          error: () =>
             patchState(store, {
               error: 'Failed to load books',
               isLoading: false,
@@ -163,7 +163,7 @@ export const AppStore = signalStore(
                   error: null
                 });
               }),
-              catchError((err) => {
+              catchError(() => {
                 const errorMessage = 'Prihlásenie zlyhalo';
                 toast.alert(errorMessage);
                 patchState(store, { error: errorMessage, isLoading: false });
@@ -200,25 +200,6 @@ export const AppStore = signalStore(
           )
         )
       ),
-
-      // logout: rxMethod<void>(
-      //   pipe(
-      //     switchMap(() => {
-      //       const username = store.user()?.username;
-      //       if (!username) return EMPTY;
-      //
-      //       return authService.logout(username).pipe(
-      //         tap(() => {
-      //           const message = translocoService.translate(
-      //             'common.success_logout',
-      //           );
-      //           toast.success(message);
-      //           patchState(store, { user: null, error: null });
-      //         }),
-      //       );
-      //     }),
-      //   ),
-      // ),
 
       refreshUser: rxMethod<void>(
         pipe(
@@ -271,7 +252,7 @@ export const AppStore = signalStore(
             return authService
               .updateUserFavorites(currentUser.username, updatedFavorites)
               .pipe(
-                catchError((err) => {
+                catchError(() => {
                   // Rollback: If backend fails, revert the state
                   patchState(store, { user: currentUser });
                   return EMPTY;

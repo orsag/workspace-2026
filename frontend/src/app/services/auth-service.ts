@@ -29,10 +29,6 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/logout`, { username });
   }
 
-  validateUsername(username: string): boolean {
-    return !!username && username.length >= 3;
-  }
-
   updateUserFavorites(username: string, favorites: string[]): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/favorites`, {
       username,

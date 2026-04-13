@@ -1,7 +1,7 @@
 {
   "name": "@test-monorepo/source",
   "version": "1.4.0",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "author": "Martin Orsag",
   "scripts": {
     "dev": "nx run-many --target=serve --projects=frontend,backend"

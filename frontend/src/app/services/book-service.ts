@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ActionResponse, Book as IBook } from '@test-monorepo/libs';
 import { Observable } from 'rxjs';
 import { PaginatedBooks } from '../../types';
+import { AppState } from '../store/app-store';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class BookService {
   private apiUrl = '/api/book';
 
   // Pure fetcher used by the Store
-  fetchBooks(p: any): Observable<PaginatedBooks> {
+  fetchBooks(p: Partial<AppState['filters']>): Observable<PaginatedBooks> {
     let params = new HttpParams();
     Object.entries(p).forEach(([k, v]) => {
       if (v !== null && v !== undefined && v !== '') {
