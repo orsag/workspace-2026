@@ -21,11 +21,9 @@ export class BookListItem {
     if (this.isInCart()) {
       // If it's there, remove it
       this.cartStore.removeItem(this.data.id);
-      console.log(`Removed ${this.data.title} from cart`);
-    } else if(this.data.availableCount > 0) {
+    } else if (this.data.availableCount > 0) {
       // If it's not, add it
       this.cartStore.addToCart(this.data);
-      console.log(`Added ${this.data.title} to cart`);
     }
   }
 }

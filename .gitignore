@@ -51,3 +51,4 @@ prisma/*.db-journal
 .env
 
 __screenshots__/
+debug_books.json

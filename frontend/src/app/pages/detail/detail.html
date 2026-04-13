@@ -1,4 +1,4 @@
-<div class="max-w-6xl mx-auto p-6 min-h-screen">
+<div *transloco="let t" class="max-w-6xl mx-auto p-6 min-h-screen">
   @if (book() === null) {
     <div class="alert alert-error shadow-lg mt-10">
       <app-icon name="error" class="h-6 w-6"></app-icon>
@@ -9,10 +9,7 @@
 
       <div class="md:w-1/3">
         <div class="sticky top-24 bg-base-200 rounded-3xl p-8 flex justify-center shadow-inner border border-base-300">
-          <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
-               [alt]="data.title"
-               width="100"
-               height="200"
+          <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'" [alt]="data.title" width="100" height="200"
                class="w-full h-auto max-w-[300px] object-contain drop-shadow-2xl rounded-sm">
         </div>
       </div>
@@ -20,8 +17,12 @@
       <div class="md:w-2/3 space-y-6">
         <div>
           <div class="flex gap-2 mb-4">
-            @if (data.isBestSeller) { <span class="badge badge-warning font-bold">Bestseller</span> }
-            @if (data.isNewArticle) { <span class="badge badge-primary font-bold">Novinka</span> }
+            @if (data.isBestSeller) {
+              <span class="badge badge-warning font-bold">Bestseller</span>
+            }
+            @if (data.isNewArticle) {
+              <span class="badge badge-primary font-bold">Novinka</span>
+            }
             <span class="badge badge-outline">{{ data.category }}</span>
           </div>
 
@@ -37,16 +38,22 @@
             </div>
 
             <div class="flex gap-3">
-              <button (click)="toggleFavorite()"
-                      class="btn btn-circle btn-outline btn-lg"
+              <button (click)="toggleFavorite()" class="btn btn-circle btn-outline btn-lg"
                       [class.btn-error]="isFavorite()">
                 <app-icon [name]="isFavorite() ? 'heart-filled' : 'heart'" class="h-8 w-8"></app-icon>
               </button>
 
-              <button (click)="addToCart()"
+              <button (click)="$event.stopPropagation(); handleCartAction()"
                       class="btn btn-primary btn-lg px-12 font-bold"
-                      [disabled]="data.isSoldOut">
-                {{ data.isSoldOut ? 'Vypredané' : 'Do košíka' }}
+                      [class.text-base-content]="!isInCart()"
+                      [class.btn-error]="isInCart()"
+                      [disabled]="data.isSoldOut"
+              >
+                @if (isInCart()) {
+                  <span>{{ t('cart.remove_from_cart') }}</span>
+                } @else {
+                  <span>{{ t('cart.add_to_cart') }}</span>
+                }
               </button>
             </div>
           </div>
@@ -54,17 +61,19 @@
 
         <div class="prose max-w-none">
           <h3 class="text-lg font-bold border-b border-base-300 pb-2">O knihe</h3>
-          <p class="leading-relaxed whitespace-pre-wrap">{{ data.description || 'Popis k tejto knihe momentálne nie je k dispozícii.' }}</p>
+          <p
+            class="leading-relaxed whitespace-pre-wrap">{{ data.description || 'Popis k tejto knihe momentálne nie je k dispozícii.' }}</p>
         </div>
       </div>
     </div>
 
-    <div class="stats stats-vertical lg:stats-horizontal shadow-md border border-base-300 w-full bg-base-100 mt-12 mb-12 flex max-w-[1100px] ">
+    <div
+      class="stats stats-vertical lg:stats-horizontal shadow-md border border-base-300 w-full bg-base-100 mt-12 mb-12 flex max-w-[1100px] ">
 
       <div class="stat p-8 flex flex-row items-center gap-6 w-full lg:w-1/4">
-<!--        <div class="p-4 rounded-2xl bg-primary/10 text-primary shrink-0">-->
-<!--          <app-icon name="bookOpen" class="h-10 w-10"></app-icon>-->
-<!--        </div>-->
+        <!--        <div class="p-4 rounded-2xl bg-primary/10 text-primary shrink-0">-->
+        <!--          <app-icon name="bookOpen" class="h-10 w-10"></app-icon>-->
+        <!--        </div>-->
         <div class="flex flex-col gap-1 min-w-0">
           <div class="stat-title text-xs uppercase font-bold tracking-widest opacity-60">Vydavateľ</div>
           <div class="stat-value text-[16px] font-black truncate">

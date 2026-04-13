@@ -117,7 +117,7 @@ export class FilterBar {
 
       this.isCoolingDown.set(true);
 
-      let filters:Partial<AppState['filters']>;
+      let filters: Partial<AppState['filters']>;
 
       if (state.sortBy === 'price_asc' || state.sortBy === 'price_desc') {
         filters = {
@@ -148,7 +148,6 @@ export class FilterBar {
         };
       }
 
-      // console.log(filters);
       // This change won't trigger the effect again because it's untracked
       this.store.updateFilters(filters);
 

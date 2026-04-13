@@ -6,16 +6,28 @@ import { switchMap, catchError, of } from 'rxjs';
 import { BookService } from '../../services/book-service';
 import { AppStore } from '../../store/app-store';
 import { IconComponent } from '../../components/icon/IconComponent';
+import { CartStore } from '../../store/cart-store';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-detail',
-  imports: [CommonModule, NgOptimizedImage, CurrencyPipe, IconComponent],
+  imports: [CommonModule, NgOptimizedImage, CurrencyPipe, IconComponent, TranslocoDirective],
   templateUrl: './detail.html',
 })
 export class Detail {
   private route = inject(ActivatedRoute);
   private bookService = inject(BookService);
+  private cartStore = inject(CartStore);
   readonly store = inject(AppStore);
+
+  // Use optional chaining and a fallback to an empty string (or skip if null)
+  isInCart = computed(() => {
+    const currentBook = this.book();
+    if (!currentBook || !currentBook.id) {
+      return false;
+    }
+    return !!this.cartStore.itemsMap()[currentBook.id];
+  });
 
   // 1. Reactively fetch the book based on the URL ID
   book = toSignal(
@@ -46,11 +58,16 @@ export class Detail {
     }
   }
 
-  addToCart() {
+  handleCartAction() {
     const currentBook = this.book();
     if (currentBook) {
-      // Future logic for cart
-      console.log('Added to cart:', currentBook.title);
+      if (this.isInCart()) {
+        // If it's there, remove it
+        this.cartStore.removeItem(currentBook.id);
+      } else {
+        // If it's not, add it
+        this.cartStore.addToCart(currentBook);
+      }
     }
   }
 

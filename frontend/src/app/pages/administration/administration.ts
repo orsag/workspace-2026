@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { BookTable} from '../../components/book-table/book-table';
+import { BookTable } from '../../components/book-table/book-table';
 import { BookService } from '../../services/book-service';
 import { CommonModule } from '@angular/common';
 import { Book as IBook, ActionResponse } from '@test-monorepo/shared-models';
@@ -72,7 +72,6 @@ export class Administration implements OnInit {
   }
 
   openEditModal(book: IBook) {
-    console.log(book);
     this.selectedBook.set(book);
     this.isEditModalOpen.set(true);
   }

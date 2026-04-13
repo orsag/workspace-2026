@@ -1,11 +1,9 @@
 {
   "name": "@test-monorepo/source",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "license": "UNLICENSED",
   "author": "Martin Orsag",
-  "scripts": {
-    "dev": "nx run-many --target=serve --projects=frontend,backend"
-  },
+  "scripts": {},
   "private": true,
   "web-types": "./web-types.json",
   "devDependencies": {

@@ -9,12 +9,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-book-card',
-  imports: [
-    CommonModule,
-    RouterLink,
-    NgOptimizedImage,
-    TranslocoDirective,
-  ],
+  imports: [CommonModule, RouterLink, NgOptimizedImage, TranslocoDirective],
   templateUrl: './book-card.html',
   styleUrl: './book-card.css',
 })
@@ -43,11 +38,9 @@ export class BookCard {
     if (this.isInCart()) {
       // If it's there, remove it
       this.cartStore.removeItem(this.data.id);
-      console.log(`Removed ${this.data.title} from cart`);
     } else {
       // If it's not, add it
       this.cartStore.addToCart(this.data);
-      console.log(`Added ${this.data.title} to cart`);
     }
   }
 }
