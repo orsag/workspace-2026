@@ -62,6 +62,7 @@ async function main() {
       email: 'admin@bookstore.sk',
       isAdmin: true,
       phoneNumber: '+421 900 000 000',
+      avatarUrl: faker.image.avatar(),
       theme: 'dark',
       favorites: [],
       cartItems: [],
@@ -78,6 +79,7 @@ async function main() {
       email: faker.internet.email().toLowerCase(),
       isAdmin: false,
       phoneNumber: faker.phone.number(),
+      avatarUrl: faker.image.avatar(),
       theme: faker.helpers.arrayElement(['light', 'dark']),
       favorites: [], // Empty as requested
       cartItems: [], // Empty as requested
@@ -87,6 +89,42 @@ async function main() {
     await prisma.user.createMany({ data: users });
     console.log('✅ Seeded 10 users.');
   }
+
+  await seedDetail();
+}
+
+async function seedDetail() {
+  console.log('🚀 Starting to populate UserDetails...');
+
+  // 1. Fetch all existing users
+  const allUsers = await prisma.user.findMany();
+
+  for (const user of allUsers) {
+    await prisma.userDetail.upsert({
+      where: { userId: user.id },
+      update: {}, // Don't change anything if it already exists
+      create: {
+        userId: user.id,
+        // Using faker for that "Real App" feel
+        isPremium: faker.datatype.boolean({ probability: 0.8 }),
+        membershipStart: faker.date.past({ years: 1 }),
+        membershipEnd: faker.date.future({ years: 1 }),
+        displayName: faker.person.fullName(),
+        addressLine1: faker.location.streetAddress(),
+        city: faker.location.city(),
+        countryCode: 'SK', // Keeping it local to Zvolenská Slatina!
+        avatarUrl: faker.image.avatar(),
+        bio: faker.person.bio(),
+        // If you added these to your model:
+        iban: faker.finance.iban(),
+        dateOfBirth: faker.date.birthdate(),
+        lastActiveAt: faker.date.past({ years: 1 }),
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  console.log(`✅ Success! Linked Details to ${allUsers.length} users.`);
 }
 
 main()

@@ -77,7 +77,7 @@ export class AuthService {
 
   async updateProfile(
     username: string,
-    updates: { email: string; phoneNumber: string; theme: string },
+    updates: { email?: string; phoneNumber?: string; theme?: string },
   ) {
     return this.prisma.client.user.update({
       where: { username: username.toLowerCase() },

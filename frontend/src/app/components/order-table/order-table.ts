@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { CreatedOrder, OrderService } from '../../services/order-service';
 import { OrderStatus } from '@test-monorepo/shared-models';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-order-table',
-  imports: [CommonModule, CurrencyPipe, DatePipe],
+  imports: [CommonModule, CurrencyPipe, DatePipe, TranslocoDirective],
   templateUrl: './order-table.html',
   styleUrl: './order-table.css',
 })

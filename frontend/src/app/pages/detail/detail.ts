@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -11,7 +11,13 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-detail',
-  imports: [CommonModule, NgOptimizedImage, CurrencyPipe, IconComponent, TranslocoDirective],
+  imports: [
+    CommonModule,
+    NgOptimizedImage,
+    CurrencyPipe,
+    IconComponent,
+    TranslocoDirective,
+  ],
   templateUrl: './detail.html',
 })
 export class Detail {

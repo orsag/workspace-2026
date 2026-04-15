@@ -7,7 +7,11 @@ import {
   withHooks,
 } from '@ngrx/signals';
 import { computed, effect, inject } from '@angular/core';
-import { User } from '@test-monorepo/shared-models';
+import {
+  User,
+  UserDetail,
+  UserDetailSmall,
+} from '@test-monorepo/shared-models';
 import { Book as IBook } from '@test-monorepo/shared-models';
 import { AuthService } from '../services/auth-service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -24,6 +28,7 @@ import {
 import { ToastService } from '../services/toast-service';
 import { BookService } from '../services/book-service';
 import { TranslocoService } from '@jsverse/transloco';
+import { DetailService } from '../services/detail-service';
 
 // Key for LocalStorage
 const USER_STORAGE_KEY = 'currentUser';
@@ -31,6 +36,7 @@ const TOKEN_STORAGE_KEY = 'accessToken';
 
 export interface AppState {
   user: User | null;
+  userDetail: UserDetail | null;
   token: string | null;
   // --- 📚 Book State ---
   books: IBook[];
@@ -53,6 +59,7 @@ export interface AppState {
 
 const initialState: AppState = {
   user: null,
+  userDetail: null,
   token: null,
   books: [],
   totalBooks: 0,
@@ -97,6 +104,7 @@ export const AppStore = signalStore(
       store,
       bookService = inject(BookService),
       authService = inject(AuthService),
+      detailService = inject(DetailService),
       toast = inject(ToastService),
       translocoService = inject(TranslocoService),
     ) => ({
@@ -151,8 +159,11 @@ export const AppStore = signalStore(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap((username) =>
             authService.login(username).pipe(
-              tap(({ user, access_token }) => { // Destructure the response
-                const message = translocoService.translate('common.success_login');
+              tap(({ user, access_token }) => {
+                // Destructure the response
+                const message = translocoService.translate(
+                  'common.success_login',
+                );
                 toast.success(message);
 
                 // Save both to state
@@ -160,7 +171,7 @@ export const AppStore = signalStore(
                   user,
                   token: access_token, // Make sure 'token' is in your AppState interface
                   isLoading: false,
-                  error: null
+                  error: null,
                 });
               }),
               catchError(() => {
@@ -168,8 +179,8 @@ export const AppStore = signalStore(
                 toast.alert(errorMessage);
                 patchState(store, { error: errorMessage, isLoading: false });
                 return EMPTY;
-              })
-            )
+              }),
+            ),
           ),
         ),
       ),
@@ -183,7 +194,9 @@ export const AppStore = signalStore(
           switchMap((username) =>
             authService.logout(username).pipe(
               tap(() => {
-                const message = translocoService.translate('common.success_logout');
+                const message = translocoService.translate(
+                  'common.success_logout',
+                );
                 toast.success(message);
               }),
               catchError(() => {
@@ -195,10 +208,10 @@ export const AppStore = signalStore(
                 patchState(store, { user: null, token: null, error: null });
                 localStorage.removeItem(USER_STORAGE_KEY);
                 localStorage.removeItem(TOKEN_STORAGE_KEY);
-              })
-            )
-          )
-        )
+              }),
+            ),
+          ),
+        ),
       ),
 
       refreshUser: rxMethod<void>(
@@ -287,6 +300,60 @@ export const AppStore = signalStore(
               }),
             );
           }),
+        ),
+      ),
+
+      updateUserDetail: rxMethod<{
+        userId: string;
+        updates: Partial<UserDetailSmall>;
+      }>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true })),
+          switchMap(({ userId, updates }) => {
+            return detailService.updateUserDetail(userId, updates).pipe(
+              tap((updatedDetail: UserDetail) => {
+                patchState(store, {
+                  userDetail: updatedDetail,
+                  isLoading: false,
+                });
+                toast.success('Profil bol úspešne aktualizovaný');
+              }),
+              catchError(() => {
+                const errorMessage = 'Aktualizácia profilu zlyhala';
+                toast.alert(errorMessage);
+                patchState(store, { error: errorMessage, isLoading: false });
+                return EMPTY;
+              }),
+            );
+          }),
+        ),
+      ),
+
+      loadUserDetail: rxMethod<{ userId: string }>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true })),
+          switchMap(({ userId }) =>
+            detailService.getUserDetailById(userId).pipe(
+              tap((userDetail: UserDetail) => {
+                // 3. Update the standalone userDetail signal in the state
+                console.log(userDetail);
+                patchState(store, {
+                  userDetail: userDetail,
+                  isLoading: false,
+                });
+              }),
+              catchError(() => {
+                const errorMessage =
+                  'Nepodarilo sa načítať detaily používateľa';
+                toast.alert(errorMessage);
+                patchState(store, {
+                  error: errorMessage,
+                  isLoading: false,
+                });
+                return EMPTY;
+              }),
+            ),
+          ),
         ),
       ),
     }),

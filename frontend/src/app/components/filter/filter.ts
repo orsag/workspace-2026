@@ -6,6 +6,8 @@ import { BookFilters } from '../../../types';
 import { AppStore } from '../../store/app-store';
 import { CATEGORIES } from '@test-monorepo/shared-models';
 import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
+import { Router } from '@angular/router';
+import { ScrollService } from '../../services/scroll-service';
 
 @Component({
   selector: 'app-filter',
@@ -15,7 +17,9 @@ import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 })
 export class Filter {
   store = inject(AppStore);
+  router = inject(Router);
   config = inject(ConfigurationService);
+  scroller = inject(ScrollService);
 
   showFilter = computed(() => this.config.flags().SHOW_FILTER);
   isCoolingDown = signal(false);
@@ -53,8 +57,14 @@ export class Filter {
     this.isCoolingDown.set(true);
     this.store.updateFilters(this.filters());
 
+    if (this.router.url !== '/home' && this.router.url !== '/') {
+      this.router.navigate(['/']);
+    } else {
+      this.scroller.scrollToTop();
+    }
+
     setTimeout(() => {
       this.isCoolingDown.set(false);
-    }, 3000);
+    }, 2000);
   }
 }

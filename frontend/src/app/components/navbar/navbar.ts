@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { CartStore } from '../../store/cart-store';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { BookFilters } from '../../../types';
 
 @Component({
   selector: 'app-navbar',
@@ -33,8 +32,11 @@ export class Navbar {
   cartStore = inject(CartStore);
 
   modelUsername = '';
+  // Existing signals
+  userAvatar = computed(() => this.store.user()?.avatarUrl);
+  isLoggedIn = computed(() => this.store.isLoggedIn());
+
   userName = this.store.user;
-  isLoggedIn = this.store.isLoggedIn;
   isAdmin = this.store.isAdmin;
   searchQuery = signal('');
   protected showLoginModal = signal(false);
@@ -52,9 +54,9 @@ export class Navbar {
     this.translocoService.setActiveLang(newLang);
   }
 
-  logout(event: any): void {
-    this.router.navigate(['/']);
+  logoutMenuItem(event: any): void {
     this.closeDropdown(event);
+    this.handleLogout();
   }
 
   toggleSearchbar(): void {
@@ -73,6 +75,8 @@ export class Navbar {
 
   handleLogout() {
     this.store.logout();
+    this.cartStore.clearCart(); // Wipe the cart logic
+    this.router.navigate(['/']);
   }
 
   onLoginSubmit(event: Event) {

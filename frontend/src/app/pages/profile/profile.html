@@ -18,20 +18,34 @@
 
     @if (orders().length > 0) {
       <div class="overflow-x-auto bg-base-100 rounded-xl border border-base-300 shadow-sm">
-        <table class="table w-full">
+        <table class="table w-full table-fixed">
           <thead>
           <tr class="bg-base-200">
             <th>ID Objednávky</th>
             <th>Dátum</th>
             <th>Suma</th>
             <th>Status</th>
-            <th class="text-right">Akcie</th>
+            <th class="text-right w-40">Akcie</th>
           </tr>
           </thead>
           <tbody>
             @for (order of orders(); track order.id) {
               <tr class="hover:bg-base-200/50 transition-colors">
-                <td class="font-mono text-xs">{{ order.id }}</td>
+                <td class="group">
+                  <button
+                    type="button"
+                    (click)="copyToClipboard(order.id)"
+                    class="flex items-center gap-3 font-mono text-xs opacity-70 hover:opacity-100 hover:text-primary transition-all focus:outline-none focus:text-primary cursor-pointer tooltip tooltip-right"
+                    data-tip="Kliknutím skopírujete"
+                  >
+                    <span>{{ order.id }}</span>
+
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                         class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5 1.5M17.25 11.25H21m-3.75 4.5H21m-3.75 4.5H21m-3.75-9.75V5.625c0-.621-.504-1.125-1.125-1.125H12.75M12 21.75V12m0 0l-3.75 3.75M12 12l3.75 3.75" />
+                    </svg>
+                  </button>
+                </td>
                 <td>{{ order.createdAt | date:'shortDate' }}</td>
                 <td class="font-bold">{{ order.totalAmount | currency:'EUR' }}</td>
                 <td>
@@ -41,13 +55,15 @@
                     'badge-error': order.status === OrderStatus.CANCELLED,
                   }">{{ order.status }}</span>
                 </td>
-                <td class="text-right">
-                  @if (order.status !== OrderStatus.CANCELLED && canCancel(order.createdAt)) {
-                    <button (click)="handleCancelOrder(order.id)"
-                            class="btn btn-ghost btn-xs text-error">
-                      Zrušiť do 14 dní
-                    </button>
-                  }
+                <td class="text-right w-40">
+                  <div class="flex justify-end items-center">
+                    @if (order.status !== OrderStatus.CANCELLED && canCancel(order.createdAt)) {
+                      <button (click)="handleCancelOrder(order.id)"
+                              class="btn btn-ghost btn-xs text-error">
+                        Zrušiť do 14 dní
+                      </button>
+                    }
+                  </div>
                 </td>
               </tr>
             }
@@ -61,61 +77,162 @@
     }
   </section>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <section class="lg:col-span-1 space-y-4">
-      <div class="card bg-base-100 shadow-sm border border-base-300 gap-6 p-6">
-        <h3 class="font-bold mb-4 text-lg">Osobné údaje</h3>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="lg:col-span-8 space-y-8">
 
-        <div class="form-control w-full">
-          <label for="username" class="label">
-            <span class="label-text">Používateľské meno</span>
-          </label>
+      <section class="card bg-base-100 shadow-sm border border-base-300 p-6">
+        <h3 class="font-bold mb-6 text-xl border-b pb-2">Osobné údaje</h3>
 
-          <div
-            class="flex items-center justify-between h-10 w-full px-4 rounded-lg bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
-            <span class="font-medium">{{ store.user()?.username }}</span>
-            <app-icon name="Lock" class="h-4 w-4"></app-icon>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-control w-full">
+            <label for="username" class="label"><span class="label-text">Používateľské meno</span></label>
+            <div
+              class="flex items-center justify-between h-12 px-4 rounded-lg bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
+              <span class="font-medium text-sm">{{ store.user()?.username }}</span>
+              <app-icon name="Lock" class="h-4 w-4"></app-icon>
+            </div>
+          </div>
+
+          <div class="form-control w-full">
+            <label for="displayname" class="label"><span class="label-text">Zobrazované meno</span></label>
+            <input id="displayname" type="text" [formField]="detailForm.displayName"
+                   class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control w-full">
+            <label for="email" class="label"><span class="label-text">Email</span></label>
+            <input id="email" type="email" [formField]="userForm.email" class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control w-full">
+            <label for="phone" class="label"><span class="label-text">Telefón</span></label>
+            <input id="phone" type="text" [formField]="userForm.phoneNumber" class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control md:col-span-2">
+            <label for="user-bio" class="label"><span class="label-text font-bold">O mne</span></label>
+            <textarea id="user-bio" [formField]="detailForm.bio" class="textarea textarea-bordered h-24 w-full"
+                      placeholder="Povedzte nám niečo o sebe..."></textarea>
+          </div>
+
+          <div class="form-control">
+            <label for="city" class="label"><span class="label-text">Mesto</span></label>
+            <input id="city" type="text" [formField]="detailForm.city" class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label for="addressLine1" class="label"><span class="label-text">Ulica</span></label>
+            <input id="addressLine1" type="text" [formField]="detailForm.addressLine1"
+                   class="input input-bordered w-full" />
+          </div>
+
+          <div class="md:col-span-2 mt-4 p-5 bg-base-200/40 rounded-xl border border-base-300">
+            <h4 class="text-xs font-bold uppercase tracking-wider mb-4 opacity-60 flex items-center gap-2">
+              <app-icon name="CreditCard" class="h-4 w-4"></app-icon>
+              Fakturačné údaje
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control md:col-span-2">
+                <label for="iban" class="label text-xs uppercase">
+                  IBAN
+                </label>
+                <input
+                  type="text"
+                  [formField]="detailForm.iban"
+                  class="input input-sm input-bordered font-mono w-full"
+                  placeholder="SK..." />
+              </div>
+              <div class="form-control">
+                <label for="taxId" class="label text-xs">DIČ (Tax ID)</label>
+                <input type="text" [formField]="detailForm.taxId" class="input input-sm input-bordered" />
+              </div>
+              <div class="form-control">
+                <label for="dateOfBirth" class="label text-xs">Dátum narodenia</label>
+                <input type="date" [formField]="detailForm.dateOfBirth" class="input input-sm input-bordered" />
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        <div class="form-control w-full">
-          <label for="email" class="label"><span class="label-text">Email</span></label>
-          <input id="email" type="email" [formField]="userForm.email" class="input input-bordered w-full" />
-        </div>
+      <section>
+        <h3 class="font-bold mb-4 text-xl flex items-center gap-2">
+          Moje obľúbené
+          <div class="badge badge-secondary badge-lg">{{ store.favoriteCount() }}</div>
+        </h3>
 
-        <div class="form-control w-full">
-          <label for="phone" class="label"><span class="label-text">Telefónne číslo</span></label>
-          <input id="phone" type="text" [formField]="userForm.phoneNumber" class="input input-bordered w-full" />
-        </div>
+        @if (favoriteBooks().length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (book of favoriteBooks(); track book.id) {
+              <app-book-card [data]="book"></app-book-card>
+            }
+          </div>
+        } @else {
+          <div class="bg-base-200/50 rounded-xl p-12 text-center border-2 border-dashed border-base-300">
+            <p class="text-base-content/40 italic">Zatiaľ nemáte žiadne obľúbené knihy.</p>
+          </div>
+        }
+      </section>
+    </div>
 
-        <div class="form-control w-full">
-          <label for="color-theme" class="label"><span class="label-text">Téma</span></label>
-          <select [formField]="userForm.theme" id="color-theme" class="select select-bordered w-full">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </div>
-      </div>
-    </section>
+    <aside class="lg:col-span-4 space-y-6">
 
-    <section class="lg:col-span-2">
-      <h3 class="font-bold mb-4 text-lg flex items-center gap-2 mt-6">
-        Moje obľúbené
-        <div class="badge badge-secondary">{{ store.favoriteCount() }}</div>
-      </h3>
+      @if (isPremium()) {
+        <div
+          class="card bg-linear-to-br from-[#D4AF37] via-[#FFD700] to-[#B8860B] text-black shadow-xl overflow-hidden border border-yellow-600/20">
+          <div class="card-body p-6 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="absolute top-4 right-4 h-12 w-12 opacity-20 rotate-12">
+              <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+            </svg>
 
-      @if (favoriteBooks().length > 0) {
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          @for (book of favoriteBooks(); track book.id) {
-            <app-book-card [data]="book"></app-book-card>
-          }
-        </div>
-      } @else {
-        <div class="bg-base-200 rounded-xl p-12 text-center border-2 border-dashed border-base-300">
-          <p class="text-base-content/50 italic">Zatiaľ nemáte žiadne obľúbené knihy.</p>
+            <h3 class="font-bold text-lg tracking-tight uppercase opacity-80">Prémiové členstvo</h3>
+
+            <div class="flex items-baseline gap-1 mt-2">
+              <span class="text-5xl font-black tracking-tighter">{{ daysLeft() }}</span>
+              <span class="text-sm font-bold uppercase tracking-widest">dní</span>
+            </div>
+
+            <p class="text-xs mt-1 font-medium opacity-70 italic">Váš VIP prístup je aktívny</p>
+
+            <div class="card-actions mt-6">
+              <button
+                routerLink="wip"
+                class="btn btn-sm btn-ghost bg-black/10 hover:bg-black/20 border-black/10 text-black w-full font-bold">
+                Predĺžiť predplatné
+              </button>
+            </div>
+          </div>
         </div>
       }
-    </section>
+
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-6">
+          <h3 class="font-bold text-sm uppercase opacity-50 mb-4 tracking-widest">Nastavenia systému</h3>
+
+          <div class="form-control w-full mb-6">
+            <label for="theme" class="label"><span class="label-text-alt font-bold">Farebná téma</span></label>
+            <select [formField]="userForm.theme" class="select select-sm select-bordered w-full">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between text-xs border-b border-base-200 pb-2">
+              <span class="opacity-60">Jazyk:</span>
+              <span class="font-bold uppercase">{{ userDetailModel().preferredLanguage }}</span>
+            </div>
+            <div class="flex flex-col gap-1 text-xs">
+              <span class="opacity-60">Posledná aktivita:</span>
+              <span
+                class="font-mono opacity-80 bg-base-200 px-2 py-1 rounded">{{ userDetailModel().lastActiveAt | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
   </div>
 </div>
 

@@ -1,8 +1,13 @@
 // auth.interceptor.ts
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AppStore } from './store/app-store';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('access_token');
+  const store = inject(AppStore);
+  const token = store.token();
+
+  console.log(token);
 
   if (token) {
     const cloned = req.clone({

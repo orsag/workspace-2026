@@ -1,12 +1,14 @@
 <!-- Removed borders/backgrounds, added max-h-[400px], smaller gap-3 -->
-<div class="flex items-stretch gap-3 group max-h-[400px] py-1" *transloco="let t">
+<div *transloco="let t"
+     class="flex items-stretch gap-5 group max-h-[400px] py-1">
 
   <!-- LEFT: Bigger Picture (120x175 instead of 80x110) -->
-  <div class="shrink-0 cursor-pointer" [routerLink]="['/book', data.id]">
+  <div class="shrink-0 cursor-pointer overflow-hidden rounded-md" [routerLink]="['/book', data.id]">
     <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
          width="120" height="175"
-         class="object-cover shadow-sm hover:shadow-md transition-shadow"
-         [alt]="'Book Cover ' + data.title">
+         class="object-cover shadow-sm transition-all duration-300 ease-in-out
+              hover:shadow-xl hover:scale-105 hover:contrast-105"
+         [alt]="t('list_item.cover', { title: data.title })">
   </div>
 
   <!-- RIGHT: All elements in a flex column -->
@@ -15,13 +17,13 @@
     <!-- Row 1: Badges & Category -->
     <div class="flex flex-wrap gap-1 mb-1.5 items-center">
       @if (data.isNewArticle) {
-        <span class="badge badge-secondary badge-xs font-bold uppercase">New</span>
+        <span class="badge badge-secondary badge-xs font-bold uppercase">{{ t('list_item.news') }}</span>
       }
       @if (data.isBestSeller) {
-        <span class="badge badge-accent badge-xs font-bold uppercase">Bestseller</span>
+        <span class="badge badge-accent badge-xs font-bold uppercase">{{ t('list_item.best') }}</span>
       }
       @if (data.discount > 0) {
-        <span class="badge badge-error badge-xs font-bold text-white uppercase">Sale</span>
+        <span class="badge badge-error badge-xs font-bold text-white uppercase">{{ t('list_item.sale') }}</span>
       }
       <!-- Moved category here to save vertical space -->
       <div class="badge badge-outline badge-xs opacity-60 uppercase tracking-tighter">
@@ -38,7 +40,7 @@
 
     <!-- Row 3: Metadata -->
     <div class="flex items-center gap-2 text-[11px] text-base-content/40 mt-1 uppercase font-semibold">
-      <span>{{ data.pageCount }} Strán</span>
+      <span>{{ data.pageCount }} {{ t('list_item.pages') }}</span>
       <span>•</span>
       <span>ISBN: {{ data.isbn }}</span>
     </div>
@@ -66,13 +68,18 @@
         <span class="text-[10px] font-medium mt-0.5"
               [class.text-success]="data.availableCount > 0"
               [class.text-error]="data.availableCount === 0">
-          {{ data.availableCount > 0 ? 'Skladom (' + data.availableCount + ' ks)' : 'Vypredané' }}
+          {{ data.availableCount > 0 ? t('list_item.stock', { items: data.availableCount }) : t('list_item.soldOut') }}
         </span>
       </div>
 
       <!-- Button -->
       @if (!data.isSoldOut) {
-        <button class="btn btn-primary btn-sm" (click)="$event.stopPropagation(); handleCartAction()">
+        <button
+          class="btn btn-sm"
+          [class.btn-error]="isInCart()"
+          [class.btn-primary]="!isInCart()"
+          (click)="$event.stopPropagation(); handleCartAction()"
+        >
           @if (isInCart()) {
             <span>{{ t('cart.remove_from_cart') }}</span>
           } @else {

@@ -6,11 +6,18 @@ import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { IconComponent } from '../icon/IconComponent';
 import { AppStore } from '../../store/app-store';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 
 @Component({
   selector: 'app-book-table',
-  imports: [RouterLink, CurrencyPipe, IconComponent, DatePipe],
+  imports: [
+    RouterLink,
+    CurrencyPipe,
+    IconComponent,
+    DatePipe,
+    TranslocoDirective,
+  ],
   templateUrl: './book-table.html',
   styleUrl: './book-table.css',
 })

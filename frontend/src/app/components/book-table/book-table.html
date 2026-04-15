@@ -1,14 +1,14 @@
-<table class="table table-sm table-zebra w-full table-pin-rows table-pin-cols">
+<table *transloco="let t" class="table table-sm table-zebra w-full table-pin-rows table-pin-cols">
   <thead class="h-12">
   <tr class="text-primary font-bold border-b-2 border-primary/20 backdrop-blur-sm">
     <th></th>
-    <th>Title & Author</th>
-    <th>Publisher & Date</th>
+    <th>{{ t('book_table.title') }}</th>
+    <th>{{ t('book_table.publisher') }}</th>
     <th>ISBN</th>
-    <th>Available</th>
-    <th>Price</th>
-    <th>Status</th>
-    <th class="text-center">Actions</th>
+    <th>{{ t('book_table.availability') }}</th>
+    <th>{{ t('book_table.price') }}</th>
+    <th>{{ t('book_table.status') }}</th>
+    <th class="text-center">{{ t('book_table.actions') }}</th>
   </tr>
   </thead>
   <tbody>
@@ -45,15 +45,15 @@
           <div class="flex items-center justify-start">
             @if (book.availableCount <= 0) {
               <span class="badge badge-error badge-xs font-bold uppercase py-2 px-2 text-[9px] text-white">
-                  Vypredané
+                  {{ t('book_table.soldOut') }}
                 </span>
             } @else if (book.isNewArticle) {
               <span class="badge badge-success badge-xs font-bold uppercase py-2 px-2 text-[9px]">
-                  Novinka
+                   {{ t('book_table.news') }}
                 </span>
             } @else {
               <span class="badge badge-neutral badge-xs font-bold uppercase py-2 px-2 text-[9px] text-white">
-                  Skladom
+                   {{ t('book_table.available') }}
                 </span>
             }
           </div>
@@ -62,7 +62,7 @@
           <div class="flex justify-end gap-1">
             <button
               (click)="handleDelete(book)"
-              data-tip="Vymazať"
+              [attr.data-tip]="t('book_table.delete')"
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
               title="Vymazať">
@@ -71,7 +71,7 @@
 
             <button
               (click)="handleEdit(book)"
-              data-tip="Upraviť"
+              [attr.data-tip]="t('book_table.edit')"
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
               title="Upraviť">
@@ -79,7 +79,7 @@
             </button>
 
             <button
-              data-tip="Detail"
+              [attr.data-tip]="t('book_table.detail')"
               type="button"
               class="btn btn-primary tooltip btn-xs btn-circle shadow-sm ml-1"
               [routerLink]="['/book', book.id]"

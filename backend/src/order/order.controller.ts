@@ -1,16 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    const tempUserId = 'cmno56rf50000i25jfqiqxmu5'; // Temporarily hardcode a valid User ID from your DB
-    return this.orderService.create(tempUserId, createOrderDto);
+  @UseGuards(JwtAuthGuard) // Ensure the user is logged in
+  create(@Body() createOrderDto: CreateOrderDto, @Req() req) {
+    // Use the ID from the JWT payload instead of the hardcoded one
+    const userId = req.user.userId;
+
+    return this.orderService.create(userId, createOrderDto);
   }
 
   @Get('all')

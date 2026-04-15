@@ -40,6 +40,10 @@ export class ConfigurationService {
     return defaults as AppFeatureFlags;
   }
 
+  toggleTheme() {
+    this.theme.set(this.theme() === 'light' ? 'dark' : 'light');
+  }
+
   toggleFlag(name: FeatureName) {
     this.flags.update((f) => ({ ...f, [name]: !f[name] }));
   }

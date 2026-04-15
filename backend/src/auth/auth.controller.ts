@@ -48,7 +48,13 @@ export class AuthController {
   async updateProfile(
     @Request() req, // Get the verified user from the token
     @Body()
-    body: { updates: { email: string; phoneNumber: string; theme: string } },
+    body: {
+      updates: {
+        email?: string;
+        phoneNumber?: string;
+        theme?: string;
+      };
+    },
   ) {
     return this.authService.updateProfile(req.user.username, body.updates);
   }

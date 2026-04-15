@@ -13,9 +13,13 @@ export class OrderService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: string, createOrderDto: CreateOrderDto) {
+    if (!userId) {
+      return `Missing userId #${userId} and will stop create method.`;
+    }
     // 🛡️ We use a transaction to ensure either everything succeeds or nothing does
     return this.prisma.client.$transaction(async (tx) => {
       let totalAmount = 0;
+      const VAT_RATE = 0.05;
       const orderItemsData = [];
 
       for (const item of createOrderDto.items) {
@@ -30,13 +34,16 @@ export class OrderService {
           );
         }
 
-        totalAmount += book.price * item.quantity;
+        const priceWithVat = book.price * (1 + VAT_RATE);
+        const itemTotal = priceWithVat * item.quantity;
+
+        totalAmount += itemTotal;
 
         // 2. Prepare the item data
         orderItemsData.push({
           bookId: item.bookId,
           quantity: item.quantity,
-          price: book.price, // Locking the price at the time of purchase
+          price: priceWithVat, // Locking the price at the time of purchase
         });
 
         // 2. DECREASE STOCK: Use atomic decrement to avoid race conditions

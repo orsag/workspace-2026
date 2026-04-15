@@ -69,6 +69,8 @@
     "title": "✨ Objavte naše najnovšie príbehy na blogu →"
   },
   "administration": {
+    "title": "Administrácia",
+    "subtitle": "Spravujte svoj katalóg kníh a skladové zásoby",
     "first": "Prvá",
     "last": "Posledná",
     "page": "Strana",
@@ -78,6 +80,17 @@
     "not_found": "Kniha sa nenašla",
     "sorry": "Prepáčte, nenašli sme stránku, ktorú hľadáte.\nMožno bola presunutá na iné miesto alebo je nedostupná na neurčito."
   },
+  "order_table": {
+    "date": "Dátum objednávky",
+    "order": "ID objednávky & Zákazník",
+    "total": "Celková suma",
+    "state": "Stav",
+    "actions": "Akcie",
+    "paid": "ZAPLATENÉ",
+    "cancel": "ZRUŠIŤ",
+    "remove": "ODSTRÁNIŤ",
+    "pending": "ČAKÁME"
+  },
   "pricing": {
     "discount_price": "Super cena",
     "you_save": "Ušetríš: "
@@ -85,6 +98,29 @@
   "cart": {
     "remove_from_cart": "Odobrať",
     "add_to_cart": "Do košíka"
+  },
+  "list_item": {
+    "cover": "Obálka {{title}}",
+    "news": "Nové",
+    "best": "Bestseller",
+    "sale": "Výpredaj",
+    "pages": "Strán",
+    "stock": "Na sklade {{items}} ks",
+    "soldOut": "Vypredané"
+  },
+  "book_table": {
+    "title": "Názov a autor",
+    "publisher": "Vydavateľ a dátum",
+    "availability": "Dostupnosť",
+    "price": "Cena",
+    "status": "Stav",
+    "actions": "Akcie",
+    "soldOut": "Vypredané",
+    "news": "Novinky",
+    "available": "Na sklade",
+    "delete": "Vymazať",
+    "edit": "Upraviť",
+    "detail": "Detail"
   },
   "filters": {
     "sections": {
