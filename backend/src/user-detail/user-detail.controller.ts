@@ -20,6 +20,11 @@ export class UserDetailController {
     return this.userDetailService.findOne(userId);
   }
 
+  @Get('/premium/:userId')
+  findPremiumStatus(@Param('userId') userId: string) {
+    return this.userDetailService.findPremiumStatus(userId);
+  }
+
   @Patch(':userId')
   update(
     @Param('userId') userId: string,

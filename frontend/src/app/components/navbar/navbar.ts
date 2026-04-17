@@ -33,6 +33,7 @@ export class Navbar {
 
   modelUsername = '';
   // Existing signals
+  isPremium = computed(() => this.store.premiumStatus()?.isPremium ?? true);
   userAvatar = computed(() => this.store.user()?.avatarUrl);
   isLoggedIn = computed(() => this.store.isLoggedIn());
 
@@ -50,6 +51,7 @@ export class Navbar {
 
   // Toggle function
   toggleLang() {
+    console.log(this.isPremium());
     const newLang = this.activeLang() === 'en' ? 'sk' : 'en';
     this.translocoService.setActiveLang(newLang);
   }

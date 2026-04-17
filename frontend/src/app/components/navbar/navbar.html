@@ -10,7 +10,8 @@
 
   <!-- MENU button and TITLE (Added z-10 so the bg doesn't block clicks) -->
   <div class="flex-1 flex items-center gap-2 pl-4 z-10">
-    <button type="button" class="shrink-0 cursor-pointer rounded-lg hover:opacity-80 transition-opacity" (click)="toggleSearchbar()">
+    <button type="button" class="shrink-0 cursor-pointer rounded-lg hover:opacity-80 transition-opacity"
+            (click)="toggleSearchbar()">
       <img [ngSrc]="logo" width="50" height="50" class="rounded-lg object-cover shadow-md" alt="Bookshop logo">
     </button>
 
@@ -89,17 +90,40 @@
 
     <!-- DROPDOWN AVATAR -->
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost hover:bg-white/20 btn-circle avatar">
-        <div class="w-10 rounded-full">
-          <img priority
-               alt="User Avatar"
-               width="40"
-               height="40"
-               [ngSrc]="userAvatar() ?? 'images/user.png'"
-          />
+      <div tabindex="0" role="button" class="relative flex items-center justify-center">
+
+        <div class="indicator">
+          @if (isPremium() && isLoggedIn()) {
+            <span class="
+            indicator-item badge badge-xs py-2 px-1.5 text-[9px]
+            font-black border-none z-20 -translate-x-2 translate-y-0
+            bg-gradient-to-tr from-[#BF953F] via-[#FCF6BA] to-[#B38728]
+             text-black shadow-[0_2px_5px_rgba(0,0,0,0.3)]
+             uppercase tracking-widest cursor-pointer">
+              VIP
+            </span>
+          }
+
+          <div class="rounded-full p-0.5 cursor-pointer"
+               [class.premium-glow]="isPremium() && isLoggedIn()"
+               [class.ring]="isPremium() && isLoggedIn()"
+               [class.ring-warning]="isPremium() && isLoggedIn()"
+               [class.ring-offset-1]="isPremium() && isLoggedIn()"
+               [class.ring-offset-base-100]="isPremium() && isLoggedIn()">
+
+            <div class="w-10 h-10 rounded-full overflow-hidden">
+              <img priority
+                   alt="User Avatar"
+                   width="40"
+                   height="40"
+                   class="object-cover w-full h-full"
+                   [ngSrc]="userAvatar() ?? 'images/user.png'" />
+            </div>
+          </div>
         </div>
       </div>
-      <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-base-content">
+      <ul tabindex="-1"
+          class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-base-content">
         <!-- Kept text-base-content on the dropdown UL so the dropdown menu adapts to the current theme naturally -->
         @if (isLoggedIn() && isAdmin()) {
           <li><a routerLink="administration" (click)="closeDropdown($event)">Administration</a></li>
@@ -132,11 +156,6 @@
           <input id="loginModalName" type="text" placeholder="Vaše meno" class="input input-bordered w-full" required
                  name="loginModalName" [(ngModel)]="modelUsername" />
         </div>
-
-        <!--        <div class="form-control">-->
-        <!--          <label for="loginModalPassword" class="label"><span class="label-text">Heslo</span></label>-->
-        <!--          <input id="loginModalPassword" type="password" placeholder="••••••••" class="input input-bordered w-full" required />-->
-        <!--        </div>-->
 
         <div class="modal-action">
           <button type="button" (click)="showLoginModal.set(false)" class="btn btn-ghost">Zrušiť</button>

@@ -84,6 +84,11 @@ export interface UserDetail {
   updatedAt: Date | string;
 }
 
+export interface PremiumStatus {
+  isPremium: boolean;
+  membershipStart: Date | null;
+  membershipEnd: Date | null;
+}
 
 // Initialisation
 export const EMPTY_USER: UserWithoutId = {
@@ -91,23 +96,4 @@ export const EMPTY_USER: UserWithoutId = {
   email: '',
   phoneNumber: '',
   theme: 'light',
-  // userDetail: {
-  //   displayName: '',
-  //   avatarUrl: '',
-  //   bio: '',
-  //   preferredLanguage: 'sk', // Bossman's territory
-  //   isPremium: false,
-  //   addressLine1: '',
-  //   addressLine2: '',
-  //   membershipEnd: null,
-  //   membershipStart: null,
-  //   city: '',
-  //   countryCode: 'SK',
-  //   lastActiveAt: new Date(),
-  //   dateOfBirth: null,
-  //   postalCode: '',
-  //   iban: '',
-  //   bic: '',
-  //   taxId: '',
-  // },
 };

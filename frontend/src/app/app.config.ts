@@ -5,20 +5,28 @@ import {
 } from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { DebounceEventManagerPlugin } from './plugins/debounce-event.plugin';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { authInterceptor } from './auth.interceptor';
+import { provideNgHttpCaching } from 'ng-http-caching';
+import { ngHttpCachingConfig } from './cachingConfig';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes, withViewTransitions()),
     provideHttpClient(
-      withInterceptors([authInterceptor])
+      withInterceptors([authInterceptor]),
+      withInterceptorsFromDi(),
     ),
+    provideNgHttpCaching(ngHttpCachingConfig),
     provideTransloco({
       config: {
         availableLangs: ['en', 'sk'],

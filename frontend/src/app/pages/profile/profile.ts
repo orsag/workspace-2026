@@ -25,7 +25,6 @@ import {
   of,
   switchMap,
 } from 'rxjs';
-import { BookService } from '../../services/book-service';
 import { IconComponent } from '../../components/icon/IconComponent';
 import { OrderService } from '../../services/order-service';
 import { OrderStatus as OSEnum } from '@test-monorepo/shared-models';
@@ -48,12 +47,12 @@ import { RouterLink } from '@angular/router';
 })
 export class Profile {
   store = inject(AppStore);
-  bookService = inject(BookService);
   orderService = inject(OrderService);
   favorites = this.store.user()?.favorites;
   toast = inject(ToastService);
   private isFormInitialized = false;
   OrderStatus = OSEnum;
+  favoriteBooks = this.store.favoriteBooks;
 
   constructor() {
     effect(() => {
@@ -78,22 +77,6 @@ export class Profile {
       }
     });
   }
-
-  favoriteBooks = toSignal(
-    toObservable(computed(() => this.store.user()?.favorites || [])).pipe(
-      // 1. Only emit if the IDs have actually changed (content-wise)
-      distinctUntilChanged(
-        (prev, curr) =>
-          prev.length === curr.length &&
-          prev.every((id, index) => id === curr[index]),
-      ),
-      // 2. Only switchMap to the API call if we have a fresh, different list of IDs
-      switchMap((ids) =>
-        ids.length > 0 ? this.bookService.getFavorites(ids) : of([]),
-      ),
-    ),
-    { initialValue: [] },
-  );
 
   userDetailModel = signal<UserDetailSmall>(
     this.mapToDetailModel(this.store.userDetail()),

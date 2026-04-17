@@ -8,6 +8,7 @@ import {
 } from '@ngrx/signals';
 import { computed, effect, inject } from '@angular/core';
 import {
+  PremiumStatus,
   User,
   UserDetail,
   UserDetailSmall,
@@ -15,16 +16,8 @@ import {
 import { Book as IBook } from '@test-monorepo/shared-models';
 import { AuthService } from '../services/auth-service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import {
-  pipe,
-  switchMap,
-  tap,
-  catchError,
-  EMPTY,
-  map,
-  filter,
-  finalize,
-} from 'rxjs';
+import { tap, map, filter, of, distinctUntilChanged } from 'rxjs';
+import { pipe, switchMap, catchError, finalize, EMPTY } from 'rxjs';
 import { ToastService } from '../services/toast-service';
 import { BookService } from '../services/book-service';
 import { TranslocoService } from '@jsverse/transloco';
@@ -33,13 +26,16 @@ import { DetailService } from '../services/detail-service';
 // Key for LocalStorage
 const USER_STORAGE_KEY = 'currentUser';
 const TOKEN_STORAGE_KEY = 'accessToken';
+const DETAIL_STORAGE_KEY = 'currentStatus';
 
 export interface AppState {
   user: User | null;
   userDetail: UserDetail | null;
   token: string | null;
+  premiumStatus: PremiumStatus | null;
   // --- 📚 Book State ---
   books: IBook[];
+  favoriteBooks: IBook[];
   totalBooks: number;
   isLoading: boolean;
   error: string | null;
@@ -61,7 +57,9 @@ const initialState: AppState = {
   user: null,
   userDetail: null,
   token: null,
+  premiumStatus: null,
   books: [],
+  favoriteBooks: [],
   totalBooks: 0,
   isLoading: false,
   error: null,
@@ -154,26 +152,71 @@ export const AppStore = signalStore(
         this.loadBooks();
       },
 
+      _syncFavorites: rxMethod<string[]>(
+        pipe(
+          distinctUntilChanged(
+            (prev, curr) =>
+              prev.length === curr.length &&
+              prev.every((id, i) => id === curr[i]),
+          ),
+          switchMap((ids) => {
+            if (ids.length === 0) {
+              patchState(store, { favoriteBooks: [], isLoading: false });
+              return of([]);
+            }
+
+            patchState(store, { isLoading: true });
+            return bookService.getFavorites(ids).pipe(
+              tap((books) => {
+                patchState(store, { favoriteBooks: books, isLoading: false });
+              }),
+              catchError((err) => {
+                patchState(store, { error: String(err), isLoading: false });
+                // Return EMPTY or of([]) so the switchMap doesn't crash
+                return of([]);
+              }),
+            );
+          }),
+        ),
+      ),
+
       login: rxMethod<string>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap((username) =>
             authService.login(username).pipe(
-              tap(({ user, access_token }) => {
-                // Destructure the response
-                const message = translocoService.translate(
-                  'common.success_login',
-                );
-                toast.success(message);
+              // Chain the premium status call
+              switchMap(({ user, access_token }) =>
+                detailService.findPremiumStatus(user.id).pipe(
+                  tap((premiumStatus) => {
+                    const message = translocoService.translate(
+                      'common.success_login',
+                    );
+                    toast.success(message);
 
-                // Save both to state
-                patchState(store, {
-                  user,
-                  token: access_token, // Make sure 'token' is in your AppState interface
-                  isLoading: false,
-                  error: null,
-                });
-              }),
+                    // Update state with everything at once
+                    patchState(store, {
+                      user,
+                      token: access_token,
+                      premiumStatus: premiumStatus, // Make sure this exists in your state
+                      isLoading: false,
+                      error: null,
+                    });
+                  }),
+                  // Catch error for premium status specifically if you want
+                  // the user to still be logged in even if premium check fails
+                  catchError((err) => {
+                    console.error('Premium check failed', err);
+                    // Still log the user in, just without premium status
+                    patchState(store, {
+                      user,
+                      token: access_token,
+                      isLoading: false,
+                    });
+                    return of(null);
+                  }),
+                ),
+              ),
               catchError(() => {
                 const errorMessage = 'Prihlásenie zlyhalo';
                 toast.alert(errorMessage);
@@ -206,6 +249,7 @@ export const AppStore = signalStore(
               finalize(() => {
                 // 2. ALWAYS wipe the local state and storage
                 patchState(store, { user: null, token: null, error: null });
+                localStorage.removeItem(DETAIL_STORAGE_KEY);
                 localStorage.removeItem(USER_STORAGE_KEY);
                 localStorage.removeItem(TOKEN_STORAGE_KEY);
               }),
@@ -364,6 +408,11 @@ export const AppStore = signalStore(
     onInit(store) {
       const savedUser = localStorage.getItem(USER_STORAGE_KEY);
       const savedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+      const savedDetail = localStorage.getItem(DETAIL_STORAGE_KEY);
+
+      // Automatically react to user favorite ID changes
+      const favoriteIds = computed(() => store.user()?.favorites || []);
+      store._syncFavorites(favoriteIds);
 
       if (savedUser && savedToken) {
         patchState(store, {
@@ -372,8 +421,22 @@ export const AppStore = signalStore(
         });
       }
 
+      if (savedDetail) {
+        patchState(store, {
+          premiumStatus: JSON.parse(savedDetail),
+        });
+      }
+
       effect(() => {
-        const { user, token } = store;
+        const { user, token, userDetail } = store;
+        if (userDetail()) {
+          localStorage.setItem(
+            DETAIL_STORAGE_KEY,
+            JSON.stringify(userDetail()),
+          );
+        } else {
+          localStorage.removeItem(DETAIL_STORAGE_KEY);
+        }
         if (user() && token()) {
           localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user()));
           localStorage.setItem(TOKEN_STORAGE_KEY, token()!);

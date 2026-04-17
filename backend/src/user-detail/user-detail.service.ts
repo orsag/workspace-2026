@@ -12,8 +12,33 @@ export class UserDetailService {
       where: { userId: userId },
     });
 
-    if (!userDetail)
+    if (!userDetail) {
       throw new NotFoundException(`User detail with ID ${userId} not found`);
+    }
+
+    return userDetail;
+  }
+
+  async findPremiumStatus(userId: string) {
+    const userDetail = await this.prisma.client.userDetail.findUnique({
+      where: { userId: userId },
+      // Optimization: Only fetch the columns you actually need
+      select: {
+        isPremium: true,
+        membershipStart: true,
+        membershipEnd: true,
+      },
+    });
+
+    // Handle the case where the user doesn't exist in the userDetail table
+    if (!userDetail) {
+      throw new NotFoundException(
+        `Premium status for user ${userId} not found`,
+      );
+      // OR return a default object:
+      // return { isPremium: false, membershipStart: null, membershipEnd: null };
+    }
+
     return userDetail;
   }
 

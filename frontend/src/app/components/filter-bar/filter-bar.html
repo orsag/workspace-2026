@@ -9,15 +9,15 @@
       @if (filter.icon === 'all') {
         <img ngSrc="/images/worldwide.png" width="20" height="20" alt="Everything" />
       } @else if (filter.icon === 'bestsellers') {
-        <img ngSrc="/images/star.png" width="20" height="20" alt="Bestsellers" />
+        <img ngSrc="/images/star.png" width="20" height="20" alt="Best sellers" />
       } @else if (filter.icon === 'newreleases') {
-        <img ngSrc="/images/books.png" width="20" height="20" alt="Bestsellers" />
+        <img ngSrc="/images/books.png" width="20" height="20" alt="New releases" />
       } @else if (filter.icon === 'expensive') {
-        <img ngSrc="/images/diamond.png" width="20" height="20" alt="Bestsellers" />
+        <img ngSrc="/images/diamond.png" width="20" height="20" alt="Expensive" />
       } @else if (filter.icon === 'cheapest') {
-        <img ngSrc="/images/piggybank.png" width="20" height="20" alt="Bestsellers" />
+        <img ngSrc="/images/piggybank.png" width="20" height="20" alt="Cheapest" />
       } @else if (filter.icon === 'discount') {
-        <img ngSrc="/images/discount.png" width="20" height="20" alt="Bestsellers" />
+        <img ngSrc="/images/discount.png" width="20" height="20" alt="Discount" />
       }
 
       {{ t('filters.' + filter.label) }}
@@ -29,17 +29,25 @@
     <button routerLink="/shopping"
             class="btn btn-soft btn-sm rounded-full transition-all"
             [disabled]="isCoolingDown()">
-        <img ngSrc="/images/cart.png" width="20" height="20" alt="Bestsellers" />
+        <img ngSrc="/images/cart.png" width="20" height="20" alt="Cart" />
       {{ t('filters.bar.to_cart') }} ({{ cartStore.itemCount() }})
     </button>
   }
 
   @if (store.isLoggedIn()) {
+    <button routerLink="/compare"
+            class="btn btn-soft btn-sm rounded-full transition-all"
+            [class.ml-auto]="cartStore.itemCount() === 0"
+            [disabled]="isCoolingDown()">
+      <img ngSrc="/images/share.png" width="20" height="20" alt="Compare" />
+      {{ t('filters.bar.vip') }}
+    </button>
+
     <button routerLink="/profile"
             class="btn btn-soft btn-sm rounded-full transition-all"
             [class.ml-auto]="cartStore.itemCount() === 0"
             [disabled]="isCoolingDown()">
-      <img ngSrc="/images/user2.png" width="20" height="20" alt="Bestsellers" />
+      <img ngSrc="/images/user2.png" width="20" height="20" alt="Profile" />
       {{ t('filters.bar.profile') }}
     </button>
   }

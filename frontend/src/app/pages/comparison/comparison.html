@@ -1,0 +1,99 @@
+<div *transloco="let t" class="p-6 max-w-7xl mx-auto space-y-8">
+  <h1 class="text-3xl font-bold">{{ t('comparison.heading') }}</h1>
+
+  <section>
+    <h2 class="text-sm uppercase tracking-widest opacity-60 mb-4">{{ t('comparison.subheading') }}</h2>
+    <div class="carousel carousel-center bg-base-300 rounded-box w-full space-x-4 p-4 shadow-inner">
+      @for (book of favoriteBooks(); track book.id) {
+        <div class="carousel-item flex flex-col items-center gap-2">
+          <img [ngSrc]="book.coverUrl || 'images/placeholder.webp'"
+               width="120" height="175"
+               fetchpriority="low"
+               class="rounded-lg h-40 w-28 object-cover shadow-lg"
+               [alt]="book.title" />
+          <div class="join">
+            <button (click)="selectBook(book, 'left')"
+                    class="btn btn-xs join-item btn-primary">{{ t('comparison.left') }}
+            </button>
+            <button (click)="selectBook(book, 'right')"
+                    class="btn btn-xs join-item btn-secondary">{{ t('comparison.right') }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <div class="grid grid-cols-12 bg-base-100 rounded-xl shadow-xl overflow-hidden border border-base-300">
+
+    <div class="col-span-4 p-4 bg-base-200 border-b border-base-300 font-bold">{{ t('comparison.compare') }}</div>
+    <div class="col-span-4 p-4 border-b border-l border-base-300 text-center bg-primary/5 font-bold">
+      {{ selectedLeft()?.title || t('comparison.book1') }}
+    </div>
+    <div class="col-span-4 p-4 border-b border-l border-base-300 text-center bg-secondary/5 font-bold">
+      {{ selectedRight()?.title || t('comparison.book2') }}
+    </div>
+
+    @for (field of comparisonFields; track field[0]) {
+      <div class="col-span-4 p-3 bg-base-200/50 border-b border-base-300 font-semibold text-sm">
+        {{ t(field[1]) }}
+      </div>
+
+      <div class="col-span-4 p-3 border-b border-l border-base-300 text-center text-sm">
+        {{ formatValue(selectedLeft()?.[field[0]], field[0]) }}
+      </div>
+
+      <div class="col-span-4 p-3 border-b border-l border-base-300 text-center text-sm">
+        {{ formatValue(selectedRight()?.[field[0]], field[0]) }}
+      </div>
+    }
+
+    <div class="col-span-4 p-3 bg-base-200/50 border-b border-base-300 font-semibold text-sm">
+      {{ t('comparison.availability') }}
+    </div>
+    <div class="col-span-4 p-3 border-b border-l border-base-300 text-center">
+      @if (selectedLeft()?.isAvailable) {
+        <div class="badge badge-success badge-outline">{{ t('comparison.available') }}</div>
+      } @else if (selectedLeft()) {
+        <div class="badge badge-error badge-outline">{{ t('comparison.soldOut') }}</div>
+      }
+    </div>
+    <div class="col-span-4 p-3 border-b border-l border-base-300 text-center">
+      @if (selectedRight()?.isAvailable) {
+        <div class="badge badge-success badge-outline">{{ t('comparison.available') }}</div>
+      } @else if (selectedRight()) {
+        <div class="badge badge-error badge-outline">{{ t('comparison.soldOut') }}</div>
+      }
+    </div>
+
+    <div class="col-span-4 p-3 bg-base-200/50 font-semibold text-sm"></div>
+    <div class="col-span-4 p-3 border-l border-base-300 text-center">
+      <button
+        class="btn btn-sm"
+        [class.btn-error]="isInCartLeft()"
+        [class.btn-primary]="!isInCartLeft()"
+        (click)="$event.stopPropagation(); handleCartAction(selectedLeft())"
+      >
+        @if (isInCartLeft()) {
+          <span>{{ t('cart.remove_from_cart') }}</span>
+        } @else {
+          <span>{{ t('cart.add_to_cart') }}</span>
+        }
+      </button>
+    </div>
+    <div class="col-span-4 p-3 border-l border-base-300 text-center">
+      <button
+        class="btn btn-sm"
+        [class.btn-error]="isInCartRight()"
+        [class.btn-primary]="!isInCartRight()"
+        (click)="$event.stopPropagation(); handleCartAction(selectedRight())"
+      >
+        @if (isInCartRight()) {
+          <span>{{ t('cart.remove_from_cart') }}</span>
+        } @else {
+          <span>{{ t('cart.add_to_cart') }}</span>
+        }
+      </button>
+    </div>
+  </div>
+</div>

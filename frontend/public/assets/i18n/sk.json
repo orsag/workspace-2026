@@ -78,6 +78,7 @@
     "support": "Kontaktuj podporu",
     "back_home": "Vráť sa domov",
     "not_found": "Kniha sa nenašla",
+    "add_book": "Pridať knihu",
     "sorry": "Prepáčte, nenašli sme stránku, ktorú hľadáte.\nMožno bola presunutá na iné miesto alebo je nedostupná na neurčito."
   },
   "order_table": {
@@ -145,7 +146,8 @@
       "cheapest": "Najlacnejšie",
       "highest_discount": "Najvyššia zľava",
       "to_cart": "Do košíka",
-      "profile": "Profil"
+      "profile": "Profil",
+      "vip": "VIP"
     },
     "status_types": {
       "available": "Dostupné",
@@ -160,5 +162,26 @@
     "stats": {
       "showing": "{{current}} / {{total}}"
     }
+  },
+  "comparison": {
+    "title": "Názov",
+    "author": "Autor",
+    "price": "Cena",
+    "category": "Kategória",
+    "pageCount": "Počet strán",
+    "publisher": "Vydavateľstvo",
+    "publishedDate": "Dátum vydania",
+    "popularity": "Popularita",
+    "book1": "Kniha A",
+    "book2": "Kniha B",
+    "isbn": "ISBN",
+    "availability": "Dostupnosť",
+    "soldOut": "Vypredané",
+    "available": "Na sklade",
+    "compare": "Porovnaj",
+    "heading": "Porovnávač kníh",
+    "subheading": "Vyberte knihy na porovnanie",
+    "left": "Lavá",
+    "right": "Pravá"
   }
 }

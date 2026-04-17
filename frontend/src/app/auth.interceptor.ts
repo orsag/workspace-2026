@@ -7,8 +7,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const store = inject(AppStore);
   const token = store.token();
 
-  console.log(token);
-
   if (token) {
     const cloned = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` },

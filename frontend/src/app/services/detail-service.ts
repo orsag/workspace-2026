@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserDetail } from '@test-monorepo/libs';
+import { PremiumStatus, UserDetail } from '@test-monorepo/libs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +19,9 @@ export class DetailService {
 
   getUserDetailById(userId: string): Observable<UserDetail> {
     return this.http.get<UserDetail>(`${this.API_URL}/${userId}`);
+  }
+
+  findPremiumStatus(userId: string): Observable<PremiumStatus> {
+    return this.http.get<PremiumStatus>(`${this.API_URL}/premium/${userId}`);
   }
 }
