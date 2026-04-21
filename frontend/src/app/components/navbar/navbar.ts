@@ -85,9 +85,11 @@ export class Navbar {
     event.preventDefault();
     // Logic for auth goes here...
     if (this.modelUsername.trim() !== '') {
-      this.store.login(this.modelUsername);
+      this.store.login({
+        username: this.modelUsername,
+        onSuccess: () => this.showLoginModal.set(false),
+      });
     }
-    this.showLoginModal.set(false);
   }
 
   // Handle the input event

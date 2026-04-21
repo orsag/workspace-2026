@@ -1,8 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CartStore } from '../../store/cart-store';
 import { Router, RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { OrderService, CreatedOrder } from '../../services/order-service';
+import {
+  ErrorCodes,
+  ErrorHandlerService,
+  SuccessCodes,
+} from '../../core/error.handler';
 
 @Component({
   selector: 'app-shopping',
@@ -10,10 +15,15 @@ import { OrderService, CreatedOrder } from '../../services/order-service';
   templateUrl: './shopping.html',
   styleUrl: './shopping.css',
 })
-export class Shopping {
-  protected readonly cartStore = inject(CartStore);
+export class Shopping implements OnInit {
+  protected cartStore = inject(CartStore);
   private orderService = inject(OrderService);
+  private errorService = inject(ErrorHandlerService)
   private router = inject(Router);
+
+  ngOnInit() {
+    this.cartStore.syncCartWithServer();
+  }
 
   async handleCheckout() {
     const items = this.cartStore.items().map((item) => ({
@@ -23,13 +33,12 @@ export class Shopping {
 
     this.orderService.createOrder({ items }).subscribe({
       next: (order: CreatedOrder) => {
-        console.log('OrderService created successfully!', order);
+        this.errorService.handleSuccess(SuccessCodes.CHECKOUT);
         this.cartStore.clearCart(); // Wipe the cart logic
         this.router.navigate(['/success', order.id]);
       },
       error: (err) => {
-        console.error('Checkout failed', err);
-        // Toast notification here would be great!
+        this.errorService.handleError(ErrorCodes.CHECKOUT);
       },
     });
   }

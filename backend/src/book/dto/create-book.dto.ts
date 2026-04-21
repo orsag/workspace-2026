@@ -8,7 +8,9 @@ import {
   IsUrl,
   Min,
   Max,
+  IsDate,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateBookDto {
   @IsString()
@@ -23,7 +25,9 @@ export class CreateBookDto {
   @IsString()
   publisher: string; // New required field
 
-  @IsDateString()
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
   publishedDate: string;
 
   @IsOptional()
@@ -66,6 +70,6 @@ export class CreateBookDto {
   isBestSeller?: boolean;
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({}, { message: 'coverUrl must be a valid URL' })
   coverUrl?: string;
 }

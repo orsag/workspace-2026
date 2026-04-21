@@ -4,7 +4,7 @@ export interface Book {
   author: string;
   isbn: string;
   publisher: string;
-  publishedDate: Date;
+  publishedDate: Date | string;
   pageCount: number; // default 0
   category: string;
   price: number;
@@ -15,6 +15,8 @@ export interface Book {
   isSoldOut: boolean;
   isAvailable: boolean;
   isBestSeller: boolean;
+  createdAt: Date | string; // Prisma returns ISO strings
+  updatedAt: Date | string;
   coverUrl?: string;
   description?: string;
 }
@@ -41,6 +43,8 @@ export const EMPTY_BOOK: BookWithoutId = {
   isSoldOut: false,
   isAvailable: false,
   isBestSeller: false,
+  createdAt: new Date(),
+  updatedAt: new Date(),
   coverUrl: '',
   description: '',
 };

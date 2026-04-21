@@ -1,4 +1,4 @@
-import { computed, effect } from '@angular/core';
+import { computed, effect, inject } from '@angular/core';
 import { Book as IBook } from '@test-monorepo/shared-models';
 import {
   signalStore,
@@ -8,6 +8,8 @@ import {
   patchState,
   withHooks,
 } from '@ngrx/signals';
+import { AppStore } from './app-store';
+import { BookService } from '../services/book-service';
 
 export interface CartItem {
   book: IBook;
@@ -34,14 +36,27 @@ export const CartStore = signalStore(
   // 1. Computed Selectors (derived state)
   withComputed(({ itemsMap }) => ({
     items: computed(() => Object.values(itemsMap())),
+
+    // Opravený subtotal, ktorý berie do úvahy zľavu
     subtotal: computed(() =>
-      Object.values(itemsMap()).reduce(
-        (acc, item) => acc + item.book.price * item.quantity,
-        0,
-      ),
+      Object.values(itemsMap()).reduce((acc, item) => {
+        const discountedPrice = item.book.price * (1 - item.book.discount);
+        return acc + discountedPrice * item.quantity;
+      }, 0),
     ),
+
     itemCount: computed(() =>
       Object.values(itemsMap()).reduce((acc, item) => acc + item.quantity, 0),
+    ),
+
+    totalSavings: computed(() =>
+      Object.values(itemsMap()).reduce((acc, item) => {
+        if (item.book.discount > 0) {
+          const savingsPerItem = item.book.price * item.book.discount;
+          return acc + savingsPerItem * item.quantity;
+        }
+        return acc;
+      }, 0),
     ),
   })),
 
@@ -51,7 +66,7 @@ export const CartStore = signalStore(
   })),
 
   // 2. Methods (actions)
-  withMethods((store) => ({
+  withMethods((store, bookService = inject(BookService)) => ({
     addToCart(book: IBook) {
       const currentMap = store.itemsMap();
       const existing = currentMap[book.id];
@@ -94,6 +109,50 @@ export const CartStore = signalStore(
 
     clearCart() {
       patchState(store, { itemsMap: {} });
+    },
+
+    // inside withMethods in cart-store.ts
+    syncCartWithServer() {
+      const ids = Object.keys(store.itemsMap());
+
+      if (ids.length === 0) return;
+
+      patchState(store, { loading: true });
+
+      bookService.getFavorites(ids).subscribe({
+        next: (freshBooks) => {
+          const currentMap = { ...store.itemsMap() };
+          const freshIds = new Set(freshBooks.map((b) => b.id));
+          let hasChanges = false;
+
+          freshBooks.forEach((freshBook) => {
+            const item = currentMap[freshBook.id];
+            if (item) {
+              if (
+                item.book.price !== freshBook.price ||
+                item.book.discount !== freshBook.discount
+              ) {
+                currentMap[freshBook.id] = { ...item, book: freshBook };
+                hasChanges = true;
+              }
+            }
+          });
+
+          // Optional: Remove items from cart that are no longer in the DB
+          Object.keys(currentMap).forEach((id) => {
+            if (!freshIds.has(id)) {
+              delete currentMap[id];
+              hasChanges = true;
+            }
+          });
+
+          if (hasChanges) {
+            patchState(store, { itemsMap: currentMap });
+          }
+          patchState(store, { loading: false });
+        },
+        error: () => patchState(store, { loading: false }),
+      });
     },
   })),
 

@@ -28,8 +28,20 @@
                 <div class="flex items-center justify-between gap-3 bg-base-100 p-3 rounded-lg shadow-sm border border-base-200">
                   <div class="flex-grow min-w-0">
                     <p class="font-semibold truncate text-sm">{{ item.book.title }}</p>
-                    <p class="text-xs text-base-content/70">{{ item.book.price | currency:'EUR' }} </p>
-                    <p class="text-xs text-base-content/70">{{ item.book.availableCount }} na sklade</p>
+
+                    <div class="flex items-center gap-2">
+                      <p class="text-xs font-bold text-primary">
+                        {{ (item.book.price * (1 - item.book.discount)) | currency:'EUR' }}
+                      </p>
+
+                      @if (item.book.discount > 0) {
+                        <p class="text-[10px] line-through opacity-50">
+                          {{ item.book.price | currency:'EUR' }}
+                        </p>
+                      }
+                    </div>
+
+                    <p class="text-[10px] text-base-content/70">{{ item.book.availableCount }} na sklade</p>
                   </div>
 
                   <div class="flex items-center gap-2">
@@ -51,22 +63,29 @@
 
             <div class="space-y-3 w-full ml-auto">
 
+              @if (cartStore.totalSavings() > 0) {
+                <div class="flex justify-between items-center text-sm text-success">
+                  <span>Ušetríte:</span>
+                  <span>-{{ cartStore.totalSavings() | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}</span>
+                </div>
+              }
+
               <!-- Cena bez DPH -->
               <div class="flex justify-between items-center gap-8 text-base">
                 <span class="text-base-content/70">Cena</span>
-                <span class="font-bold">{{ cartStore.subtotal().toFixed(2) }} €</span>
+                <span class="font-bold">{{ cartStore.subtotal() | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}</span>
               </div>
 
               <!-- DPH -->
               <div class="flex justify-between items-center gap-8 text-base">
                 <span class="text-base-content/70">VAT (5%)</span>
-                <span class="font-bold">{{ cartStore.tax().toFixed(2) }} €</span>
+                <span class="font-bold">{{ cartStore.tax() | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}</span>
               </div>
 
               <!-- Celková suma -->
               <div class="flex justify-between items-center gap-8 font-bold text-2xl mt-4 text-primary">
                 <span>Spolu</span>
-                <span>{{ cartStore.grandTotal().toFixed(2) }} €</span>
+                <span>{{ cartStore.grandTotal() | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}</span>
               </div>
 
             </div>
@@ -109,10 +128,10 @@
           <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-sm">
             <input type="radio" name="faq-accordion" />
             <div class="collapse-title text-base font-medium">
-              I forgot my password. What should I do?
+              I forgot my username. What should I do?
             </div>
             <div class="collapse-content text-sm text-base-content/80">
-              <p>Click on the "Forgot Password" link on the login page. Enter your registered email address, and we will send you a secure link to reset your password.</p>
+              <p>Click on the "Forgot Username" link on the login page. Enter your registered email address, and we will send you a secure link to reset your password.</p>
             </div>
           </div>
 

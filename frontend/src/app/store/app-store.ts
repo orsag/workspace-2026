@@ -18,10 +18,17 @@ import { AuthService } from '../services/auth-service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tap, map, filter, of, distinctUntilChanged } from 'rxjs';
 import { pipe, switchMap, catchError, finalize, EMPTY } from 'rxjs';
-import { ToastService } from '../services/toast-service';
 import { BookService } from '../services/book-service';
-import { TranslocoService } from '@jsverse/transloco';
 import { DetailService } from '../services/detail-service';
+import {
+  ErrorCodes,
+  ErrorHandlerService,
+  SuccessCodes,
+} from '../core/error.handler';
+import { registerLocaleData } from '@angular/common';
+import localeSk from '@angular/common/locales/sk';
+
+registerLocaleData(localeSk);
 
 // Key for LocalStorage
 const USER_STORAGE_KEY = 'currentUser';
@@ -38,7 +45,6 @@ export interface AppState {
   favoriteBooks: IBook[];
   totalBooks: number;
   isLoading: boolean;
-  error: string | null;
   // --- 🔍 Filter State ---
   filters: {
     page: number;
@@ -62,7 +68,6 @@ const initialState: AppState = {
   favoriteBooks: [],
   totalBooks: 0,
   isLoading: false,
-  error: null,
   filters: {
     page: 1,
     limit: 20,
@@ -76,9 +81,8 @@ const initialState: AppState = {
   },
 };
 
-
 export const AppStore = signalStore(
-  { providedIn: 'root' }, // Makes it a singleton for the whole app
+  { providedIn: 'root' },
   withState(initialState),
 
   // 1. Computed Values (Like Selectors)
@@ -87,7 +91,6 @@ export const AppStore = signalStore(
     isAdmin: computed(() => user()?.isAdmin ?? false),
     favoriteCount: computed(() => user()?.favorites?.length ?? 0),
     cartCount: computed(() => user()?.cartItems?.length ?? 0),
-    // FIX: Use totalBooks() instead of books().length
     totalPages: computed(() => Math.ceil(totalBooks() / filters().limit)),
 
     // FIX: Compare current page against the corrected totalPages calculation
@@ -103,8 +106,7 @@ export const AppStore = signalStore(
       bookService = inject(BookService),
       authService = inject(AuthService),
       detailService = inject(DetailService),
-      toast = inject(ToastService),
-      translocoService = inject(TranslocoService),
+      errorService = inject(ErrorHandlerService),
     ) => ({
       // Update filters without triggering a fetch automatically
       updateFilters(newFilters: Partial<AppState['filters']>) {
@@ -127,11 +129,10 @@ export const AppStore = signalStore(
               totalBooks: res.meta.total,
               isLoading: false,
             }),
-          error: () =>
-            patchState(store, {
-              error: 'Failed to load books',
-              isLoading: false,
-            }),
+          error: () => {
+            patchState(store, { isLoading: false });
+            errorService.handleError(ErrorCodes.FETCH_BOOKS);
+          },
         });
       },
 
@@ -171,8 +172,7 @@ export const AppStore = signalStore(
                 patchState(store, { favoriteBooks: books, isLoading: false });
               }),
               catchError((err) => {
-                patchState(store, { error: String(err), isLoading: false });
-                // Return EMPTY or of([]) so the switchMap doesn't crash
+                patchState(store, { isLoading: false });
                 return of([]);
               }),
             );
@@ -180,33 +180,29 @@ export const AppStore = signalStore(
         ),
       ),
 
-      login: rxMethod<string>(
+      login: rxMethod<{ username: string; onSuccess?: () => void }>(
         pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap((username) =>
+          tap(() => patchState(store, { isLoading: true })),
+          switchMap(({ username, onSuccess }) =>
             authService.login(username).pipe(
               // Chain the premium status call
               switchMap(({ user, access_token }) =>
                 detailService.findPremiumStatus(user.id).pipe(
                   tap((premiumStatus) => {
-                    const message = translocoService.translate(
-                      'common.success_login',
-                    );
-                    toast.success(message);
-
+                    errorService.handleSuccess(SuccessCodes.LOGIN);
+                    if (onSuccess) onSuccess();
                     // Update state with everything at once
                     patchState(store, {
                       user,
                       token: access_token,
                       premiumStatus: premiumStatus, // Make sure this exists in your state
                       isLoading: false,
-                      error: null,
                     });
                   }),
                   // Catch error for premium status specifically if you want
                   // the user to still be logged in even if premium check fails
                   catchError((err) => {
-                    console.error('Premium check failed', err);
+                    errorService.handleError(ErrorCodes.PREMIUM);
                     // Still log the user in, just without premium status
                     patchState(store, {
                       user,
@@ -218,9 +214,8 @@ export const AppStore = signalStore(
                 ),
               ),
               catchError(() => {
-                const errorMessage = 'Prihlásenie zlyhalo';
-                toast.alert(errorMessage);
-                patchState(store, { error: errorMessage, isLoading: false });
+                errorService.handleError(ErrorCodes.LOGIN);
+                patchState(store, { isLoading: false });
                 return EMPTY;
               }),
             ),
@@ -237,18 +232,16 @@ export const AppStore = signalStore(
           switchMap((username) =>
             authService.logout(username).pipe(
               tap(() => {
-                const message = translocoService.translate(
-                  'common.success_logout',
-                );
-                toast.success(message);
+                errorService.handleSuccess(SuccessCodes.LOGOUT);
               }),
               catchError(() => {
+                errorService.handleError(ErrorCodes.LOGOUT);
                 // Even if backend fails, we proceed with local cleanup
                 return EMPTY;
               }),
               finalize(() => {
                 // 2. ALWAYS wipe the local state and storage
-                patchState(store, { user: null, token: null, error: null });
+                patchState(store, { user: null, token: null });
                 localStorage.removeItem(DETAIL_STORAGE_KEY);
                 localStorage.removeItem(USER_STORAGE_KEY);
                 localStorage.removeItem(TOKEN_STORAGE_KEY);
@@ -272,7 +265,8 @@ export const AppStore = signalStore(
                 localStorage.setItem('user', JSON.stringify(updatedUser));
               }),
               catchError((err) => {
-                console.error('Failed to refresh user data', err);
+                errorService.handleError(ErrorCodes.REFRESH);
+                console.error(err);
                 return EMPTY;
               }),
             ),
@@ -281,7 +275,7 @@ export const AppStore = signalStore(
       ),
 
       setUser(user: User) {
-        patchState(store, { user, error: null });
+        patchState(store, { user });
       },
 
       clearUser() {
@@ -305,11 +299,11 @@ export const AppStore = signalStore(
             patchState(store, { user: updatedUser });
 
             // 3. Sync with Backend
-            // We'll assume a new 'updateUser' method in AuthService
             return authService
               .updateUserFavorites(currentUser.username, updatedFavorites)
               .pipe(
                 catchError(() => {
+                  errorService.handleError(ErrorCodes.TOGGLE_FAVORITE);
                   // Rollback: If backend fails, revert the state
                   patchState(store, { user: currentUser });
                   return EMPTY;
@@ -333,13 +327,12 @@ export const AppStore = signalStore(
 
             return authService.updateProfile(username, safeUpdates).pipe(
               tap((updatedUser) => {
+                errorService.handleSuccess(SuccessCodes.UPDATE_PROFILE);
                 patchState(store, { user: updatedUser, isLoading: false });
-                toast.success('Profil bol úspešne aktualizovaný');
               }),
-              catchError(() => {
-                const errorMessage = 'Aktualizácia profilu zlyhala';
-                toast.alert(errorMessage);
-                patchState(store, { error: errorMessage, isLoading: false });
+              catchError((err) => {
+                errorService.handleError(ErrorCodes.UPDATE_PROFILE);
+                patchState(store, { isLoading: false });
                 return EMPTY;
               }),
             );
@@ -356,16 +349,15 @@ export const AppStore = signalStore(
           switchMap(({ userId, updates }) => {
             return detailService.updateUserDetail(userId, updates).pipe(
               tap((updatedDetail: UserDetail) => {
+                errorService.handleSuccess(SuccessCodes.UPDATE_PROFILE);
                 patchState(store, {
                   userDetail: updatedDetail,
                   isLoading: false,
                 });
-                toast.success('Profil bol úspešne aktualizovaný');
               }),
               catchError(() => {
-                const errorMessage = 'Aktualizácia profilu zlyhala';
-                toast.alert(errorMessage);
-                patchState(store, { error: errorMessage, isLoading: false });
+                errorService.handleError(ErrorCodes.UPDATE_PROFILE);
+                patchState(store, { isLoading: false });
                 return EMPTY;
               }),
             );
@@ -379,21 +371,14 @@ export const AppStore = signalStore(
           switchMap(({ userId }) =>
             detailService.getUserDetailById(userId).pipe(
               tap((userDetail: UserDetail) => {
-                // 3. Update the standalone userDetail signal in the state
-                console.log(userDetail);
                 patchState(store, {
                   userDetail: userDetail,
                   isLoading: false,
                 });
               }),
               catchError(() => {
-                const errorMessage =
-                  'Nepodarilo sa načítať detaily používateľa';
-                toast.alert(errorMessage);
-                patchState(store, {
-                  error: errorMessage,
-                  isLoading: false,
-                });
+                errorService.handleError(ErrorCodes.LOAD_PROFILE);
+                patchState(store, { isLoading: false });
                 return EMPTY;
               }),
             ),
@@ -437,9 +422,10 @@ export const AppStore = signalStore(
         } else {
           localStorage.removeItem(DETAIL_STORAGE_KEY);
         }
-        if (user() && token()) {
+        const _token = token();
+        if (user() && _token) {
           localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user()));
-          localStorage.setItem(TOKEN_STORAGE_KEY, token()!);
+          localStorage.setItem(TOKEN_STORAGE_KEY, _token);
         } else {
           localStorage.removeItem(USER_STORAGE_KEY);
           localStorage.removeItem(TOKEN_STORAGE_KEY);

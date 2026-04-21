@@ -130,9 +130,11 @@ export class BookService {
   }
 
   update(id: string, updateBookDto: UpdateBookDto) {
+    const { createdAt, updatedAt, ...dataToUpdate } = updateBookDto as any;
+
     return this.prisma.client.book.update({
       where: { id },
-      data: updateBookDto,
+      data: dataToUpdate,
     });
   }
 

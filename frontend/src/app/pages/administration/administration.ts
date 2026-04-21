@@ -5,10 +5,14 @@ import { CommonModule } from '@angular/common';
 import { Book as IBook, ActionResponse } from '@test-monorepo/shared-models';
 import { IconComponent } from '../../components/icon/IconComponent';
 import { AppStore } from '../../store/app-store';
-import { ToastService } from '../../services/toast-service';
 import { EditModalComponent } from './edit-modal';
 import { OrderTable } from '../../components/order-table/order-table';
 import { TranslocoDirective } from '@jsverse/transloco';
+import {
+  ErrorCodes,
+  ErrorHandlerService,
+  SuccessCodes,
+} from '../../core/error.handler';
 
 @Component({
   selector: 'app-administration',
@@ -26,7 +30,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 export class Administration implements OnInit {
   store = inject(AppStore);
   bookService = inject(BookService);
-  toast = inject(ToastService);
+  errorService = inject(ErrorHandlerService);
 
   selectedBook = signal<IBook | null>(null);
   isDeleteModalOpen = signal(false);
@@ -49,9 +53,9 @@ export class Administration implements OnInit {
     if (bookId) {
       this.bookService.delete(bookId).subscribe((res: ActionResponse) => {
         if (res.warning) {
-          this.toast.alert(res.message);
+          this.errorService.handleError(ErrorCodes.BOOK_DELETE);
         } else {
-          this.toast.success(res.message);
+          this.errorService.handleSuccess(SuccessCodes.BOOK_DELETE);
           this.store.loadBooks();
         }
       });

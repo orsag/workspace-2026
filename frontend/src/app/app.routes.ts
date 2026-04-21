@@ -9,9 +9,9 @@ import { Shopping } from './pages/shopping/shopping';
 import { Success } from './pages/success/success';
 import { Comparison } from './pages/comparison/comparison';
 // ======================================================================
-import { authGuard } from './auth.guard';
-import { premiumGuard } from './premium.guard';
-import { adminGuard } from './admin.guard';
+import { authGuard } from './core/auth.guard';
+import { premiumGuard } from './core/premium.guard';
+import { adminGuard } from './core/admin.guard';
 
 export const appRoutes: Route[] = [
   { path: '', component: Dashboard },

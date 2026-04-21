@@ -3,7 +3,8 @@
   class="card h-[390px] w-full bg-base-100 border border-base-300 hover:-translate-y-1 transition-all duration-300 group"
 >
   <figure class="px-4 pt-4 cursor-pointer" [routerLink]="['/book', data.id]">
-    <div class="relative w-full h-52 bg-base-200 rounded-xl overflow-hidden flex items-center justify-center group-hover:bg-primary/5 transition-colors">
+    <div
+      class="relative w-full h-52 bg-base-200 rounded-xl overflow-hidden flex items-center justify-center group-hover:bg-primary/5 transition-colors">
 
       <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
            width="120"
@@ -11,7 +12,8 @@
            class="h-40 w-auto object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-110"
            [alt]="`Book Cover ${data.title}`">
 
-      <span class="absolute top-2 left-2 px-2 py-1 rounded-md bg-base-100/70 backdrop-blur-md border border-base-content/10 text-base-content text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+      <span
+        class="absolute top-2 left-2 px-2 py-1 rounded-md bg-base-100/70 backdrop-blur-md border border-base-content/10 text-base-content text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
         {{ data.category }}
       </span>
 
@@ -21,8 +23,11 @@
         [class.fav]="isFavorite()"
         [class.text-error]="isFavorite()"
         [class.text-base-content]="!isFavorite()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [attr.fill]="isFavorite() ? 'currentColor' : 'none'">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             [attr.fill]="isFavorite() ? 'currentColor' : 'none'">
+          <path
+            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
         </svg>
       </button>
     </div>
@@ -40,12 +45,12 @@
       <div class="flex flex-col gap-0.5">
         @if (data.discount > 0) {
           <span class="text-[10px] line-through opacity-40">
-            {{ (data.price / (1 - data.discount)) | currency:'EUR' }}
+            {{ data.price | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
           </span>
         }
 
         <span class="text-xl font-extrabold text-primary leading-none">
-          {{ data.price | currency:'EUR' }}
+          {{ (data.price * (1 - data.discount)) | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
         </span>
 
         <span class="text-[10px] font-medium mt-0.5"

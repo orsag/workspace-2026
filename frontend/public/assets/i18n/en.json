@@ -112,7 +112,7 @@
   "book_table": {
     "title": "Title & Author",
     "publisher": "Publisher & Date",
-    "availability": "Availability",
+    "availability": "Store",
     "price": "Price",
     "status": "Status",
     "actions": "Actions",
@@ -162,6 +162,28 @@
     "stats": {
       "showing": "{{current}} / {{total}}"
     }
+  },
+  "edit_modal": {
+    "edit": "Edit book",
+    "create": "Create new book",
+    "name": "Name",
+    "name_min": "Name has at least 3 characters",
+    "author": "Author",
+    "price": "Price",
+    "available": "Available (items)",
+    "category": "Category",
+    "pick_category": "Pick category",
+    "discount": "Discount",
+    "description": "Description",
+    "pageCount": "Page count",
+    "popularity": "Popularity",
+    "publisher": "Publisher",
+    "publishedDate": "Published date",
+    "btn_edit": "Save changes",
+    "btn_create": "Create book",
+    "local_save": "Save LC",
+    "close": "Close window",
+    "cancel": "Cancel"
   },
   "comparison": {
     "title": "Title",

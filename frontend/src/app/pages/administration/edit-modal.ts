@@ -24,23 +24,34 @@ import {
   BookWithoutId,
   EMPTY_BOOK,
 } from '@test-monorepo/libs';
+import { CATEGORIES } from '@test-monorepo/shared-models';
 import { BookService } from '../../services/book-service';
+import {
+  ErrorCodes,
+  ErrorHandlerService,
+  SuccessCodes,
+} from '../../core/error.handler';
+import { AppStore } from '../../store/app-store';
+import { TranslocoDirective } from '@jsverse/transloco';
+const BOOK_STORAGE_KEY = 'bookSaved';
 
 @Component({
   selector: 'app-edit-modal',
-  imports: [CommonModule, FormField],
+  imports: [CommonModule, FormField, TranslocoDirective],
   template: `
-    <dialog class="modal modal-open">
+    <dialog *transloco="let t" class="modal modal-open">
       <div class="modal-box max-w-2xl">
-        <h3 class="font-bold text-xl mb-6 text-primary">
-          {{ selectedBook() ? 'Upraviť knihu' : 'Pridať novú knihu' }}
+        <h3 class="font-bold text-xl mb-4 text-primary">
+          {{ selectedBook() ? t('edit_modal.edit') : t('edit_modal.create') }}
         </h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <!-- FULL WIDTH: Title -->
           <div class="form-control md:col-span-2">
             <label class="label" [attr.for]="'title-' + selectedBook()?.id">
-              <span class="label-text font-semibold">Názov</span>
+              <span class="label-text font-semibold">{{
+                t('edit_modal.name')
+              }}</span>
             </label>
             <input
               type="text"
@@ -52,16 +63,18 @@ import { BookService } from '../../services/book-service';
               "
             />
             @if (editForm.title().touched() && editForm.title().invalid()) {
-              <span class="text-error text-xs mt-1"
-                >Názov musí mať aspoň 3 znaky</span
-              >
+              <span class="text-error text-xs mt-1">{{
+                t('edit_modal.name_min')
+              }}</span>
             }
           </div>
 
           <!-- Author -->
           <div class="form-control">
             <label class="label" [attr.for]="'author-' + idBook">
-              <span class="label-text font-semibold">Autor</span>
+              <span class="label-text font-semibold">{{
+                t('edit_modal.author')
+              }}</span>
             </label>
             <input
               type="text"
@@ -88,7 +101,9 @@ import { BookService } from '../../services/book-service';
           <!-- Price -->
           <div class="form-control">
             <label class="label" [attr.for]="'price-' + idBook">
-              <span class="label-text font-semibold">Cena (€)</span>
+              <span class="label-text font-semibold">{{
+                t('edit_modal.price')
+              }}</span>
             </label>
             <input
               type="number"
@@ -101,7 +116,9 @@ import { BookService } from '../../services/book-service';
           <!-- Available count -->
           <div class="form-control">
             <label class="label" [attr.for]="'available-' + idBook">
-              <span class="label-text font-semibold">Skladom (ks)</span>
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.available') }}
+              </span>
             </label>
             <input
               type="number"
@@ -112,26 +129,109 @@ import { BookService } from '../../services/book-service';
           </div>
 
           <!-- Category -->
-          <div class="form-control md:col-span-2">
+          <div class="form-control">
             <label class="label" [attr.for]="'category-' + idBook">
-              <span class="label-text font-semibold">Kategória</span>
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.category') }}
+              </span>
             </label>
             <select
               [id]="'category-' + idBook"
               [formField]="editForm.category"
               class="select select-bordered w-full"
             >
-              <option value="" disabled selected>Vyberte kategóriu</option>
-              @for (cat of categories; track cat) {
+              <option value="" disabled selected>
+                {{ t('edit_modal.pick_category') }}
+              </option>
+              @for (cat of bookCategories; track cat) {
                 <option [value]="cat">{{ cat }}</option>
               }
             </select>
           </div>
 
+          <!-- Discount -->
+          <div class="form-control">
+            <label class="label" [attr.for]="'discount-' + idBook">
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.discount') }}
+              </span>
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              [id]="'discount-' + idBook()"
+              [formField]="editForm.discount"
+              class="input input-bordered w-full"
+              (input)="clampDiscount($event)"
+            />
+          </div>
+
+          <!-- PageCount -->
+          <div class="form-control">
+            <label class="label" [attr.for]="'pageCount-' + idBook">
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.pageCount') }}
+              </span>
+            </label>
+            <input
+              type="number"
+              [id]="'pageCount-' + idBook()"
+              [formField]="editForm.pageCount"
+              class="input input-bordered w-full"
+            />
+          </div>
+
+          <!-- Popularity -->
+          <div class="form-control">
+            <label class="label" [attr.for]="'popularity-' + idBook">
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.popularity') }}
+              </span>
+            </label>
+            <input
+              type="number"
+              [id]="'popularity-' + idBook()"
+              [formField]="editForm.popularity"
+              class="input input-bordered w-full"
+            />
+          </div>
+
+          <!-- Publisher -->
+          <div class="form-control">
+            <label class="label" [attr.for]="'publisher-' + idBook">
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.publisher') }}
+              </span>
+            </label>
+            <input
+              type="text"
+              [id]="'publisher-' + idBook()"
+              [formField]="editForm.publisher"
+              class="input input-bordered w-full"
+            />
+          </div>
+
+          <!-- publishedDate -->
+          <div class="form-control">
+            <label class="label" [attr.for]="'publishedDate-' + idBook">
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.publishedDate') }}
+              </span>
+            </label>
+            <input
+              type="date"
+              [id]="'publishedDate-' + idBook()"
+              [formField]="editForm.publishedDate"
+              class="input input-bordered w-full"
+            />
+          </div>
+
           <!-- FULL WIDTH: Description -->
           <div class="form-control md:col-span-2">
             <label class="label" [attr.for]="'description-' + idBook">
-              <span class="label-text font-semibold">Popis</span>
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.description') }}
+              </span>
             </label>
             <textarea
               [id]="'description-' + idBook"
@@ -142,13 +242,22 @@ import { BookService } from '../../services/book-service';
         </div>
 
         <div class="modal-action">
-          <button class="btn btn-ghost" (click)="handleClose()">Zrušiť</button>
+          <button class="btn btn-ghost" (click)="handleClose()">
+            {{ t('edit_modal.cancel') }}
+          </button>
+          <button class="btn btn-ghost" (click)="handleSaveLocalStorage()">
+            {{ t('edit_modal.local_save') }}
+          </button>
           <button
             class="btn btn-primary px-10"
             [disabled]="editForm().invalid()"
             (click)="handleSave()"
           >
-            {{ selectedBook() ? 'Uložiť zmeny' : 'Vytvoriť knihu' }}
+            {{
+              selectedBook()
+                ? t('edit_modal.btn_edit')
+                : t('edit_modal.btn_create')
+            }}
           </button>
         </div>
       </div>
@@ -156,7 +265,7 @@ import { BookService } from '../../services/book-service';
         class="modal-backdrop"
         role="button"
         tabindex="0"
-        aria-label="Zatvoriť okno"
+        [attr.aria-label]="t('edit_modal.close')"
         (click)="handleClose()"
         (keydown.enter)="handleClose()"
         (keydown.space)="handleClose()"
@@ -166,10 +275,16 @@ import { BookService } from '../../services/book-service';
   styles: [],
 })
 export class EditModalComponent {
-  readonly selectedBook = input.required<Book | null>();
-  bookService = inject(BookService);
   closeModal = output<void>();
+  readonly selectedBook = input.required<Book | null>();
+  store = inject(AppStore);
+  bookService = inject(BookService);
+  errorService = inject(ErrorHandlerService);
+
+  editModel = signal<BookWithoutId>({ ...EMPTY_BOOK });
   readonly idBook = computed(() => this.selectedBook()?.id);
+
+  bookCategories = CATEGORIES;
   private hasOpened = false;
 
   constructor() {
@@ -182,13 +297,16 @@ export class EditModalComponent {
 
         // Execute your logic
         untracked(() => {
-          this.openEditModal(book);
+          const { id, ...editableFields } = book;
+          this.editModel.set({
+            ...editableFields,
+            coverUrl: editableFields.coverUrl ?? '',
+            description: editableFields.description ?? '',
+          });
         });
       }
     });
   }
-
-  editModel = signal<BookWithoutId>({ ...EMPTY_BOOK });
 
   editForm = form(this.editModel, (schemaPath) => {
     required(schemaPath.title, {
@@ -220,38 +338,22 @@ export class EditModalComponent {
     });
   });
 
-  protected readonly categories = [
-    'Fiction',
-    'Non-fiction',
-    'Fantasy',
-    'Sci-Fi',
-    'Romance',
-    'History',
-    'Biography',
-    'Self-help',
-    'Mystery',
-  ];
+  clampDiscount(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = parseFloat(input.value);
 
-  openEditModal(book: IBook) {
-    this.editModel.set({
-      title: book.title,
-      author: book.author,
-      isbn: book.isbn,
-      category: book.category,
-      publisher: book.publisher,
-      publishedDate: book.publishedDate,
-      pageCount: book.pageCount,
-      price: book.price,
-      discount: book.discount,
-      popularity: book.popularity,
-      availableCount: book.availableCount,
-      isNewArticle: book.isNewArticle,
-      isSoldOut: book.isSoldOut,
-      isAvailable: book.isAvailable,
-      isBestSeller: book.isBestSeller,
-      coverUrl: book.coverUrl ?? '',
-      description: book.description ?? '',
-    });
+    if (value > 1) input.value = '1';
+    if (value < 0) input.value = '0';
+  }
+
+  handleSaveLocalStorage() {
+    const formData: Partial<IBook> = this.editForm().value();
+    const newBook = {
+      id: this.idBook() ?? null,
+      ...formData,
+    };
+    localStorage.setItem(BOOK_STORAGE_KEY, JSON.stringify(newBook));
+    this.errorService.handleSuccess(SuccessCodes.BOOK_SAVE);
   }
 
   handleSave() {
@@ -260,15 +362,41 @@ export class EditModalComponent {
     const formData: Partial<IBook> = this.editForm().value();
     const value = this.idBook();
 
-    if (value) {
-      // EDIT MODE
-      this.bookService.update(value, formData);
-    } else {
-      // CREATE MODE
-      this.bookService.create(formData as BookWithoutId);
-    }
+    // In your Angular Dialog
+    const {
+      createdAt,
+      isSoldOut,
+      isAvailable,
+      updatedAt,
+      coverUrl,
+      ...dataToSave
+    } = this.editForm().value();
 
-    this.handleClose();
+    if (value) {
+      this.bookService.update(value, dataToSave).subscribe({
+        next: (updatedBook) => {
+          this.errorService.handleSuccess(SuccessCodes.BOOK_UPDATE);
+          this.store.loadBooks();
+          this.handleClose();
+        },
+        error: (err) => {
+          this.errorService.handleError(ErrorCodes.BOOK_UPDATE);
+          console.error(err);
+        },
+      });
+    } else {
+      this.bookService.create(formData as Omit<IBook, 'id'>).subscribe({
+        next: (newBook) => {
+          this.errorService.handleSuccess(SuccessCodes.BOOK_CREATE);
+          this.store.loadBooks();
+          this.handleClose();
+        },
+        error: (err) => {
+          this.errorService.handleError(ErrorCodes.BOOK_CREATE);
+          console.error(err);
+        },
+      });
+    }
   }
 
   handleClose() {

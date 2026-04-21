@@ -28,6 +28,15 @@ export class BookTable {
 
   books = this.store.books;
 
+  isRecentlyUpdated(updatedAt?: string | Date): boolean {
+    if (!updatedAt) return false;
+
+    const updatedDate = new Date(updatedAt).getTime();
+    const twelveHoursAgo = Date.now() - 12 * 60 * 60 * 1000;
+
+    return updatedDate > twelveHoursAgo;
+  }
+
   handleEdit(book: IBook) {
     this.edit.emit(book);
   }
