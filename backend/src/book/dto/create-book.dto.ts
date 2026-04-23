@@ -69,7 +69,7 @@ export class CreateBookDto {
   @IsOptional()
   isBestSeller?: boolean;
 
+  @IsString()
   @IsOptional()
-  @IsUrl({}, { message: 'coverUrl must be a valid URL' })
   coverUrl?: string;
 }

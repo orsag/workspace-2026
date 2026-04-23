@@ -1,22 +1,35 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import * as dotenv from 'dotenv';
-import { join } from 'path';
+import { join, resolve } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 // Load .env from the root of the monorepo
 dotenv.config({ path: join(__dirname, '../../.env') });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // 2. Add the Generic Type here <NestExpressApplication>
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+
+  // 1. Get the path from .env (e.g., "../../development/images")
+  const rawLocation = process.env.UPLOAD_LOCATION;
+
+  // 2. Resolve it relative to the Monorepo Root (where the app is running)
+  const uploadPath = resolve(process.cwd(), rawLocation);
+
+  console.log('--- STATIC ASSET CHECK ---');
+  console.log('Absolute path to images:', uploadPath);
+  console.log('--------------------------');
+
   const port = process.env.PORT || 3000;
+
+  app.useStaticAssets(uploadPath, {
+    prefix: '/assets/',
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -28,11 +41,6 @@ async function bootstrap() {
 
   // Enable CORS so your Angular app can talk to the backend
   app.enableCors();
-  // app.enableCors({
-  //   origin: 'http://localhost:8080', // Your Docker/Angular URL
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   credentials: true,
-  // });
 
   await app.listen(port);
   Logger.log(

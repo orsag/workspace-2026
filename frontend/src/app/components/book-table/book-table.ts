@@ -25,6 +25,7 @@ export class BookTable {
   store = inject(AppStore);
   edit = output<IBook>();
   remove = output<IBook>();
+  editCover = output<IBook>();
 
   books = this.store.books;
 
@@ -39,6 +40,10 @@ export class BookTable {
 
   handleEdit(book: IBook) {
     this.edit.emit(book);
+  }
+
+  handleEditCover(book: IBook) {
+    this.editCover.emit(book);
   }
 
   handleDelete(book: IBook) {

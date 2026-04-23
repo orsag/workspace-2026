@@ -79,6 +79,15 @@
     "back_home": "Vráť sa domov",
     "not_found": "Kniha sa nenašla",
     "add_book": "Pridať knihu",
+    "delete_book": "Odstrániť knihu?",
+    "delete_book2": "Naozaj chcete vymazať knihu",
+    "delete_btn": "Vymazať",
+    "cancel_btn": "Zrušiť",
+    "upload": "Nahrať obálku knihy",
+    "upload2": "Vyberte kvalitný obrázok pre obálku knihy.",
+    "upload_btn": "Nahrať a uložiť",
+    "select_file_btn": "Vyber súbor prosím",
+    "no_file_chosen": "žiadny súbor",
     "sorry": "Prepáčte, nenašli sme stránku, ktorú hľadáte.\nMožno bola presunutá na iné miesto alebo je nedostupná na neurčito."
   },
   "order_table": {
@@ -121,6 +130,7 @@
     "available": "Na sklade",
     "delete": "Vymazať",
     "edit": "Upraviť",
+    "edit_cover": "Upraviť obálku",
     "detail": "Detail"
   },
   "filters": {

@@ -27,7 +27,7 @@ export class BookService {
     return this.http.get<IBook>(`${this.apiUrl}/${id}`);
   }
 
-  create(book: Omit<IBook, 'id'>): Observable<IBook> {
+  create(book: Partial<IBook>): Observable<IBook> {
     return this.http.post<IBook>(this.apiUrl, book);
   }
 

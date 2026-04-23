@@ -385,7 +385,7 @@ export class EditModalComponent {
         },
       });
     } else {
-      this.bookService.create(formData as Omit<IBook, 'id'>).subscribe({
+      this.bookService.create(dataToSave).subscribe({
         next: (newBook) => {
           this.errorService.handleSuccess(SuccessCodes.BOOK_CREATE);
           this.store.loadBooks();

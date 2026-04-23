@@ -62,33 +62,21 @@
   }
 
   <div class="w-full bg-base-100 shadow-sm">
-    <app-book-table (edit)="openEditModal($event)"
-                    (remove)="openDeleteConfirmation($event)">
-    </app-book-table>
+    <app-book-table
+      (edit)="openEditModal($event)"
+      (remove)="openDeleteConfirmation($event)"
+      (editCover)="openCoverModal($event)"
+    ></app-book-table>
   </div>
 
 </div>
 
 @if (isDeleteModalOpen()) {
-  <dialog class="modal modal-open">
-    <div class="modal-box border border-error/20">
-      <h3 class="font-bold text-lg text-error">Odstrániť knihu?</h3>
-      <p class="py-4">Naozaj chcete vymazať knihu <strong>{{ selectedBook()?.title }}</strong>?</p>
-      <div class="modal-action">
-        <button class="btn btn-ghost" (click)="closeModals()">Zrušiť</button>
-        <button class="btn btn-error text-white" (click)="confirmDelete()">Vymazať</button>
-      </div>
-    </div>
-    <div
-      class="modal-backdrop"
-      role="button"
-      tabindex="0"
-      aria-label="Zatvoriť okno"
-      (click)="closeModals()"
-      (keydown.enter)="closeModals()"
-      (keydown.space)="closeModals()">
-    </div>
-  </dialog>
+  <app-delete-modal [selectedBook]="selectedBook()" (closeModal)="closeModals()"></app-delete-modal>
+}
+
+@if (isCoverModalOpen()) {
+  <app-cover-modal [selectedBook]="selectedBook()" (closeModal)="closeModals()"></app-cover-modal>
 }
 
 @if (isEditModalOpen()) {

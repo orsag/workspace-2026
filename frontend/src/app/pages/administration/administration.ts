@@ -1,18 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { BookTable } from '../../components/book-table/book-table';
-import { BookService } from '../../services/book-service';
 import { CommonModule } from '@angular/common';
-import { Book as IBook, ActionResponse } from '@test-monorepo/shared-models';
+import { Book as IBook } from '@test-monorepo/shared-models';
 import { IconComponent } from '../../components/icon/IconComponent';
 import { AppStore } from '../../store/app-store';
 import { EditModalComponent } from './edit-modal';
 import { OrderTable } from '../../components/order-table/order-table';
 import { TranslocoDirective } from '@jsverse/transloco';
-import {
-  ErrorCodes,
-  ErrorHandlerService,
-  SuccessCodes,
-} from '../../core/error.handler';
+import { CoverModalComponent } from './cover-modal';
+import { DeleteModalComponent } from './delete-modal';
 
 @Component({
   selector: 'app-administration',
@@ -23,16 +19,17 @@ import {
     EditModalComponent,
     OrderTable,
     TranslocoDirective,
+    CoverModalComponent,
+    DeleteModalComponent,
   ],
   templateUrl: './administration.html',
   styleUrl: './administration.css',
 })
 export class Administration implements OnInit {
   store = inject(AppStore);
-  bookService = inject(BookService);
-  errorService = inject(ErrorHandlerService);
 
   selectedBook = signal<IBook | null>(null);
+  isCoverModalOpen = signal<boolean>(false);
   isDeleteModalOpen = signal(false);
   isEditModalOpen = signal(false);
 
@@ -47,24 +44,13 @@ export class Administration implements OnInit {
     this.isDeleteModalOpen.set(true);
   }
 
-  confirmDelete() {
-    const bookId = this.selectedBook()?.id;
-
-    if (bookId) {
-      this.bookService.delete(bookId).subscribe((res: ActionResponse) => {
-        if (res.warning) {
-          this.errorService.handleError(ErrorCodes.BOOK_DELETE);
-        } else {
-          this.errorService.handleSuccess(SuccessCodes.BOOK_DELETE);
-          this.store.loadBooks();
-        }
-      });
-    }
-
-    this.closeModals();
+  openCoverModal(book: IBook) {
+    this.selectedBook.set(book);
+    this.isCoverModalOpen.set(true);
   }
 
   closeModals() {
+    this.isCoverModalOpen.set(false);
     this.isDeleteModalOpen.set(false);
     this.isEditModalOpen.set(false);
     this.selectedBook.set(null);

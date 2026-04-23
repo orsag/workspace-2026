@@ -82,6 +82,15 @@
             </button>
 
             <button
+              (click)="handleEditCover(book)"
+              [attr.data-tip]="t('book_table.edit_cover')"
+              type="button"
+              class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
+              title="Upraviť Obal">
+              <app-icon name="AddCover" class="h-5 w-5"></app-icon>
+            </button>
+
+            <button
               [attr.data-tip]="t('book_table.detail')"
               type="button"
               class="btn btn-primary tooltip btn-xs btn-circle shadow-sm ml-1"
