@@ -87,42 +87,42 @@
           <div class="form-control w-full">
             <label for="username" class="label"><span class="label-text">Používateľské meno</span></label>
             <div
-              class="flex items-center justify-between h-12 px-4 rounded-lg bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
+              class="flex items-center justify-between h-10 px-4 rounded-sm bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
               <span class="font-medium text-sm">{{ store.user()?.username }}</span>
-              <app-icon name="Lock" class="h-4 w-4"></app-icon>
+              <app-icon name="Lock" class="h-5 w-5"></app-icon>
             </div>
           </div>
 
           <div class="form-control w-full">
             <label for="displayname" class="label"><span class="label-text">Zobrazované meno</span></label>
-            <input id="displayname" type="text" [formField]="detailForm.displayName"
+            <input appNoFocusJump id="displayname" type="text" [formField]="detailForm.displayName"
                    class="input input-bordered w-full" />
           </div>
 
           <div class="form-control w-full">
             <label for="email" class="label"><span class="label-text">Email</span></label>
-            <input id="email" type="email" [formField]="userForm.email" class="input input-bordered w-full" />
+            <input appNoFocusJump id="email" type="email" [formField]="userForm.email" class="input input-bordered w-full" />
           </div>
 
           <div class="form-control w-full">
             <label for="phone" class="label"><span class="label-text">Telefón</span></label>
-            <input id="phone" type="text" [formField]="userForm.phoneNumber" class="input input-bordered w-full" />
+            <input appNoFocusJump id="phone" type="text" [formField]="userForm.phoneNumber" class="input input-bordered w-full" />
           </div>
 
           <div class="form-control md:col-span-2">
             <label for="user-bio" class="label"><span class="label-text font-bold">O mne</span></label>
-            <textarea id="user-bio" [formField]="detailForm.bio" class="textarea textarea-bordered h-24 w-full"
+            <textarea appNoFocusJump id="user-bio" [formField]="detailForm.bio" class="textarea textarea-bordered h-24 w-full"
                       placeholder="Povedzte nám niečo o sebe..."></textarea>
           </div>
 
           <div class="form-control">
             <label for="city" class="label"><span class="label-text">Mesto</span></label>
-            <input id="city" type="text" [formField]="detailForm.city" class="input input-bordered w-full" />
+            <input appNoFocusJump id="city" type="text" [formField]="detailForm.city" class="input input-bordered w-full" />
           </div>
 
           <div class="form-control">
             <label for="addressLine1" class="label"><span class="label-text">Ulica</span></label>
-            <input id="addressLine1" type="text" [formField]="detailForm.addressLine1"
+            <input appNoFocusJump id="addressLine1" type="text" [formField]="detailForm.addressLine1"
                    class="input input-bordered w-full" />
           </div>
 
@@ -137,6 +137,7 @@
                   IBAN
                 </label>
                 <input
+                  appNoFocusJump
                   type="text"
                   [formField]="detailForm.iban"
                   class="input input-sm input-bordered font-mono w-full"
@@ -144,11 +145,11 @@
               </div>
               <div class="form-control">
                 <label for="taxId" class="label text-xs">DIČ (Tax ID)</label>
-                <input type="text" [formField]="detailForm.taxId" class="input input-sm input-bordered" />
+                <input appNoFocusJump type="text" [formField]="detailForm.taxId" class="input input-sm input-bordered" />
               </div>
               <div class="form-control">
                 <label for="dateOfBirth" class="label text-xs">Dátum narodenia</label>
-                <input type="date" [formField]="detailForm.dateOfBirth" class="input input-sm input-bordered" />
+                <input appNoFocusJump type="date" [formField]="detailForm.dateOfBirth" class="input input-sm input-bordered" />
               </div>
             </div>
           </div>
@@ -213,7 +214,7 @@
 
           <div class="form-control w-full mb-6">
             <label for="theme" class="label"><span class="label-text-alt font-bold">Farebná téma</span></label>
-            <select [formField]="userForm.theme" class="select select-sm select-bordered w-full">
+            <select appNoFocusJump [formField]="userForm.theme" class="select select-sm select-bordered w-full">
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>

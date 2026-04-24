@@ -25,7 +25,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard) // Protects this specific route
-  @Post('logout')
+  @Get('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Request() req) {
     // req.user is now available thanks to the guard

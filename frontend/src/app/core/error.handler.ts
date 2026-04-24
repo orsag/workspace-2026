@@ -16,6 +16,7 @@ export const ErrorCodes = {
   BOOK_DELETE: 'BOOK_DELETE',
   CHECKOUT: 'CHECKOUT',
   NOT_FOUND: 'REQ_404',
+  FORCE_LOGOUT: 'FORCE_LOGOUT',
 } as const;
 
 export const SuccessCodes = {
@@ -47,6 +48,7 @@ const ErrorMessages: Record<string, string> = {
   [ErrorCodes.BOOK_CREATE]: 'Book create failed',
   [ErrorCodes.BOOK_DELETE]: 'Book delete failed',
   [ErrorCodes.CHECKOUT]: 'Checkout failed',
+  [ErrorCodes.FORCE_LOGOUT]: 'User was logged out.',
 };
 
 const SuccessMessages: Record<string, string> = {

@@ -7,11 +7,18 @@ import { ErrorCodes, ErrorHandlerService } from '../../core/error.handler';
 import { ImageUploadService } from '../../services/image-upload-service';
 import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 import { IconComponent } from '../../components/icon/IconComponent';
+import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 
 @Component({
   selector: 'app-cover-modal',
   standalone: true,
-  imports: [CommonModule, TranslocoDirective, TranslocoPipe, IconComponent],
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TranslocoPipe,
+    IconComponent,
+    NoFocusJumpDirective,
+  ],
   template: `
     <dialog *transloco="let t" class="modal modal-open">
       <div class="modal-box border border-primary">
@@ -24,6 +31,7 @@ import { IconComponent } from '../../components/icon/IconComponent';
 
         <div class="form-control w-full">
           <input
+            appNoFocusJump
             type="file"
             #fileInput
             class="hidden"

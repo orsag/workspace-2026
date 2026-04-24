@@ -6,7 +6,6 @@ export interface BookFilters {
   isBestSeller: boolean;
   isNewRelease: boolean;
   isDiscounted: boolean;
-  sortBy: 'popularity' | 'price_asc' | 'price_desc' | null;
   category: string | null;
 }
 

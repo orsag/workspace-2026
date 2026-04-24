@@ -10,27 +10,44 @@ import { Success } from './pages/success/success';
 import { Comparison } from './pages/comparison/comparison';
 // ======================================================================
 import { authGuard } from './core/auth.guard';
-import { premiumGuard } from './core/premium.guard';
 import { adminGuard } from './core/admin.guard';
+import { MainLayoutComponent } from './layouts/main-layout/main-layout';
+import { SimpleLayoutComponent } from './layouts/simple-layout/simple-layout';
+import { LoginPage } from './pages/login/login';
 
 export const appRoutes: Route[] = [
-  { path: '', component: Dashboard },
+  { path: 'login', component: LoginPage },
+  // Routes that NEED the sidebar/filter
   {
-    path: 'home',
-    redirectTo: '',
-    pathMatch: 'full',
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      { path: '', component: Dashboard },
+      {
+        path: 'home',
+        redirectTo: '',
+        pathMatch: 'full',
+      },
+      {
+        path: 'administration',
+        component: Administration,
+        canActivate: [adminGuard],
+      },
+    ],
   },
-  { path: 'book/:id', component: Detail },
-  { path: 'profile', component: Profile, canActivate: [authGuard] },
-  { path: 'features', component: Features, canActivate: [authGuard] },
-  { path: 'compare', component: Comparison },
+  // Routes that should be SIMPLE (No sidebar)
   {
-    path: 'administration',
-    component: Administration,
-    canActivate: [adminGuard],
+    path: '',
+    component: SimpleLayoutComponent,
+    children: [
+      { path: 'book/:id', component: Detail },
+      { path: 'profile', component: Profile, canActivate: [authGuard] },
+      { path: 'features', component: Features, canActivate: [authGuard] },
+      { path: 'compare', component: Comparison },
+      { path: 'shopping', component: Shopping },
+      { path: 'success/:id', component: Success },
+      { path: 'wip', component: PageNotFound },
+      { path: '**', component: PageNotFound },
+    ],
   },
-  { path: 'shopping', component: Shopping },
-  { path: 'success/:id', component: Success },
-  { path: 'wip', component: PageNotFound },
-  { path: '**', component: PageNotFound },
 ];

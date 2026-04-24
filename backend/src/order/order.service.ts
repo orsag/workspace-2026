@@ -90,11 +90,11 @@ export class OrderService {
     });
   }
 
-  update(id: string, updateOrderDto: UpdateOrderDto) {
+  update(userId: string, id: string, updateOrderDto: UpdateOrderDto) {
     return `This action updates a #${id} order`;
   }
 
-  remove(id: string) {
+  remove(userId: string, id: string) {
     return `This action removes a #${id} order`;
   }
 
@@ -102,6 +102,9 @@ export class OrderService {
 
   // Fetch all orders for a specific user with items and book details
   findAllByUser(userId: string) {
+    if (!userId) {
+      return `Missing userId #${userId} and will stop create method.`;
+    }
     return this.prisma.client.order.findMany({
       where: { userId },
       include: {
@@ -114,7 +117,10 @@ export class OrderService {
   }
 
   // Cancel an order if within 14 days
-  async cancel(id: string) {
+  async cancel(userId: string, id: string) {
+    if (!userId) {
+      return `Missing userId #${userId} and will stop create method.`;
+    }
     const order = await this.prisma.client.order.findUnique({
       where: { id },
     });

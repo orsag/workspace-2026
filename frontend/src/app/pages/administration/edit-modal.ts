@@ -33,11 +33,12 @@ import {
 } from '../../core/error.handler';
 import { AppStore } from '../../store/app-store';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 const BOOK_STORAGE_KEY = 'bookSaved';
 
 @Component({
   selector: 'app-edit-modal',
-  imports: [CommonModule, FormField, TranslocoDirective],
+  imports: [CommonModule, FormField, TranslocoDirective, NoFocusJumpDirective],
   template: `
     <dialog *transloco="let t" class="modal modal-open">
       <div class="modal-box max-w-2xl">
@@ -54,6 +55,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               }}</span>
             </label>
             <input
+              appNoFocusJump
               type="text"
               [id]="'title-' + idBook"
               [formField]="editForm.title"
@@ -77,6 +79,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               }}</span>
             </label>
             <input
+              appNoFocusJump
               type="text"
               [id]="'author-' + idBook"
               [formField]="editForm.author"
@@ -90,6 +93,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               <span class="label-text font-semibold">ISBN</span>
             </label>
             <input
+              appNoFocusJump
               type="text"
               [id]="'isbn-' + idBook"
               [formField]="editForm.isbn"
@@ -106,6 +110,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               }}</span>
             </label>
             <input
+              appNoFocusJump
               type="number"
               [id]="'price-' + idBook"
               [formField]="editForm.price"
@@ -121,6 +126,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <input
+              appNoFocusJump
               type="number"
               [id]="'available-' + idBook"
               [formField]="editForm.availableCount"
@@ -136,6 +142,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <select
+              appNoFocusJump
               [id]="'category-' + idBook"
               [formField]="editForm.category"
               class="select select-bordered w-full"
@@ -157,6 +164,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <input
+              appNoFocusJump
               type="number"
               step="0.1"
               [id]="'discount-' + idBook()"
@@ -174,6 +182,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <input
+              appNoFocusJump
               type="number"
               [id]="'pageCount-' + idBook()"
               [formField]="editForm.pageCount"
@@ -189,6 +198,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <input
+              appNoFocusJump
               type="number"
               [id]="'popularity-' + idBook()"
               [formField]="editForm.popularity"
@@ -204,6 +214,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <input
+              appNoFocusJump
               type="text"
               [id]="'publisher-' + idBook()"
               [formField]="editForm.publisher"
@@ -219,6 +230,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <input
+              appNoFocusJump
               type="date"
               [id]="'publishedDate-' + idBook()"
               [formField]="editForm.publishedDate"
@@ -234,6 +246,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               </span>
             </label>
             <textarea
+              appNoFocusJump
               [id]="'description-' + idBook"
               [formField]="editForm.description"
               class="textarea textarea-bordered w-full h-28"

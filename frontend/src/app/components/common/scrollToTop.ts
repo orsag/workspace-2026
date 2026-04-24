@@ -1,11 +1,4 @@
-import {
-  Component,
-  signal,
-  effect,
-  input,
-  ElementRef,
-  afterNextRender,
-} from '@angular/core';
+import { Component, signal, effect } from '@angular/core';
 
 @Component({
   selector: 'app-scroll-btn',

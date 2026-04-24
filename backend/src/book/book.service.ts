@@ -4,7 +4,14 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Prisma } from '../../../generated/prisma/client';
-import { ActionResponse } from '@test-monorepo/libs';
+import {
+  ActionResponse,
+  Book,
+  DefaultSortParams,
+  FindAllParams,
+  PriceSortParams,
+} from '@test-monorepo/libs';
+type BookWithEffectivePrice = Book & { effectivePrice: number };
 
 @Injectable()
 export class BookService {
@@ -14,17 +21,7 @@ export class BookService {
     return this.prisma.client.book.create({ data });
   }
 
-  async findAll(params: {
-    page?: number;
-    limit?: number;
-    search?: string; // Title/Author search
-    category?: string;
-    isBestSeller?: boolean;
-    newReleases?: boolean;
-    isAvailable?: boolean;
-    isDiscounted?: boolean;
-    sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'popularity';
-  }) {
+  async findAll(params: FindAllParams) {
     const {
       page = 1,
       limit = 20,
@@ -39,62 +36,29 @@ export class BookService {
 
     const skip = (page - 1) * limit;
 
-    const where: Prisma.BookWhereInput = {};
+    const where = this.buildWhereClause({
+      search,
+      category,
+      isBestSeller,
+      newReleases,
+      isAvailable,
+      isDiscounted,
+    });
 
-    if (category && category.trim().length > 0) {
-      where.category = category;
-    }
+    let data: Book[];
+    const total = await this.prisma.client.book.count({ where });
 
-    // 2. Handle Booleans (ensure we only filter if they are actually 'true')
-    if (isBestSeller === true) where.isBestSeller = true;
-    if (newReleases === true) where.isNewArticle = true;
-    if (isAvailable === true) where.isAvailable = true;
-    if (isDiscounted === true)
-      where.discount = {
-        gt: 0.0,
-      };
-
-    if (search && search.trim() !== '') {
-      // 3. Handle Search (Only if search has actual characters)
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { author: { contains: search, mode: 'insensitive' } },
-        { isbn: { contains: search, mode: 'insensitive' } },
-      ];
-    }
-
-    // 2. Build Dynamic Sort
-    const orderBy: Prisma.BookOrderByWithRelationInput[] = [];
-
-    switch (sortBy) {
-      case 'price_asc':
-        orderBy.push({ price: 'asc' });
-        break;
-      case 'price_desc':
-        orderBy.push({ price: 'desc' });
-        break;
-      case 'popularity':
-        orderBy.push({ popularity: 'desc' });
-        break;
-      case 'newest':
-        orderBy.push({ publishedDate: 'desc' });
-        break;
-      default:
-        orderBy.push({ createdAt: 'desc' });
-    }
-    // ALWAYS add a tie-breaker as the last sorting rule
-    orderBy.push({ id: 'asc' });
-
-    // 3. Execute Parallel Queries
-    const [data, total] = await Promise.all([
-      this.prisma.client.book.findMany({
+    if (sortBy?.startsWith('price')) {
+      data = await this.getSortedByPrice({
         where,
+        limit,
         skip,
-        take: limit,
-        orderBy,
-      }),
-      this.prisma.client.book.count({ where }),
-    ]);
+        sortBy,
+        search,
+      });
+    } else {
+      data = await this.getSortedByDefault({ where, limit, skip, sortBy });
+    }
 
     return {
       data,
@@ -105,6 +69,89 @@ export class BookService {
         hasMore: page < Math.ceil(total / limit),
       },
     };
+  }
+
+  private buildWhereClause(params: FindAllParams) {
+    const {
+      search,
+      category,
+      isBestSeller,
+      newReleases,
+      isAvailable,
+      isDiscounted,
+    } = params;
+
+    const where: Prisma.BookWhereInput = {};
+    if (category?.trim()) where.category = category;
+    if (isBestSeller === true) where.isBestSeller = true;
+    if (newReleases === true) where.isNewArticle = true;
+    if (isAvailable === true) where.isAvailable = true;
+    if (isDiscounted === true) where.discount = { gt: 0 };
+
+    if (search?.trim()) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { author: { contains: search, mode: 'insensitive' } },
+        { isbn: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    return where;
+  }
+
+  private async getSortedByPrice(params: PriceSortParams) {
+    const { where, limit, skip, sortBy, search } = params;
+    const direction =
+      sortBy === 'price_asc' ? Prisma.sql`ASC` : Prisma.sql`DESC`;
+
+    const conditions: Prisma.Sql[] = [Prisma.sql`1=1`];
+
+    if (where.category)
+      conditions.push(Prisma.sql`category = ${where.category}`);
+    if (where.isBestSeller) conditions.push(Prisma.sql`"isBestSeller" = true`);
+    if (where.isAvailable) conditions.push(Prisma.sql`"isAvailable" = true`);
+    if (where.discount) conditions.push(Prisma.sql`discount > 0`);
+    if (where.isNewArticle) conditions.push(Prisma.sql`"isNewArticle" = true`);
+    if (search?.trim()) {
+      const searchPattern = `%${search}%`;
+      conditions.push(
+        Prisma.sql`(title ILIKE ${searchPattern} OR author ILIKE ${searchPattern} OR isbn ILIKE ${searchPattern})`,
+      );
+    }
+
+    const whereClause = Prisma.join(conditions, ' AND ');
+
+    return this.prisma.client.$queryRaw<BookWithEffectivePrice[]>`
+      SELECT *, (price * (1 - discount)) as "effectivePrice"
+      FROM "Book"
+      WHERE ${whereClause}
+      ORDER BY (price * (1 - discount)) ${direction}, id ASC
+      LIMIT ${limit} OFFSET ${skip}
+    `;
+  }
+
+  private async getSortedByDefault(params: DefaultSortParams) {
+    const { where, limit, skip, sortBy } = params;
+
+    const orderBy: Prisma.BookOrderByWithRelationInput[] = [];
+
+    switch (sortBy) {
+      case 'popularity':
+        orderBy.push({ popularity: 'desc' });
+        break;
+      case 'newest':
+        orderBy.push({ publishedDate: 'desc' });
+        break;
+      default:
+        orderBy.push({ createdAt: 'desc' });
+    }
+    orderBy.push({ id: 'asc' });
+
+    return this.prisma.client.book.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy,
+    });
   }
 
   findSoldOut() {

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { IconComponent } from '../icon/IconComponent';
 import { ConfigurationService } from '../../services/configuration-service';
 import { inject, computed } from '@angular/core';
@@ -8,47 +8,59 @@ import { CATEGORIES } from '@test-monorepo/shared-models';
 import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { ScrollService } from '../../services/scroll-service';
+import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 
 @Component({
   selector: 'app-filter',
-  imports: [IconComponent, TranslocoDirective, TranslocoPipe],
+  imports: [
+    IconComponent,
+    TranslocoDirective,
+    TranslocoPipe,
+    NoFocusJumpDirective,
+  ],
   templateUrl: './filter.html',
   styleUrl: './filter.css',
 })
-export class Filter {
+export class Filter implements OnInit {
   store = inject(AppStore);
   router = inject(Router);
   config = inject(ConfigurationService);
   scroller = inject(ScrollService);
+  bookCategories = CATEGORIES;
 
   showFilter = computed(() => this.config.flags().SHOW_FILTER);
   isCoolingDown = signal(false);
+  toggles = [
+    { key: 'isAvailable', label: 'available' },
+    { key: 'isNewRelease', label: 'newReleases' },
+    { key: 'isDiscounted', label: 'discounted' },
+    { key: 'isBestSeller', label: 'bestsellers' },
+  ] as const;
+
+  // Initialize from store instead of hardcoded defaults
   filters = signal<BookFilters>({
     search: '',
     category: null,
-    sortBy: null,
     isAvailable: false,
     isBestSeller: false,
     isNewRelease: false,
     isDiscounted: false,
   });
 
-  bookCategories = CATEGORIES;
+  ngOnInit() {
+    this.filters.set({
+      search: this.store.filters.search(),
+      category: this.store.filters.category(),
+      isAvailable: this.store.filters.isAvailable(),
+      isBestSeller: this.store.filters.isBestSeller(),
+      isNewRelease: this.store.filters.isNewRelease(),
+      isDiscounted: this.store.filters.isDiscounted(),
+    });
+  }
 
   // Update helper
   updateFilter<K extends keyof BookFilters>(key: K, value: BookFilters[K]) {
     this.filters.update((f) => ({ ...f, [key]: value }));
-  }
-
-  updateSort(target: 'popularity' | 'price') {
-    const current = this.filters().sortBy;
-
-    if (target === 'price') {
-      const nextPrice = current === 'price_asc' ? 'price_desc' : 'price_asc';
-      this.updateFilter('sortBy', nextPrice);
-    } else {
-      this.updateFilter('sortBy', 'popularity');
-    }
   }
 
   onSubmit() {
@@ -57,10 +69,12 @@ export class Filter {
     this.isCoolingDown.set(true);
     this.store.updateFilters(this.filters());
 
-    if (this.router.url !== '/home' && this.router.url !== '/') {
-      this.router.navigate(['/']);
-    } else {
+    const allowedRoutes = ['/', '/home', '/administration'];
+
+    if (allowedRoutes.includes(this.router.url)) {
       this.scroller.scrollToTop();
+    } else {
+      this.router.navigate(['/']);
     }
 
     setTimeout(() => {

@@ -8,7 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
-  UnauthorizedException,
+  UnauthorizedException, Request,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -21,11 +21,9 @@ export class OrderController {
 
   @Post()
   @UseGuards(JwtAuthGuard) // Ensure the user is logged in
-  create(@Body() createOrderDto: CreateOrderDto, @Req() req) {
+  create(@Request() req, @Body() createOrderDto: CreateOrderDto) {
     // Use the ID from the JWT payload instead of the hardcoded one
-    const userId = req.user.userId;
-
-    return this.orderService.create(userId, createOrderDto);
+    return this.orderService.create(req.user.userId, createOrderDto);
   }
 
   @Get('all')
@@ -43,9 +41,14 @@ export class OrderController {
     return this.orderService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(id, updateOrderDto);
+  update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
+    return this.orderService.update(req.user.userId, id, updateOrderDto);
   }
 
   // 2. Administration: Generic status update
@@ -54,18 +57,21 @@ export class OrderController {
     return this.orderService.updateStatus(id, status);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(id);
+  remove(@Request() req, @Param('id') id: string) {
+    return this.orderService.remove(req.user.userId, id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('user/:userId')
-  findAllByUser(@Param('userId') userId: string) {
-    return this.orderService.findAllByUser(userId);
+  findAllByUser(@Request() req) {
+    return this.orderService.findAllByUser(req.user.userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/cancel')
-  cancelOrder(@Param('id') id: string) {
-    return this.orderService.cancel(id);
+  cancelOrder(@Request() req, @Param('id') id: string) {
+    return this.orderService.cancel(req.user.userId, id);
   }
 }

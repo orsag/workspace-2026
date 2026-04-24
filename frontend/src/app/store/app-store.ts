@@ -45,6 +45,7 @@ export interface AppState {
   favoriteBooks: IBook[];
   totalBooks: number;
   isLoading: boolean;
+  viewLayout: 'grid' | 'list',
   // --- 🔍 Filter State ---
   filters: {
     page: number;
@@ -68,6 +69,7 @@ const initialState: AppState = {
   favoriteBooks: [],
   totalBooks: 0,
   isLoading: false,
+  viewLayout: 'grid' as 'grid' | 'list',
   filters: {
     page: 1,
     limit: 20,
@@ -121,6 +123,7 @@ export const AppStore = signalStore(
         patchState(store, { isLoading: true });
 
         const params: Partial<AppState['filters']> = store.filters();
+        console.log(params);
         bookService.fetchBooks(params).subscribe({
           next: (res) =>
             patchState(store, {
@@ -225,19 +228,18 @@ export const AppStore = signalStore(
 
       logout: rxMethod<void>(
         pipe(
-          // 1. Get the username from the store signal before we wipe it
-          map(() => store.user()?.username),
-          filter((username): username is string => !!username),
+          map(() => store.token()),
+          filter((token): token is string => !!token),
 
-          switchMap((username) =>
-            authService.logout(username).pipe(
+          switchMap((token) =>
+            authService.logout().pipe(
               tap(() => {
                 errorService.handleSuccess(SuccessCodes.LOGOUT);
               }),
               catchError(() => {
                 errorService.handleError(ErrorCodes.LOGOUT);
                 // Even if backend fails, we proceed with local cleanup
-                return EMPTY;
+                return of(null); // Use 'of' instead of EMPTY to ensure finalize runs
               }),
               finalize(() => {
                 // 2. ALWAYS wipe the local state and storage
@@ -286,7 +288,10 @@ export const AppStore = signalStore(
         pipe(
           switchMap((bookId) => {
             const currentUser = store.user();
-            if (!currentUser) return EMPTY;
+            const token = store.token(); //
+
+            // If user is not logged in or token is missing, we can't sync
+            if (!currentUser || !token) return EMPTY; //
 
             // 1. Calculate new favorites array locally
             const isFavorite = currentUser.favorites.includes(bookId);
@@ -296,16 +301,16 @@ export const AppStore = signalStore(
 
             // 2. Optimistic Update: Update UI immediately
             const updatedUser = { ...currentUser, favorites: updatedFavorites };
-            patchState(store, { user: updatedUser });
+            patchState(store, { user: updatedUser }); //
 
-            // 3. Sync with Backend
+            // 3. Sync with Backend using the token
             return authService
-              .updateUserFavorites(currentUser.username, updatedFavorites)
+              .updateUserFavorites(updatedFavorites) // Pass the token here
               .pipe(
                 catchError(() => {
-                  errorService.handleError(ErrorCodes.TOGGLE_FAVORITE);
-                  // Rollback: If backend fails, revert the state
-                  patchState(store, { user: currentUser });
+                  errorService.handleError(ErrorCodes.TOGGLE_FAVORITE); //
+                  // Rollback: If backend fails, revert the state to the original user object
+                  patchState(store, { user: currentUser }); //
                   return EMPTY;
                 }),
               );
@@ -314,10 +319,19 @@ export const AppStore = signalStore(
       ),
 
       // Inside AppStore withMethods
-      updateUserProfile: rxMethod<{ username: string; updates: Partial<User> }>(
+      updateUserProfile: rxMethod<{ updates: Partial<User> }>(
         pipe(
           tap(() => patchState(store, { isLoading: true })),
-          switchMap(({ username, updates }) => {
+          switchMap(({ updates }) => {
+            const currentUser = store.user();
+            const token = store.token();
+
+            // Guard: Ensure we have a user and a token before proceeding
+            if (!currentUser || !token) {
+              patchState(store, { isLoading: false });
+              return EMPTY;
+            }
+
             // Whitelist only the safe fields to be sent to the backend
             const safeUpdates = {
               email: updates.email,
@@ -325,7 +339,8 @@ export const AppStore = signalStore(
               theme: updates.theme,
             };
 
-            return authService.updateProfile(username, safeUpdates).pipe(
+            // Pass the token to the authService instead of (or in addition to) the username
+            return authService.updateProfile(safeUpdates).pipe(
               tap((updatedUser) => {
                 errorService.handleSuccess(SuccessCodes.UPDATE_PROFILE);
                 patchState(store, { user: updatedUser, isLoading: false });
@@ -385,6 +400,26 @@ export const AppStore = signalStore(
           ),
         ),
       ),
+
+      setViewLayout(layout: 'grid' | 'list') {
+        patchState(store, { viewLayout: layout });
+      },
+
+      // In app-store.ts
+      toggleSort(type: 'price' | 'popularity' | null) {
+        const current = store.filters().sortBy;
+        let next: string | null = null;
+
+        if (type === 'price') {
+          next = current === 'price_asc' ? 'price_desc' : 'price_asc';
+        } else if (type === 'popularity') {
+          next = 'popularity';
+        } else {
+          next = null;
+        }
+
+        this.updateFilters({ sortBy: next });
+      },
     }),
   ),
 

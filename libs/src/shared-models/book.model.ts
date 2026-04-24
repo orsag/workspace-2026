@@ -1,3 +1,6 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { Prisma } from '../../../generated/prisma/client';
+
 export interface Book {
   id: string;
   title: string;
@@ -53,4 +56,33 @@ export interface ActionResponse {
   success: boolean;
   message: string;
   warning?: boolean;
+}
+
+export interface FindAllParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+  isBestSeller?: boolean;
+  newReleases?: boolean;
+  isAvailable?: boolean;
+  isDiscounted?: boolean;
+  sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'popularity';
+}
+
+// Define an interface for price sorting parameters
+export interface PriceSortParams {
+  where: Prisma.BookWhereInput;
+  limit: number;
+  skip: number;
+  sortBy: string;
+  search?: string;
+}
+
+// Define an interface for default sorting parameters
+export interface DefaultSortParams {
+  where: Prisma.BookWhereInput;
+  limit: number;
+  skip: number;
+  sortBy?: string;
 }

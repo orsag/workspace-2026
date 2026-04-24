@@ -30,6 +30,7 @@ import { OrderService } from '../../services/order-service';
 import { OrderStatus as OSEnum } from '@test-monorepo/shared-models';
 import { ToastService } from '../../services/toast-service';
 import { RouterLink } from '@angular/router';
+import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 
 @Component({
   selector: 'app-profile',
@@ -41,6 +42,7 @@ import { RouterLink } from '@angular/router';
     FormField,
     IconComponent,
     RouterLink,
+    NoFocusJumpDirective,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
@@ -122,14 +124,11 @@ export class Profile {
 
   handleSave() {
     if (this.userForm().valid()) {
-      const username = this.store.user()?.username;
       const updatedData: Partial<User> = {
         ...this.userModel(),
       };
 
-      if (username) {
-        this.store.updateUserProfile({ username, updates: updatedData });
-      }
+      this.store.updateUserProfile({ updates: updatedData });
     }
     if (this.detailForm().valid()) {
       const userId = this.store.user()?.id;

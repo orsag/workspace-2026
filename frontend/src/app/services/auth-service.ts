@@ -25,21 +25,15 @@ export class AuthService {
     });
   }
 
-  logout(username: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, { username });
+  logout(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/logout`);
   }
 
-  updateUserFavorites(username: string, favorites: string[]): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/favorites`, {
-      username,
-      favorites,
-    });
+  updateUserFavorites(favorites: string[]): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/favorites`, { favorites });
   }
 
-  updateProfile(username: string, updates: Partial<User>): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/update`, {
-      username,
-      updates,
-    });
+  updateProfile(updates: Partial<User>): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/update`, { updates });
   }
 }

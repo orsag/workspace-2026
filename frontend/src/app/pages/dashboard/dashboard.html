@@ -6,10 +6,16 @@
     <div class="flex justify-end mb-6">
       <div class="join border border-base-300 bg-base-200 rounded-full overflow-hidden">
         <label class="join-item btn btn-sm btn-ghost px-2 has-checked:bg-base-100 has-checked:text-primary">
-          <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('grid')" [checked]="viewLayout() === 'grid'" /> <app-icon name="Grid"></app-icon>
+          <input type="radio" name="layout" class="hidden"
+                 (change)="store.setViewLayout('grid')"
+                 [checked]="store.viewLayout() === 'grid'" />
+          <app-icon name="Grid"></app-icon>
         </label>
         <label class="join-item btn btn-sm btn-ghost px-2 has-checked:bg-base-100 has-checked:text-primary">
-          <input type="radio" name="layout" class="hidden" (change)="viewLayout.set('list')" [checked]="viewLayout() === 'list'" /> <app-icon name="List"></app-icon>
+          <input type="radio" name="layout" class="hidden"
+                 (change)="store.setViewLayout('list')"
+                 [checked]="store.viewLayout() === 'list'" />
+          <app-icon name="List"></app-icon>
         </label>
       </div>
     </div>
@@ -24,7 +30,7 @@
   } @else {
 
     <!-- Render Grid or List -->
-    @switch (viewLayout()) {
+    @switch (store.viewLayout()) {
       @case ('grid') {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           @for (book of store.books(); track book.id; let i = $index) {

@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule, NgOptimizedImage, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -48,21 +48,6 @@ export class Detail {
       ),
     ),
   );
-
-  // 2. Reuse your favorite logic
-  isFavorite = computed(() => {
-    const currentBook = this.book();
-    return currentBook
-      ? this.store.user()?.favorites.includes(currentBook.id)
-      : false;
-  });
-
-  toggleFavorite() {
-    const currentBook = this.book();
-    if (currentBook) {
-      this.store.toggleFavorite(currentBook.id);
-    }
-  }
 
   handleCartAction() {
     const currentBook = this.book();
