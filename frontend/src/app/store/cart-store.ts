@@ -8,7 +8,6 @@ import {
   patchState,
   withHooks,
 } from '@ngrx/signals';
-import { AppStore } from './app-store';
 import { BookService } from '../services/book-service';
 
 export interface CartItem {

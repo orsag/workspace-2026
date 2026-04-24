@@ -372,7 +372,6 @@ export class EditModalComponent {
   handleSave() {
     if (this.editForm().invalid()) return;
 
-    const formData: Partial<IBook> = this.editForm().value();
     const value = this.idBook();
 
     // In your Angular Dialog

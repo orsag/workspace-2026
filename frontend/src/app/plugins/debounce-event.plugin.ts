@@ -3,8 +3,6 @@ import { EventManagerPlugin } from '@angular/platform-browser';
 
 @Injectable()
 export class DebounceEventManagerPlugin extends EventManagerPlugin {
-  private readonly platformId = inject(PLATFORM_ID);
-
   constructor() {
     // We manually fetch the DOCUMENT and pass it to the undecorated base class
     super(inject(DOCUMENT));

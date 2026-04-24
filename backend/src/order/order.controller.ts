@@ -7,8 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req,
-  UnauthorizedException, Request,
+  Request,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';

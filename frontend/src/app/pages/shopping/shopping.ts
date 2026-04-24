@@ -37,7 +37,7 @@ export class Shopping implements OnInit {
         this.cartStore.clearCart(); // Wipe the cart logic
         this.router.navigate(['/success', order.id]);
       },
-      error: (err) => {
+      error: () => {
         this.errorService.handleError(ErrorCodes.CHECKOUT);
       },
     });

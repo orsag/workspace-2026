@@ -174,7 +174,7 @@ export const AppStore = signalStore(
               tap((books) => {
                 patchState(store, { favoriteBooks: books, isLoading: false });
               }),
-              catchError((err) => {
+              catchError(() => {
                 patchState(store, { isLoading: false });
                 return of([]);
               }),
@@ -204,7 +204,7 @@ export const AppStore = signalStore(
                   }),
                   // Catch error for premium status specifically if you want
                   // the user to still be logged in even if premium check fails
-                  catchError((err) => {
+                  catchError(() => {
                     errorService.handleError(ErrorCodes.PREMIUM);
                     // Still log the user in, just without premium status
                     patchState(store, {
@@ -231,7 +231,7 @@ export const AppStore = signalStore(
           map(() => store.token()),
           filter((token): token is string => !!token),
 
-          switchMap((token) =>
+          switchMap(() =>
             authService.logout().pipe(
               tap(() => {
                 errorService.handleSuccess(SuccessCodes.LOGOUT);
@@ -345,7 +345,7 @@ export const AppStore = signalStore(
                 errorService.handleSuccess(SuccessCodes.UPDATE_PROFILE);
                 patchState(store, { user: updatedUser, isLoading: false });
               }),
-              catchError((err) => {
+              catchError(() => {
                 errorService.handleError(ErrorCodes.UPDATE_PROFILE);
                 patchState(store, { isLoading: false });
                 return EMPTY;

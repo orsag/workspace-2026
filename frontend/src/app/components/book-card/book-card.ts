@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
-import { PriceTagComponent } from '../common/price-tag.component';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({

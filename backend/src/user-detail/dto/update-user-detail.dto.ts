@@ -1,7 +1,6 @@
 import {
   IsString,
   IsOptional,
-  IsPhoneNumber,
   MaxLength,
   IsUrl,
   IsDate,
