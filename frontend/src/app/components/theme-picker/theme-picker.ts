@@ -2,10 +2,12 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DAISY_THEMES } from '@test-monorepo/shared-models';
 import { ConfigurationService } from '../../services/configuration-service';
+import { NoBtnHoverDirective } from '../../core/no-btn-hover.directive';
+import { LucideCheck } from '@lucide/angular';
 
 @Component({
   selector: 'app-theme-picker',
-  imports: [CommonModule],
+  imports: [CommonModule, LucideCheck, NoBtnHoverDirective],
   templateUrl: './theme-picker.html',
   styleUrl: './theme-picker.css',
 })

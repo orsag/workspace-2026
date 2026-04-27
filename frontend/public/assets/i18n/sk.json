@@ -215,5 +215,11 @@
     "subheading": "Vyberte knihy na porovnanie",
     "left": "Lavá",
     "right": "Pravá"
+  },
+  "premium": {
+    "title": "Prémiové členstvo",
+    "active": "Váš VIP prístup je aktívny",
+    "prolong": "Predĺžiť predplatné",
+    "days": "dní"
   }
 }

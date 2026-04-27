@@ -6,23 +6,20 @@ import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { LucideHeart } from '@lucide/angular';
-import { DatePipe, CurrencyPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-book-card',
+  selector: 'app-card-small',
   imports: [
     CommonModule,
     RouterLink,
-    NgOptimizedImage,
     LucideHeart,
+    NgOptimizedImage,
     TranslocoDirective,
-    CurrencyPipe,
-    DatePipe,
   ],
-  templateUrl: './book-card.html',
-  styleUrl: './book-card.css',
+  templateUrl: './card-small.html',
+  styleUrl: './card-small.css',
 })
-export class BookCard {
+export class CardSmall {
   @Input({ required: true }) data!: Book;
   private readonly cartStore = inject(CartStore);
   readonly store = inject(AppStore);

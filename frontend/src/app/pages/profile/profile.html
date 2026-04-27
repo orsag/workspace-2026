@@ -1,12 +1,8 @@
 <div class="max-w-6xl mx-auto p-6">
-  <header class="mb-8 flex justify-between items-end border-b border-base-300 pb-4">
+  <header class="mb-8 flex border-b border-base-300 pb-4">
     <div>
       <h1 class="text-3xl font-bold">Editácia profilu</h1>
       <p class="text-base-content/60">Spravujte svoje osobné údaje a obľúbené knihy</p>
-    </div>
-    <div class="space-x-2">
-      <button (click)="handleCancel()" class="btn btn-ghost">Zrušiť</button>
-      <button (click)="handleSave()" class="btn btn-primary px-8">Uložiť</button>
     </div>
   </header>
 
@@ -40,10 +36,7 @@
                   >
                     <span>{{ order.id }}</span>
 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                         class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5 1.5M17.25 11.25H21m-3.75 4.5H21m-3.75 4.5H21m-3.75-9.75V5.625c0-.621-.504-1.125-1.125-1.125H12.75M12 21.75V12m0 0l-3.75 3.75M12 12l3.75 3.75" />
-                    </svg>
+                    <svg lucideClipboardCopy size="20"></svg>
                   </button>
                 </td>
                 <td>{{ order.createdAt | date:'shortDate' }}</td>
@@ -77,6 +70,25 @@
     }
   </section>
 
+  <section class="mb-12">
+    <h3 class="font-bold mb-4 text-xl flex items-center gap-2">
+      Moje obľúbené
+      <div class="badge badge-secondary badge-lg">{{ store.favoriteCount() }}</div>
+    </h3>
+
+    @if (favoriteBooks().length > 0) {
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-2">
+        @for (book of favoriteBooks(); track book.id) {
+          <app-card-small [data]="book"></app-card-small>
+        }
+      </div>
+    } @else {
+      <div class="bg-base-200/50 rounded-xl p-12 text-center border-2 border-dashed border-base-300">
+        <p class="text-base-content/40 italic">Zatiaľ nemáte žiadne obľúbené knihy.</p>
+      </div>
+    }
+  </section>
+
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
     <div class="lg:col-span-8 space-y-8">
 
@@ -89,7 +101,7 @@
             <div
               class="flex items-center justify-between h-10 px-4 rounded-sm bg-base-200 text-base-content/50 border border-base-300 cursor-not-allowed">
               <span class="font-medium text-sm">{{ store.user()?.username }}</span>
-              <app-icon name="Lock" class="h-5 w-5"></app-icon>
+              <svg lucideLock size="20"></svg>
             </div>
           </div>
 
@@ -128,7 +140,7 @@
 
           <div class="md:col-span-2 mt-4 p-5 bg-base-200/40 rounded-xl border border-base-300">
             <h4 class="text-xs font-bold uppercase tracking-wider mb-4 opacity-60 flex items-center gap-2">
-              <app-icon name="CreditCard" class="h-4 w-4"></app-icon>
+              <svg lucideCreditCard></svg>
               Fakturačné údaje
             </h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -153,62 +165,21 @@
               </div>
             </div>
           </div>
+          <div class="md:col-span-2 flex justify-end gap-2">
+              <button (click)="handleCancel()" class="btn btn-ghost">Zrušiť</button>
+              <button (click)="handleSave()" class="btn btn-primary px-8">Uložiť</button>
+            </div>
         </div>
-      </section>
-
-      <section>
-        <h3 class="font-bold mb-4 text-xl flex items-center gap-2">
-          Moje obľúbené
-          <div class="badge badge-secondary badge-lg">{{ store.favoriteCount() }}</div>
-        </h3>
-
-        @if (favoriteBooks().length > 0) {
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            @for (book of favoriteBooks(); track book.id) {
-              <app-book-card [data]="book"></app-book-card>
-            }
-          </div>
-        } @else {
-          <div class="bg-base-200/50 rounded-xl p-12 text-center border-2 border-dashed border-base-300">
-            <p class="text-base-content/40 italic">Zatiaľ nemáte žiadne obľúbené knihy.</p>
-          </div>
-        }
       </section>
     </div>
 
     <aside class="lg:col-span-4 space-y-6">
 
       @if (isPremium()) {
-        <div
-          class="card bg-linear-to-br from-[#D4AF37] via-[#FFD700] to-[#B8860B] text-black shadow-xl overflow-hidden border border-yellow-600/20">
-          <div class="card-body p-6 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                 class="absolute top-4 right-4 h-12 w-12 opacity-20 rotate-12">
-              <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
-            </svg>
-
-            <h3 class="font-bold text-lg tracking-tight uppercase opacity-80">Prémiové členstvo</h3>
-
-            <div class="flex items-baseline gap-1 mt-2">
-              <span class="text-5xl font-black tracking-tighter">{{ daysLeft() }}</span>
-              <span class="text-sm font-bold uppercase tracking-widest">dní</span>
-            </div>
-
-            <p class="text-xs mt-1 font-medium opacity-70 italic">Váš VIP prístup je aktívny</p>
-
-            <div class="card-actions mt-6">
-              <button
-                routerLink="wip"
-                class="btn btn-sm btn-ghost bg-black/10 hover:bg-black/20 border-black/10 text-black w-full font-bold">
-                Predĺžiť predplatné
-              </button>
-            </div>
-          </div>
-        </div>
+        <app-premium-card [daysLeft]="daysLeft()"></app-premium-card>
       }
 
-      <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card bg-base-100 border border-base-300 shadow-sm mt-6">
         <div class="card-body p-6">
           <h3 class="font-bold text-sm uppercase opacity-50 mb-4 tracking-widest">Nastavenia systému</h3>
 
@@ -236,4 +207,3 @@
     </aside>
   </div>
 </div>
-

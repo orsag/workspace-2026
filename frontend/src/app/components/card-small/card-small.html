@@ -1,19 +1,19 @@
 <div
   *transloco="let t"
-  class="card h-[390px] w-full bg-base-100 border border-base-300 hover:-translate-y-1 transition-all duration-300 group"
+  class="card h-[360px] w-full bg-base-100 border border-base-300 transition-all duration-300 group"
 >
-  <figure class="px-4 pt-4 cursor-pointer" [routerLink]="['/book', data.id]">
+  <figure class="px-2 pt-4 cursor-pointer" [routerLink]="['/book', data.id]">
     <div
-      class="relative w-full h-56 rounded-xl flex items-center justify-center transition-colors">
+      class="relative w-full h-52 bg-base-200 rounded-xl flex items-center justify-center transition-colors">
 
       <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
-           width="130"
+           width="120"
            height="160"
-           class="h-52 w-auto object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-105"
+           class="h-46 w-auto object-contain drop-shadow-md duration-500"
            [alt]="`Book Cover ${data.title}`">
 
       <span
-        class="absolute top-0 left-0 px-2 py-1 rounded-md bg-base-100/70 backdrop-blur-md border border-base-content/10 text-base-content text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+        class="absolute top-0 left-1 px-1 py-1 rounded-md bg-base-100/70 backdrop-blur-md border border-base-content/10 text-base-content text-[8px] uppercase tracking-widest font-bold shadow-sm z-10">
         {{ data.category }}
       </span>
 
@@ -28,7 +28,7 @@
     </div>
   </figure>
 
-  <div class="card-body p-5 flex flex-col overflow-hidden">
+  <div class="card-body p-3 flex flex-col overflow-hidden">
     <div class="space-y-1 shrink-0">
       <h2 class="card-title text-sm font-bold line-clamp-1 group-hover:text-primary transition-colors leading-tight">
         {{ data.title }}
@@ -36,24 +36,27 @@
       <p class="text-xs text-base-content/70 italic">by {{ data.author }}</p>
     </div>
 
-    <div class="flex justify-between items-center shrink-0 mt-2">
-      <div class="flex flex-col gap-0.5">
-        @if (data.discount > 0) {
+    <div class="flex flex-col items-center shrink-0 mt-2 gap-3">
+      <span class="text-md font-extrabold text-primary leading-none">
+        {{ (data.price * (1 - data.discount)) | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
+      </span>
+      <!-- <div class="flex flex-col gap-0.5"> -->
+        <!-- @if (data.discount > 0) {
           <span class="text-[10px] line-through opacity-40">
             {{ data.price | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
           </span>
-        }
+        } -->
 
-        <span class="text-xl font-extrabold text-primary leading-none">
+        <!-- <span class="text-md font-extrabold text-primary leading-none">
           {{ (data.price * (1 - data.discount)) | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
-        </span>
+        </span> -->
 
-        <span class="text-[10px] font-medium mt-0.5"
+        <!-- <span class="text-[10px] font-medium mt-0.5"
               [class.text-success]="data.availableCount > 0"
               [class.text-error]="data.availableCount === 0">
           {{ data.availableCount > 0 ? 'Skladom (' + data.availableCount + ' ks)' : 'Vypredané' }}
-        </span>
-      </div>
+        </span> -->
+      <!-- </div> -->
 
       @if (!data.isSoldOut) {
         <button

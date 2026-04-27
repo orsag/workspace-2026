@@ -4,20 +4,19 @@
     <app-filter-bar></app-filter-bar>
 
     <div class="flex justify-end mb-6">
-      <div class="join border border-base-300 bg-base-200 rounded-full overflow-hidden">
-        <label class="join-item btn btn-sm btn-ghost px-2 has-checked:bg-base-100 has-checked:text-primary">
-          <input type="radio" name="layout" class="hidden"
-                 (change)="store.setViewLayout('grid')"
-                 [checked]="store.viewLayout() === 'grid'" />
-          <app-icon name="Grid"></app-icon>
-        </label>
-        <label class="join-item btn btn-sm btn-ghost px-2 has-checked:bg-base-100 has-checked:text-primary">
-          <input type="radio" name="layout" class="hidden"
-                 (change)="store.setViewLayout('list')"
-                 [checked]="store.viewLayout() === 'list'" />
-          <app-icon name="List"></app-icon>
-        </label>
-      </div>
+      <button
+        (click)="store.setViewLayout(store.viewLayout() === 'grid' ? 'list' : 'grid')"
+        class="btn btn-sm btn-ghost border border-base-300 bg-base-200 rounded-full hover:bg-base-300"
+        [title]="store.viewLayout() === 'grid' ? 'Switch to List' : 'Switch to Grid'"
+      >
+        @if (store.viewLayout() === 'grid') {
+          <svg lucideGrid size="20"></svg>
+        } @else {
+          <svg lucideList size="20"></svg>
+        }
+
+        <span class="ml-1 capitalize">{{ store.viewLayout() }} view</span>
+      </button>
     </div>
   </header>
 
@@ -54,49 +53,6 @@
       }
     }
 
-    <!-- Pagination & Load More Section -->
-    <div class="flex flex-col items-center gap-4 mt-12 pb-10">
-
-      @if (store.isLoading()) {
-        <!-- Small spinner shown only when appending the next page -->
-        <span class="loading loading-spinner loading-md text-primary mt-4"></span>
-        <p class="text-sm text-base-content/50">Loading more books...</p>
-      } @else {
-
-        <div class="join bg-base-100 overflow-hidden shadow-sm">
-          <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
-                  (click)="store.setPage(1)">First
-          </button>
-          <button class="join-item btn btn-sm md:btn-md" [disabled]="store.filters.page() <= 1"
-                  (click)="store.setPage(store.filters.page() - 1)">{{ store.filters.page() - 1 }}
-          </button>
-
-          <!-- NEW: Load More Button -->
-          <button class="join-item btn btn-sm md:btn-md btn-primary"
-                  [disabled]="!store.hasMorePage()"
-                  (click)="store.loadMore()">
-            Load more books
-          </button>
-
-          <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
-                  (click)="store.setPage(store.filters.page() + 1)">{{ store.filters.page() + 1 }}
-          </button>
-          <button class="join-item btn btn-sm md:btn-md" [disabled]="!store.hasMorePage()"
-                  (click)="store.setPage(store.totalPages())">Last
-          </button>
-        </div>
-
-        <!-- Moved Stats underneath the buttons -->
-        <div class="flex flex-col items-center gap-1 text-center mt-2">
-          <span class="text-xs font-semibold text-base-content/70">
-            Page {{ store.filters.page() }} of {{ store.totalPages() }}
-          </span>
-          <span class="text-xs text-base-content/40">
-            Displaying {{ store.books().length }} of {{ store.totalBooks() }} total books
-          </span>
-        </div>
-
-      }
-    </div>
+    <app-pagination />
   }
 </main>

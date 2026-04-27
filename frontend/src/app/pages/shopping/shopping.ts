@@ -8,17 +8,18 @@ import {
   ErrorHandlerService,
   SuccessCodes,
 } from '../../core/error.handler';
+import { LucideTrash2 } from '@lucide/angular';
 
 @Component({
   selector: 'app-shopping',
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, LucideTrash2, RouterLink],
   templateUrl: './shopping.html',
   styleUrl: './shopping.css',
 })
 export class Shopping implements OnInit {
   protected cartStore = inject(CartStore);
   private orderService = inject(OrderService);
-  private errorService = inject(ErrorHandlerService)
+  private errorService = inject(ErrorHandlerService);
   private router = inject(Router);
 
   ngOnInit() {

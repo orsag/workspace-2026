@@ -1,5 +1,4 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { IconComponent } from '../icon/IconComponent';
 import { ConfigurationService } from '../../services/configuration-service';
 import { inject, computed } from '@angular/core';
 import { BookFilters } from '../../../types';
@@ -9,11 +8,12 @@ import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { ScrollService } from '../../services/scroll-service';
 import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
+import { LucideSearch } from '@lucide/angular';
 
 @Component({
   selector: 'app-filter',
   imports: [
-    IconComponent,
+    LucideSearch,
     TranslocoDirective,
     TranslocoPipe,
     NoFocusJumpDirective,

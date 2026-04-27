@@ -69,7 +69,7 @@
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
               title="Vymazať">
-              <app-icon name="Trash" class="h-4 w-4"></app-icon>
+                <svg lucideTrash2 size="20"></svg>
             </button>
 
             <button
@@ -78,7 +78,7 @@
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
               title="Upraviť">
-              <app-icon name="Edit" class="h-4 w-4"></app-icon>
+                <svg lucidePencil size="20"></svg>
             </button>
 
             <button
@@ -87,16 +87,16 @@
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
               title="Upraviť Obal">
-              <app-icon name="AddCover" class="h-5 w-5"></app-icon>
+                <svg lucideImagePlus size="20"></svg>
             </button>
 
             <button
               [attr.data-tip]="t('book_table.detail')"
               type="button"
-              class="btn btn-primary tooltip btn-xs btn-circle shadow-sm ml-1"
+              class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
               [routerLink]="['/book', book.id]"
               title="Detail">
-              <app-icon name="RightArrow" class="h-4 w-4"></app-icon>
+                <svg lucideChevronsRight size="20"></svg>
             </button>
           </div>
         </td>
@@ -104,4 +104,3 @@
     }
   </tbody>
 </table>
-

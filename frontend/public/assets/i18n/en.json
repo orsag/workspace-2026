@@ -215,5 +215,11 @@
     "subheading": "Select Books to Compare",
     "left": "Left",
     "right": "Right"
+  },
+  "premium": {
+    "title": "Premium Membership",
+    "active": "Your VIP access is active",
+    "prolong": "Renew subscription",
+    "days": "days"
   }
 }

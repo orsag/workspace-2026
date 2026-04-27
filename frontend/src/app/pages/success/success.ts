@@ -2,10 +2,24 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CreatedOrder, OrderService } from '../../services/order-service';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import {
+  LucideChessQueen,
+  LucideFrown,
+  LucideShoppingBasket,
+  LucideCircleUserRound,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-success',
-  imports: [CommonModule, RouterModule, CurrencyPipe],
+  imports: [
+    CommonModule,
+    RouterModule,
+    LucideChessQueen,
+    LucideFrown,
+    LucideShoppingBasket,
+    LucideCircleUserRound,
+    CurrencyPipe,
+  ],
   templateUrl: './success.html',
   styleUrl: './success.css',
 })
@@ -15,11 +29,13 @@ export class Success implements OnInit {
 
   order = signal<CreatedOrder | null>(null);
   isLoading = signal(true);
+  routeId = signal('');
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.orderService.getOrderById(id).subscribe({
+    this.routeId.set(id ?? '');
+    if (this.routeId) {
+      this.orderService.getOrderById(this.routeId()).subscribe({
         next: (data) => {
           this.order.set(data);
           this.isLoading.set(false);
@@ -29,4 +45,3 @@ export class Success implements OnInit {
     }
   }
 }
-

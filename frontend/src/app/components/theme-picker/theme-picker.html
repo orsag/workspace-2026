@@ -1,49 +1,58 @@
 <div title="Change Theme" class="dropdown dropdown-end block z-50">
-  <div tabindex="0" role="button" class="btn btn-ghost uppercase text-white hover:bg-white/20">
-    <div
-      [attr.data-theme]="currentTheme()"
-      class="bg-base-100 grid shrink-0 grid-cols-2 gap-0.5 rounded-md p-1 shadow-sm"
-    >
-      <div class="bg-base-content size-1 rounded-full"></div>
-      <div class="bg-primary size-1 rounded-full"></div>
-      <div class="bg-secondary size-1 rounded-full"></div>
-      <div class="bg-accent size-1 rounded-full"></div>
+  <div tabindex="0"
+       role="button"
+       appNoHoverButton
+       class="btn btn-ghost uppercase text-white outline-none">
+
+    <div class="flex items-center gap-2 transition-transform duration-150 active:scale-90 will-change-transform">
+
+      <div [attr.data-theme]="currentTheme()"
+           class="grid shrink-0 grid-cols-2 gap-0.5 rounded-md p-1 shadow-sm bg-base-100">
+        <div class="bg-base-content size-1 rounded-full"></div>
+        <div class="bg-primary size-1 rounded-full"></div>
+        <div class="bg-secondary size-1 rounded-full"></div>
+        <div class="bg-accent size-1 rounded-full"></div>
+      </div>
+
+      <span>{{ currentTheme() }}</span>
     </div>
-    {{ currentTheme() }}
   </div>
 
-  <ul tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[100] w-56 p-2 shadow-xl border border-base-300 max-h-[31rem] overflow-y-auto mt-4">
-    <li class="menu-title text-xs">Theme</li>
-    @for (theme of availableThemes(); track theme.name) {
-      <li class="mb-1">
+  <div tabindex="0"
+       class="dropdown-content bg-base-200 text-base-content rounded-box z-[100] w-144 p-4 shadow-2xl border border-base-300 mt-4">
+
+    <div class="px-1 mb-3 text-[10px] font-bold uppercase tracking-widest opacity-50">
+      Select Theme
+    </div>
+
+    <div class="grid grid-cols-3 gap-2">
+      @for (theme of availableThemes(); track theme.name) {
         <button
           (click)="changeTheme(theme.name)"
-          class="group flex items-center gap-3 px-3 py-1 w-full hover:bg-base-300 transition-colors rounded-md text-left"
-          [class.bg-base-300]="currentTheme() === theme.name"
-          [class.is-active]="currentTheme() === theme.name"
-        >
-          <div
-            [attr.data-theme]="theme.name"
-            class="bg-base-100 grid shrink-0 grid-cols-2 gap-0.5 rounded-md p-1 shadow-sm"
+          class="group flex items-center gap-1 px-3 py-0 transition-all rounded-xl text-left border border-transparent hover:bg-base-100"
+          [class.bg-base-100]="currentTheme() === theme.name"
+          [class.shadow-sm]="currentTheme() === theme.name"
+          [class]="currentTheme() === theme.name ? 'border-base-content/10 bg-primary/15' : ''"
           >
-            <div class="bg-base-content size-1 rounded-full"></div>
-            <div class="bg-primary size-1 rounded-full"></div>
-            <div class="bg-secondary size-1 rounded-full"></div>
-            <div class="bg-accent size-1 rounded-full"></div>
+          <div [attr.data-theme]="theme.name"
+               class="bg-base-100 grid shrink-0 grid-cols-2 gap-0.5 rounded-md p-0.5 border border-base-content/5">
+            <div class="bg-base-content size-1.5 rounded-full"></div>
+            <div class="bg-primary size-1.5 rounded-full"></div>
+            <div class="bg-secondary size-1.5 rounded-full"></div>
+            <div class="bg-accent size-1.5 rounded-full"></div>
           </div>
 
-          <div class="flex-1 w-32 truncate lowercase">{{ theme.label }}</div>
+          <span class="flex-1 truncate text-xs font-medium lowercase">
+            {{ theme.label }}
+          </span>
 
           @if (currentTheme() === theme.name) {
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
-                 class="h-3 w-3 shrink-0">
-              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
-            </svg>
-          } @else {
-            <div class="w-3"></div>
+            <div class="flex items-center justify-center size-6 rounded-full text-primary animate-in zoom-in duration-300">
+              <svg lucideCheck size="16" strokeWidth="3"></svg>
+            </div>
           }
         </button>
-      </li>
-    }
-  </ul>
+      }
+    </div>
+  </div>
 </div>

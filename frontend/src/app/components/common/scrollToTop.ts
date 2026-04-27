@@ -1,30 +1,20 @@
 import { Component, signal, effect } from '@angular/core';
+import { LucideArrowBigUp } from '@lucide/angular';
 
 @Component({
   selector: 'app-scroll-btn',
   standalone: true,
+  imports: [LucideArrowBigUp],
   template: `
     <button
       (click)="scrollToTop()"
       [class.opacity-100]="isVisible()"
       [class.opacity-0]="!isVisible()"
       [class.pointer-events-none]="!isVisible()"
-      class="btn btn-circle btn-primary btn-lg shadow-xl fixed bottom-8 right-8 z-50"
+      class="btn btn-circle btn-primary btn-lg shadow-xl fixed bottom-8 right-8
+      z-50 transition-transform hover:scale-110 active:scale-95 hover:ring-4 hover:ring-primary/30"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M5 10l7-7m0 0l7 7m-7-7v18"
-        />
-      </svg>
+      <svg lucideArrowBigUp size="30"></svg>
     </button>
   `,
 })

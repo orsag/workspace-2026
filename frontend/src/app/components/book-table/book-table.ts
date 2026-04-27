@@ -1,22 +1,27 @@
 import { Component, inject, output } from '@angular/core';
-import {
-  Book as IBook,
-} from '@test-monorepo/shared-models';
+import { Book as IBook } from '@test-monorepo/shared-models';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { IconComponent } from '../icon/IconComponent';
 import { AppStore } from '../../store/app-store';
 import { TranslocoDirective } from '@jsverse/transloco';
-
+import {
+  LucideTrash2,
+  LucidePencil,
+  LucideImagePlus,
+  LucideChevronsRight,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-book-table',
   imports: [
     RouterLink,
     CurrencyPipe,
-    IconComponent,
     DatePipe,
     TranslocoDirective,
+    LucideTrash2,
+    LucidePencil,
+    LucideImagePlus,
+    LucideChevronsRight,
   ],
   templateUrl: './book-table.html',
   styleUrl: './book-table.css',

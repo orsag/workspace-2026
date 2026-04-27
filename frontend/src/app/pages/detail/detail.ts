@@ -5,7 +5,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, catchError, of } from 'rxjs';
 import { BookService } from '../../services/book-service';
 import { AppStore } from '../../store/app-store';
-import { IconComponent } from '../../components/icon/IconComponent';
+import {
+  LucideBookOpenText,
+  LucideCalendarDays,
+  LucideFlame,
+} from '@lucide/angular';
 import { CartStore } from '../../store/cart-store';
 import { TranslocoDirective } from '@jsverse/transloco';
 
@@ -15,7 +19,9 @@ import { TranslocoDirective } from '@jsverse/transloco';
     CommonModule,
     NgOptimizedImage,
     CurrencyPipe,
-    IconComponent,
+    LucideFlame,
+    LucideBookOpenText,
+    LucideCalendarDays,
     TranslocoDirective,
   ],
   templateUrl: './detail.html',

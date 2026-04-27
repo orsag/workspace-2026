@@ -3,12 +3,18 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ThemePicker } from '../theme-picker/theme-picker';
 import { ConfigurationService } from '../../services/configuration-service';
-import { IconComponent } from '../icon/IconComponent';
 import { AppStore } from '../../store/app-store';
 import { FormsModule } from '@angular/forms';
 import { CartStore } from '../../store/cart-store';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  LucideLogIn,
+  LucideLogOut,
+  LucideLanguages,
+  LucideShoppingBasket,
+} from '@lucide/angular';
+import { NoBtnHoverDirective } from '../../core/no-btn-hover.directive';
 
 @Component({
   selector: 'app-navbar',
@@ -17,9 +23,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
     RouterLink,
     ThemePicker,
     NgOptimizedImage,
-    IconComponent,
     FormsModule,
     TranslocoDirective,
+    LucideLogIn,
+    LucideLogOut,
+    LucideLanguages,
+    LucideShoppingBasket,
+    NoBtnHoverDirective,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',

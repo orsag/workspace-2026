@@ -1,4 +1,11 @@
-import { Component, inject, output, input, signal, effect } from '@angular/core';
+import {
+  Component,
+  inject,
+  output,
+  input,
+  signal,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Book } from '@test-monorepo/libs';
 import { AppStore } from '../../store/app-store';
@@ -6,8 +13,8 @@ import { BookService } from '../../services/book-service';
 import { ErrorCodes, ErrorHandlerService } from '../../core/error.handler';
 import { ImageUploadService } from '../../services/image-upload-service';
 import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
-import { IconComponent } from '../../components/icon/IconComponent';
 import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
+import { LucideImageUp } from '@lucide/angular';
 
 @Component({
   selector: 'app-cover-modal',
@@ -16,7 +23,7 @@ import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
     CommonModule,
     TranslocoDirective,
     TranslocoPipe,
-    IconComponent,
+    LucideImageUp,
     NoFocusJumpDirective,
   ],
   template: `
@@ -45,7 +52,7 @@ import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
               class="btn btn-outline btn-primary"
               (click)="fileInput.click()"
             >
-              <app-icon name="Upload" class="h-4 w-4"></app-icon>
+              <svg lucideImageUp size="20"></svg>
               {{ 'administration.select_file_btn' | transloco }}
             </button>
 

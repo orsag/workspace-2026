@@ -6,8 +6,8 @@
     } @else if (order(); as details) {
 
       <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-success text-success-content rounded-full mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-success text-success-content rounded-full mb-4">
+          <svg lucideChessQueen size="48"></svg>
         </div>
         <h1 class="text-4xl font-bold">Ďakujeme za objednávku!</h1>
         <p class="text-base-content/70 mt-2">Vaša objednávka <strong>#{{ details.id }}</strong> bola úspešne prijatá.</p>
@@ -49,15 +49,26 @@
               <div class="badge badge-secondary mt-2 font-bold">{{ details.status }}</div> </div>
           </div>
 
-          <button routerLink="/home" class="btn btn-outline btn-block">Späť do obchodu</button>
-          <button routerLink="/profile" class="btn btn-outline btn-block">Späť do profilu</button>
+          <button routerLink="/home" class="btn btn-primary btn-block">
+            <svg lucideShoppingBasket></svg>
+            Späť do obchodu
+          </button>
+          <button routerLink="/profile" class="btn btn-primary btn-block">
+            <svg lucideCircleUserRound></svg>
+            Späť do profilu
+          </button>
         </div>
       </div>
 
     } @else {
-      <div class="alert alert-error">
-        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        <span>Objednávku sa nepodarilo nájsť.</span>
+      <div class="flex flex-col items-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-error text-error-content rounded-full mb-4">
+          <svg lucideFrown size="48"></svg>
+        </div>
+        <h1 class="text-4xl font-bold">Objednávku sa nepodarilo nájsť.</h1>
+        <p class="text-base-content/70 mt-2">Vaša objednávka <strong class="text-error">
+          #{{ routeId() }}</strong> sa nenašla.
+        </p>
       </div>
     }
   </div>

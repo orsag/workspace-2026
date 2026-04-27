@@ -2,12 +2,17 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AppStore } from '../../store/app-store';
-import { IconComponent } from '../../components/icon/IconComponent';
+import { LucideCircleUserRound } from '@lucide/angular';
 import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, IconComponent, RouterLink, NoFocusJumpDirective],
+  imports: [
+    RouterLink,
+    FormsModule,
+    LucideCircleUserRound,
+    NoFocusJumpDirective,
+  ],
   templateUrl: './login.html',
 })
 export class LoginPage {

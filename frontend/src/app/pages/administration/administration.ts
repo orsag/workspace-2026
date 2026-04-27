@@ -2,20 +2,20 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { BookTable } from '../../components/book-table/book-table';
 import { CommonModule } from '@angular/common';
 import { Book as IBook } from '@test-monorepo/shared-models';
-import { IconComponent } from '../../components/icon/IconComponent';
 import { AppStore } from '../../store/app-store';
 import { EditModalComponent } from './edit-modal';
 import { OrderTable } from '../../components/order-table/order-table';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { CoverModalComponent } from './cover-modal';
 import { DeleteModalComponent } from './delete-modal';
+import { LucidePlus } from '@lucide/angular';
 
 @Component({
   selector: 'app-administration',
   imports: [
     BookTable,
+    LucidePlus,
     CommonModule,
-    IconComponent,
     EditModalComponent,
     OrderTable,
     TranslocoDirective,

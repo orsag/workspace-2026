@@ -6,7 +6,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { form, FormField, required } from '@angular/forms/signals';
 import {
   UserWithoutId,
@@ -15,7 +15,6 @@ import {
 } from '@test-monorepo/shared-models';
 import { AppStore } from '../../store/app-store';
 import { FormsModule } from '@angular/forms';
-import { BookCard } from '../../components/book-card/book-card';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject,
@@ -25,12 +24,14 @@ import {
   of,
   switchMap,
 } from 'rxjs';
-import { IconComponent } from '../../components/icon/IconComponent';
+import { LucideLock, LucideCreditCard, LucideClipboardCopy } from '@lucide/angular';
 import { OrderService } from '../../services/order-service';
 import { OrderStatus as OSEnum } from '@test-monorepo/shared-models';
 import { ToastService } from '../../services/toast-service';
 import { RouterLink } from '@angular/router';
 import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
+import { CardSmall } from '../../components/card-small/card-small';
+import { PremiumCard } from './premium-card';
 
 @Component({
   selector: 'app-profile',
@@ -38,11 +39,15 @@ import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
     CommonModule,
     FormsModule,
     DatePipe,
-    BookCard,
     FormField,
-    IconComponent,
     RouterLink,
+    CardSmall,
+    LucideLock,
+    LucideCreditCard,
+    LucideClipboardCopy,
     NoFocusJumpDirective,
+    CurrencyPipe,
+    PremiumCard,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
