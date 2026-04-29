@@ -15,6 +15,7 @@ import {
   LucideShoppingBasket,
 } from '@lucide/angular';
 import { NoBtnHoverDirective } from '../../core/no-btn-hover.directive';
+import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 
 @Component({
   selector: 'app-navbar',
@@ -30,6 +31,7 @@ import { NoBtnHoverDirective } from '../../core/no-btn-hover.directive';
     LucideLanguages,
     LucideShoppingBasket,
     NoBtnHoverDirective,
+    NoFocusJumpDirective,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
@@ -52,7 +54,6 @@ export class Navbar {
   searchQuery = signal('');
   protected showLoginModal = signal(false);
   showSearchbar = computed(() => this.config.flags().SHOW_SEARCHBAR_HEADER);
-  showFilter = computed(() => this.config.flags().SHOW_FILTER);
 
   // Convert the lang changes to a signal
   activeLang = toSignal(this.translocoService.langChanges$, {
@@ -66,7 +67,7 @@ export class Navbar {
     this.translocoService.setActiveLang(newLang);
   }
 
-  logoutMenuItem(event: any): void {
+  logoutMenuItem(event: PointerEvent): void {
     this.closeDropdown(event);
     this.handleLogout();
   }
@@ -75,10 +76,14 @@ export class Navbar {
     this.config.toggleFlag('SHOW_FILTER');
   }
 
-  closeDropdown(event: any) {
-    event.currentTarget.blur();
-    // Or more aggressively:
-    (document.activeElement as HTMLElement)?.blur();
+  closeDropdown(event: PointerEvent) {
+    const el = event.currentTarget;
+    if (el instanceof HTMLElement) {
+      el.blur();
+    } else {
+      // Or more aggressively:
+      (document.activeElement as HTMLElement)?.blur();
+    }
   }
 
   handleLogin() {

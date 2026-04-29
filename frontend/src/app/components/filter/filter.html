@@ -14,32 +14,51 @@
   >
     <section>
       <div class="flex justify-between items-center mb-3">
-        <h3
-          class="text-xs font-bold uppercase tracking-widest text-base-content/40"
-        >
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">
           {{ t('filters.sections.search') }}
         </h3>
         <button
           type="button"
           (click)="updateFilter('search', '')"
-          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 transition-all"
+          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none px-1 transition-all"
         >
           {{ t('filters.actions.clear') }}
         </button>
       </div>
-      <label
-        appNoFocusJump
-        class="input input-md flex items-center gap-2 bg-base-200/30"
-      >
-        <svg lucideSearch size="18" class="opacity-40"></svg>
-        <input
-          type="text"
-          class="grow bg-transparent border-none! outline-none!"
-          [placeholder]="t('filters.placeholders.search')"
-          [value]="filters().search"
-          (input)="updateFilter('search', $any($event.target).value)"
-        />
-      </label>
+
+      <!-- Container for Dropdown positioning -->
+      <div class="relative">
+        <label appNoFocusJump class="input input-md flex items-center gap-2 bg-base-200/30 focus-within:ring-1 focus-within:ring-primary">
+          <svg lucideSearch size="18" class="opacity-40"></svg>
+          <input
+            type="text"
+            class="grow bg-transparent border-none! outline-none!"
+            [placeholder]="t('filters.placeholders.search')"
+            [value]="filters().search"
+            (input)="updateFilter('search', $any($event.target).value)"
+            (focus)="showHistory.set(true)"
+            (blur)="showHistory.set(false)"
+            (keydown)="onKeyDown($event)"
+          />
+        </label>
+
+        <!-- History Dropdown -->
+        @if (showHistory() && store.searchHistory().length > 0) {
+          <ul class="absolute z-50 w-full mt-1 bg-base-100 border border-base-300 rounded-lg shadow-xl overflow-hidden">
+            @for (item of store.searchHistory(); track item; let i = $index) {
+              <li
+                (mousedown)="selectHistory(item)"
+                [class.bg-primary]="i === activeIndex()"
+                [class.text-primary-content]="i === activeIndex()"
+                class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 transition-colors flex items-center gap-2"
+              >
+                <svg lucideSearch size="14" class="opacity-30"></svg>
+                {{ item }}
+              </li>
+            }
+          </ul>
+        }
+      </div>
     </section>
 
     <section class="border-base-200">
@@ -72,7 +91,7 @@
         <button
           type="button"
           (click)="store.toggleSort(null)"
-          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 transition-all"
+          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none px-1 transition-all"
         >
           {{ t('filters.actions.clear') }}
         </button>
@@ -114,7 +133,7 @@
         <button
           type="button"
           (click)="updateFilter('category', null)"
-          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 transition-all"
+          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none px-1 transition-all"
         >
           {{ 'filters.actions.clear' | transloco }}
         </button>

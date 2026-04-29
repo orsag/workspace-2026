@@ -1,56 +1,106 @@
 import { faker } from '@faker-js/faker';
 import { prisma } from './prisma';
+import { Prisma } from '../generated/prisma/client';
+
+const games = [
+  'ProductTypeKingdoms of Emberfall',
+  'Trade Winds Caravan',
+  'Mystic Forge Duel',
+  'Harbor of Thieves',
+  'Chronicle Architects',
+  'Runes of the Lost Vale',
+  'Skyport Tycoons',
+  'Shadow Market',
+  'Questline: Relics of Asteron',
+  'Guildmasters’ Gambit',
+];
+
+const categories = [
+  'Fiction',
+  'Non-fiction',
+  'Fantasy',
+  'Sci-Fi',
+  'Romance',
+  'History',
+  'Biography',
+  'Self-help',
+  'Mystery',
+];
 
 async function main() {
-  const bookCount = await prisma.book.count();
+  // Clear existing data
+  await prisma.aggregateRating.deleteMany();
+  await prisma.book.deleteMany();
+  await prisma.game.deleteMany();
+  await prisma.product.deleteMany();
 
-  if (bookCount === 0) {
-    const books = Array.from({ length: 1000 }).map(() => {
-      const price = parseFloat(
-        faker.commerce.price({ min: 9, max: 250, dec: 2 }),
-      );
-      const availableCount = faker.number.int({ min: 0, max: 50 });
-      const isBestSeller = Math.random() > 0.85; // 15% chance
-      const isNewArticle = Math.random() > 0.8; // 20% chance
+  for (let i = 0; i < 100; i++) {
+    const type = faker.helpers.arrayElement(['BOOK', 'GAME']);
+    // const type = faker.helpers.arrayElement(Object.values(ProductType));
+    const audioBook = Math.random() > 0.9;
+    // 1. Create the Base Product
+    const createInput: Prisma.ProductCreateInput = {
+      sku: faker.string.alphanumeric(8).toUpperCase(),
+      name:
+        type === 'BOOK'
+          ? faker.commerce.productName()
+          : type === 'GAME'
+            ? faker.helpers.arrayElement(games)
+            : faker.commerce.product(),
+      alternativeHeadline: faker.company.catchPhrase(),
+      description: faker.commerce.productDescription(),
+      price: parseFloat(faker.commerce.price()),
+      productType: type,
+      availability: 'InStock',
+      availableCount: faker.number.int({ min: 0, max: 50 }),
+      deliveryLeadTime: faker.number.int({ min: 1, max: 7 }),
+      coverUrl: `https://picsum.photos/seed/${faker.string.uuid()}/400/600`,
+      // 2. Create the Rating as a child
+      rating: {
+        create: {
+          ratingValue: faker.number.float({
+            min: 1,
+            max: 5,
+            fractionDigits: 1,
+          }),
+          ratingCount: faker.number.int({ min: 0, max: 1000 }),
+          bestRating: 5,
+          worstRating: 1,
+        },
+      },
+    };
 
-      return {
-        title: faker.book.title(),
-        author: faker.person.fullName(),
-        isbn: faker.commerce.isbn(),
-        publisher: faker.company.name(),
-        publishedDate: faker.date.past({ years: 12 }),
-        description: faker.lorem.paragraphs({ min: 1, max: 2 }), // Longer for your line-clamp tests
-        pageCount: faker.number.int({ min: 80, max: 1200 }),
-        category: faker.helpers.arrayElement([
-          'Fiction',
-          'Non-fiction',
-          'Fantasy',
-          'Sci-Fi',
-          'Romance',
-          'History',
-          'Biography',
-          'Self-help',
-          'Mystery',
-        ]),
-
-        price: price,
-        discount: faker.helpers.arrayElement([0, 0, 0, 0.1, 0.2, 0.3, 0.5]), // Most have 0, some have big deals
-        popularity: isBestSeller
-          ? faker.number.int({ min: 8, max: 10 })
-          : faker.number.int({ min: 0, max: 7 }),
-        availableCount: availableCount,
-        isAvailable: availableCount > 0,
-        isSoldOut: availableCount === 0,
-        isBestSeller: isBestSeller,
-        isNewArticle: isNewArticle,
-        coverUrl: `https://picsum.photos/seed/${faker.string.uuid()}/400/600`,
+    if (type === 'BOOK') {
+      createInput.bookDetails = {
+        create: {
+          author: faker.book.title(),
+          isbn: faker.commerce.isbn(),
+          publisher: faker.book.publisher(),
+          pageCount: faker.number.int({ min: 100, max: 1000 }),
+          bookFormat: faker.book.format(),
+          category: faker.helpers.arrayElement(categories),
+          binding: 'Smyth Sewn',
+          publishedDate: faker.date.past(),
+          audioBook: audioBook,
+          audioLength: faker.number.int({ min: 100, max: 400 }),
+          audioLanguage: 'Slovak',
+        },
       };
-    });
+    } else if (type === 'GAME') {
+      createInput.gameDetails = {
+        create: {
+          category: 'Board Game',
+          brand: 'Legion',
+          playersMin: 2,
+          playersMax: 6,
+          playTimeMinutes: faker.number.int({ min: 20, max: 60 }),
+          producer: faker.company.name(),
+          item_weight: faker.number.int({ min: 100, max: 500 }),
+        },
+      };
+    }
 
-    await prisma.book.createMany({ data: books });
-    console.log('✅ Seeded 1000 books.');
-  } else {
-    console.log(`ℹ️ Skipping book seed: ${bookCount} books already exist.`);
+    await prisma.product.create({ data: createInput });
   }
 
   console.log('👤 Seeding Admin...');
@@ -73,23 +123,22 @@ async function main() {
   const userCount = await prisma.user.count();
   if (userCount <= 1) {
     // Only the admin exists
-    console.log('👥 Generating 10 random users...');
-    const users = Array.from({ length: 10 }).map(() => ({
+    console.log('👥 Generating 2 random users...');
+    const users = Array.from({ length: 2 }).map(() => ({
       username: faker.internet.username().toLowerCase(),
       email: faker.internet.email().toLowerCase(),
       isAdmin: false,
       phoneNumber: faker.phone.number(),
       avatarUrl: faker.image.avatar(),
-      theme: faker.helpers.arrayElement(['light', 'dark']),
+      theme: 'light',
       favorites: [], // Empty as requested
       cartItems: [], // Empty as requested
       lastLogin: faker.date.recent(),
     }));
 
     await prisma.user.createMany({ data: users });
-    console.log('✅ Seeded 10 users.');
+    console.log('✅ Seeded 2 users.');
   }
-
   await seedDetail();
 }
 
@@ -127,11 +176,4 @@ async function seedDetail() {
   console.log(`✅ Success! Linked Details to ${allUsers.length} users.`);
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().finally(() => prisma.$disconnect());

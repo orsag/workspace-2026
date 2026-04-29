@@ -34,6 +34,7 @@ registerLocaleData(localeSk);
 const USER_STORAGE_KEY = 'currentUser';
 const TOKEN_STORAGE_KEY = 'accessToken';
 const DETAIL_STORAGE_KEY = 'currentStatus';
+const SEARCH_HISTORY_KEY = 'searchHistory';
 
 export interface AppState {
   user: User | null;
@@ -45,7 +46,8 @@ export interface AppState {
   favoriteBooks: IBook[];
   totalBooks: number;
   isLoading: boolean;
-  viewLayout: 'grid' | 'list',
+  viewLayout: 'grid' | 'list';
+  searchHistory: string[];
   // --- 🔍 Filter State ---
   filters: {
     page: number;
@@ -70,6 +72,7 @@ const initialState: AppState = {
   totalBooks: 0,
   isLoading: false,
   viewLayout: 'grid' as 'grid' | 'list',
+  searchHistory: [],
   filters: {
     page: 1,
     limit: 20,
@@ -123,7 +126,6 @@ export const AppStore = signalStore(
         patchState(store, { isLoading: true });
 
         const params: Partial<AppState['filters']> = store.filters();
-        console.log(params);
         bookService.fetchBooks(params).subscribe({
           next: (res) =>
             patchState(store, {
@@ -420,6 +422,21 @@ export const AppStore = signalStore(
 
         this.updateFilters({ sortBy: next });
       },
+
+      addToHistory(searchTerm: string) {
+        if (!searchTerm.trim()) return;
+
+        patchState(store, (state) => {
+          // Remove duplicate if exists, then put new search on top
+          const newHistory = [
+            searchTerm,
+            ...state.searchHistory.filter((h) => h !== searchTerm),
+          ].slice(0, 10); // Limit to 10 items
+
+          localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(newHistory));
+          return { searchHistory: newHistory };
+        });
+      },
     }),
   ),
 
@@ -429,6 +446,7 @@ export const AppStore = signalStore(
       const savedUser = localStorage.getItem(USER_STORAGE_KEY);
       const savedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
       const savedDetail = localStorage.getItem(DETAIL_STORAGE_KEY);
+      const savedHistory = localStorage.getItem(SEARCH_HISTORY_KEY);
 
       // Automatically react to user favorite ID changes
       const favoriteIds = computed(() => store.user()?.favorites || []);
@@ -445,6 +463,11 @@ export const AppStore = signalStore(
         patchState(store, {
           premiumStatus: JSON.parse(savedDetail),
         });
+      }
+
+      // history
+      if (savedHistory) {
+        patchState(store, { searchHistory: JSON.parse(savedHistory) });
       }
 
       effect(() => {

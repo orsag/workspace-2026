@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfigurationService } from '../../services/configuration-service';
 import { FeatureName, FEATURES } from '@test-monorepo/shared-models';
@@ -10,9 +10,8 @@ import { FeatureName, FEATURES } from '@test-monorepo/shared-models';
   styleUrl: './features.css',
 })
 export class Features {
-  readonly featureList = FEATURES;
-  // eslint-disable-next-line @angular-eslint/prefer-inject
-  constructor(public config: ConfigurationService) {}
+  features = FEATURES;
+  configService = inject(ConfigurationService);
 
   asFeature = (val: string) => val as FeatureName;
 }

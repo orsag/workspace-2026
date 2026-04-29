@@ -6,7 +6,7 @@ import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { LucideHeart } from '@lucide/angular';
-import { DatePipe, CurrencyPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-book-card',
@@ -17,7 +17,6 @@ import { DatePipe, CurrencyPipe } from '@angular/common';
     LucideHeart,
     TranslocoDirective,
     CurrencyPipe,
-    DatePipe,
   ],
   templateUrl: './book-card.html',
   styleUrl: './book-card.css',

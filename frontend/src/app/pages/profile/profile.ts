@@ -24,11 +24,14 @@ import {
   of,
   switchMap,
 } from 'rxjs';
-import { LucideLock, LucideCreditCard, LucideClipboardCopy } from '@lucide/angular';
+import {
+  LucideLock,
+  LucideCreditCard,
+  LucideClipboardCopy,
+} from '@lucide/angular';
 import { OrderService } from '../../services/order-service';
 import { OrderStatus as OSEnum } from '@test-monorepo/shared-models';
 import { ToastService } from '../../services/toast-service';
-import { RouterLink } from '@angular/router';
 import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 import { CardSmall } from '../../components/card-small/card-small';
 import { PremiumCard } from './premium-card';
@@ -40,7 +43,6 @@ import { PremiumCard } from './premium-card';
     FormsModule,
     DatePipe,
     FormField,
-    RouterLink,
     CardSmall,
     LucideLock,
     LucideCreditCard,

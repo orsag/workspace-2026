@@ -1,5 +1,9 @@
 import { Injectable, signal, effect } from '@angular/core';
-import { AppFeatureFlags, FeatureName, FEATURES } from '@test-monorepo/shared-models';
+import {
+  FeatureName,
+  FEATURES,
+} from '@test-monorepo/shared-models';
+type FeatureFlags = Record<FeatureName, boolean>;
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +12,7 @@ export class ConfigurationService {
   private readonly STORAGE_KEY = 'app_config';
   private readonly THEME_KEY = 'app_theme';
 
-  readonly flags = signal<AppFeatureFlags>(this.loadFlags());
+  readonly flags = signal<FeatureFlags>(this.loadFlags());
   readonly theme = signal<string>(
     localStorage.getItem(this.THEME_KEY) || 'light',
   );
@@ -27,25 +31,44 @@ export class ConfigurationService {
     });
   }
 
-  private loadFlags(): AppFeatureFlags {
-    const saved = localStorage.getItem('app_config');
+  private loadFlags(): FeatureFlags {
+    const saved = localStorage.getItem(this.STORAGE_KEY);
 
-    // Create the default object matching the interface
-    const defaults: any = {};
-    FEATURES.forEach((f) => (defaults[f.name] = !!f.defaultVal));
+    // Initialize the object using the strict type
+    const defaults = {} as FeatureFlags;
+
+    // Populate defaults from your constants
+    const keys = Object.keys(FEATURES) as FeatureName[];
+    for (const key of keys) {
+      defaults[key] = FEATURES[key].defaultValue;
+    }
 
     if (saved) {
-      return { ...defaults, ...JSON.parse(saved) };
+      try {
+        const savedObj = JSON.parse(saved);
+        // Only merge keys that actually exist in our FeatureName definition
+        for (const key in savedObj) {
+          if (key in defaults) {
+            defaults[key as FeatureName] = savedObj[key];
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse saved flags', e);
+      }
     }
-    return defaults as AppFeatureFlags;
+
+    return defaults;
+  }
+
+  toggleFlag(name: FeatureName) {
+    this.flags.update((f) => ({
+      ...f,
+      [name]: !f[name], // Works perfectly because f[name] is a boolean
+    }));
   }
 
   toggleTheme() {
     this.theme.set(this.theme() === 'light' ? 'dark' : 'light');
-  }
-
-  toggleFlag(name: FeatureName) {
-    this.flags.update((f) => ({ ...f, [name]: !f[name] }));
   }
 
   setTheme(newTheme: string) {

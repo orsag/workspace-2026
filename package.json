@@ -3,7 +3,9 @@
   "version": "1.8.1",
   "license": "UNLICENSED",
   "author": "Martin Orsag",
-  "scripts": {},
+  "scripts": {
+    "db:seed": "ts-node prisma/seed.ts"
+  },
   "private": true,
   "web-types": "./web-types.json",
   "devDependencies": {

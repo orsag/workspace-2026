@@ -3,7 +3,7 @@
 
 <div class="navbar shadow-2xl h-18 relative bg-neutral text-white">
 
-  <div class="absolute inset-0 z-0 pointer-events-none opacity-30 overflow-hidden rounded-b-lg"
+  <div class="absolute inset-0 z-0 pointer-events-none opacity-50 overflow-hidden rounded-b-lg"
        [style.backgroundImage]="'url(' + navBg + ')'"
        style="background-position: bottom; background-repeat: repeat-x; background-size: contain;">
   </div>
@@ -66,14 +66,19 @@
       </button>
     }
 
-    <button routerLink="/shopping" appNoHoverButton class="btn btn-ghost btn-sm btn-square relative group text-white"
-            aria-label="View Shopping Cart">
+    <button
+      appNoHoverButton
+      [disabled]="cartStore.itemCount() === 0"
+      [class.opacity-50]="cartStore.itemCount() === 0"
+      [routerLink]="cartStore.itemCount() > 0 ? '/shopping' : null"
+      class="btn btn-ghost btn-sm btn-square relative group text-white"
+      aria-label="View Shopping Cart">
       <div class="indicator transition-transform duration-300 group-hover:scale-110 group-active:scale-95 group-hover:-rotate-12">
         @if (cartStore.itemCount() > 0) {
           <span
             class="indicator-item badge badge-primary badge-xs font-bold border-none shadow-sm scale-90 mt-1 text-white">
-          {{ cartStore.itemCount() }}
-        </span>
+            {{ cartStore.itemCount() }}
+          </span>
         }
         <svg lucideShoppingBasket></svg>
       </div>
@@ -114,3 +119,38 @@
     </div>
   </div>
 </div>
+
+@if (showLoginModal()) {
+<div class="modal" [class.modal-open]="showLoginModal()">
+  <div class="modal-box max-w-sm">
+    <h3 class="font-bold text-lg mb-4">Prihlásenie</h3>
+
+    <form (submit)="onLoginSubmit($event)" class="space-y-4">
+      <div class="form-control">
+        <label for="loginModalName" class="label"><span class="label-text">Meno</span></label>
+        <input id="loginModalName"
+               type="text"
+               placeholder="Vaše meno" 
+               appNoFocusJump
+               class="input input-bordered w-full" required
+               name="loginModalName" [(ngModel)]="modelUsername" />
+      </div>
+
+      <div class="modal-action">
+        <button type="button" (click)="showLoginModal.set(false)" class="btn btn-ghost">Zrušiť</button>
+        <button type="submit" class="btn btn-primary">Prihlásiť sa</button>
+      </div>
+    </form>
+  </div>
+
+  <div
+    class="modal-backdrop"
+    role="button"
+    tabindex="0"
+    aria-label="Zatvoriť okno"
+    (click)="showLoginModal.set(false)"
+    (keydown.enter)="showLoginModal.set(false)"
+    (keydown.space)="showLoginModal.set(false)">
+  </div>
+</div>
+}

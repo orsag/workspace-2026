@@ -1,4 +1,4 @@
-import { Injectable, PLATFORM_ID, DOCUMENT, inject } from '@angular/core';
+import { Injectable, DOCUMENT, inject } from '@angular/core';
 import { EventManagerPlugin } from '@angular/platform-browser';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class DebounceEventManagerPlugin extends EventManagerPlugin {
     const baseEvent = parts[0]; // 'input'
     const delay = parseInt(parts[2] || '300', 10); // '500' or default 300
 
-    let timeout: any;
+    let timeout: number;
 
     const debouncedHandler = (event: Event) => {
       if (timeout) clearTimeout(timeout);

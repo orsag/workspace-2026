@@ -30,6 +30,8 @@ export class Filter implements OnInit {
 
   showFilter = computed(() => this.config.flags().SHOW_FILTER);
   isCoolingDown = signal(false);
+  showHistory = signal(false);
+  activeIndex = signal(-1); // For keyboard navigation
   toggles = [
     { key: 'isAvailable', label: 'available' },
     { key: 'isNewRelease', label: 'newReleases' },
@@ -63,11 +65,34 @@ export class Filter implements OnInit {
     this.filters.update((f) => ({ ...f, [key]: value }));
   }
 
+  selectHistory(term: string) {
+    this.updateFilter('search', term);
+    this.showHistory.set(false);
+    // this.onSubmit(); // Auto-submit when picking from history
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    const history = this.store.searchHistory();
+    if (!this.showHistory() || history.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      this.activeIndex.update((i) => (i < history.length - 1 ? i + 1 : i));
+    } else if (event.key === 'ArrowUp') {
+      this.activeIndex.update((i) => (i > 0 ? i - 1 : 0));
+    } else if (event.key === 'Enter' && this.activeIndex() !== -1) {
+      event.preventDefault();
+      this.selectHistory(history[this.activeIndex()]);
+    } else if (event.key === 'Escape') {
+      this.showHistory.set(false);
+    }
+  }
+
   onSubmit() {
     if (this.isCoolingDown()) return;
 
     this.isCoolingDown.set(true);
     this.store.updateFilters(this.filters());
+    this.store.addToHistory(this.filters().search);
 
     const allowedRoutes = ['/', '/home', '/administration'];
 

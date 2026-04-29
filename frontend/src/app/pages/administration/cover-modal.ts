@@ -136,8 +136,10 @@ export class CoverModalComponent {
     this.previewUrl.set(null);
   }
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
     if (file) {
       this.selectedFile.set(file);
       const reader = new FileReader();
