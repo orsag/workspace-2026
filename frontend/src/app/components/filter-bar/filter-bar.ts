@@ -35,20 +35,20 @@ export class FilterBar {
       isActive: () => this.activeMode() === 'all',
       action: () => this.reset(),
     },
-    {
-      label: 'bar.bestsellers',
-      icon: 'bestsellers',
-      style: 'outline',
-      isActive: () => this.activeMode() === 'bestSellers',
-      action: () => this.setMode('bestSellers'),
-    },
-    {
-      label: 'bar.new_releases',
-      icon: 'newreleases',
-      style: 'outline',
-      isActive: () => this.activeMode() === 'newReleases',
-      action: () => this.setMode('newReleases'),
-    },
+    // {
+    //   label: 'bar.bestsellers',
+    //   icon: 'bestsellers',
+    //   style: 'outline',
+    //   isActive: () => this.activeMode() === 'bestSellers',
+    //   action: () => this.setMode('bestSellers'),
+    // },
+    // {
+    //   label: 'bar.new_releases',
+    //   icon: 'newreleases',
+    //   style: 'outline',
+    //   isActive: () => this.activeMode() === 'newReleases',
+    //   action: () => this.setMode('newReleases'),
+    // },
     {
       label: 'bar.most_expensive',
       icon: 'expensive',
@@ -63,13 +63,13 @@ export class FilterBar {
       isActive: () => this.activeSort() === 'price_asc',
       action: () => this.setSort('price_asc'),
     },
-    {
-      label: 'bar.highest_discount',
-      icon: 'discount',
-      style: 'outline',
-      isActive: () => this.activeMode() === 'discounted',
-      action: () => this.setMode('discounted'),
-    },
+    // {
+    //   label: 'bar.highest_discount',
+    //   icon: 'discount',
+    //   style: 'outline',
+    //   isActive: () => this.activeMode() === 'discounted',
+    //   action: () => this.setMode('discounted'),
+    // },
   ]);
 
   // 1. The Single Source of Truth
@@ -122,28 +122,16 @@ export class FilterBar {
       if (state.sortBy === 'price_asc' || state.sortBy === 'price_desc') {
         filters = {
           page: 1,
-          isBestSeller: false,
-          isNewRelease: false,
-          isDiscounted: false,
-          isAvailable: false,
           sortBy: state.sortBy,
         };
       } else if (state.mode === 'all') {
         filters = {
           page: 1,
-          isBestSeller: false,
-          isNewRelease: false,
-          isDiscounted: false,
-          isAvailable: false,
           sortBy: null,
         };
       } else {
         filters = {
           page: 1,
-          isBestSeller: state.mode === 'bestSellers',
-          isNewRelease: state.mode === 'newReleases',
-          isDiscounted: state.mode === 'discounted',
-          isAvailable: false,
           sortBy: state.sortBy,
         };
       }

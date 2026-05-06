@@ -121,6 +121,8 @@
   "book_table": {
     "title": "Title & Author",
     "publisher": "Publisher & Date",
+    "brand": "Brand",
+    "category": "Category",
     "availability": "Store",
     "price": "Price",
     "status": "Status",
@@ -131,10 +133,12 @@
     "delete": "Delete",
     "edit": "Edit",
     "edit_cover": "Edit Cover",
-    "detail": "Detail"
+    "detail": "Detail",
+    "isbn": "ISBN"
   },
   "filters": {
     "sections": {
+      "type": "Product",
       "search": "Search",
       "status": "Status",
       "sort": "Sort By",

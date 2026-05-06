@@ -3,8 +3,8 @@
   <tr class="text-primary font-bold border-b-2 border-primary/20 backdrop-blur-sm">
     <th></th>
     <th>{{ t('book_table.title') }}</th>
-    <th>{{ t('book_table.publisher') }}</th>
-    <th>ISBN</th>
+    <th>{{ t(`${dynamicColumns().columnOne}`) }}</th>
+    <th>{{ t(`${dynamicColumns().columnTwo}`) }}</th>
     <th>{{ t('book_table.availability') }}</th>
     <th>{{ t('book_table.price') }}</th>
     <th>{{ t('book_table.status') }}</th>
@@ -12,47 +12,62 @@
   </tr>
   </thead>
   <tbody>
-    @for (book of books(); track book.id; let i = $index) {
-      <tr class="hover:bg-base-200/30 transition-colors group"
-          [class]="isRecentlyUpdated(book.updatedAt) ? 'bg-success/10' : ''"
-      >
+    @for (product of products(); track product.id; let i = $index) {
+      <tr class="hover:bg-base-200/30 transition-colors group">
         <td><span class="font-bold">{{ i }}</span></td>
+
+        @if (store.filters().type === 'BOOK') {
+          @let bookDetails = product.bookDetails;
+          <td>
+            <div class="font-bold text-sm"><a [routerLink]="['/product', product.id]">{{ product.name }}</a></div>
+            <div class="text-[10px] opacity-50 italic">
+              {{ bookDetails?.author }}</div>
+          </td>
+          <td>
+            <div class="font-bold text-sm">{{ bookDetails?.publisher }}</div>
+            <div class="text-[10px] opacity-50 italic">{{ bookDetails?.publishedDate | date:'mediumDate' }}</div>
+          </td>
+          <td>
+            <div class="font-normal">{{ bookDetails?.isbn }}</div>
+          </td>
+        }
+
+        @if (store.filters().type === 'GAME') {
+          @let gameDetails = product.gameDetails;
+          <td>
+            <div class="font-bold text-sm"><a [routerLink]="['/product', product.id]">{{ product.name }}</a></div>
+            <div class="text-[10px] opacity-50 italic">
+              {{ gameDetails?.brand }}</div>
+          </td>
+          <td>
+            <div class="font-bold text-sm">{{ gameDetails?.producer }}</div>
+          </td>
+          <td>
+            <div class="font-normal">{{ gameDetails?.category }}</div>
+          </td>
+        }
+
         <td>
-          <div class="font-bold text-sm"><a [routerLink]="['/book', book.id]">{{ book.title }}</a></div>
-          <div class="text-[10px] opacity-50 italic">{{ book.author }}</div>
-        </td>
-        <td>
-          <div class="font-bold text-sm">{{ book.publisher }}</div>
-          <div class="text-[10px] opacity-50 italic">{{ book.publishedDate | date:'mediumDate' }}</div>
-        </td>
-        <td>
-          <div class="font-normal">{{ book.isbn }}</div>
-        </td>
-        <td>
-          <div class="font-normal">{{ book.availableCount }}</div>
+          <div class="font-normal">{{ product.availableCount }}</div>
         </td>
         <td>
           <div class="flex flex-col items-start gap-0.5">
             <span class="font-bold text-sm text-success">
-              {{ (book.price * (1 - book.discount)) | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
+              {{ (product.price * (1 - product.discount)) | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
             </span>
 
-            @if (book.discount > 0) {
+            @if (product.discount > 0) {
               <span class="text-[10px] line-through opacity-40">
-                {{ book.price | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
+                {{ product.price | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
               </span>
             }
           </div>
         </td>
         <td style="min-width: 100px;">
           <div class="flex items-center justify-start">
-            @if (book.availableCount <= 0) {
+            @if (product.availableCount <= 0) {
               <span class="badge badge-error badge-xs font-bold uppercase py-2 px-2 text-[9px] text-white">
                   {{ t('book_table.soldOut') }}
-                </span>
-            } @else if (book.isNewArticle) {
-              <span class="badge badge-success badge-xs font-bold uppercase py-2 px-2 text-[9px]">
-                   {{ t('book_table.news') }}
                 </span>
             } @else {
               <span class="badge badge-neutral badge-xs font-bold uppercase py-2 px-2 text-[9px] text-white">
@@ -64,7 +79,7 @@
         <td class="text-right whitespace-nowrap">
           <div class="flex justify-end gap-1">
             <button
-              (click)="handleDelete(book)"
+              (click)="handleDelete(product)"
               [attr.data-tip]="t('book_table.delete')"
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
@@ -73,7 +88,7 @@
             </button>
 
             <button
-              (click)="handleEdit(book)"
+              (click)="handleEdit(product)"
               [attr.data-tip]="t('book_table.edit')"
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
@@ -82,7 +97,7 @@
             </button>
 
             <button
-              (click)="handleEditCover(book)"
+              (click)="handleEditCover(product)"
               [attr.data-tip]="t('book_table.edit_cover')"
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
@@ -94,7 +109,7 @@
               [attr.data-tip]="t('book_table.detail')"
               type="button"
               class="btn btn-ghost tooltip btn-xs btn-circle text-primary hover:bg-primary/10 transition-colors"
-              [routerLink]="['/book', book.id]"
+              [routerLink]="['/product', product.id]"
               title="Detail">
                 <svg lucideChevronsRight size="20"></svg>
             </button>

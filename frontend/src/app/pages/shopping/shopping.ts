@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CartStore } from '../../store/cart-store';
+import { Component, inject, OnInit, Signal } from '@angular/core';
+import { CartItem, CartStore } from '../../store/cart-store';
 import { Router, RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { OrderService, CreatedOrder } from '../../services/order-service';
@@ -22,13 +22,15 @@ export class Shopping implements OnInit {
   private errorService = inject(ErrorHandlerService);
   private router = inject(Router);
 
+  items: Signal<CartItem[]> = this.cartStore.items;
+
   ngOnInit() {
     this.cartStore.syncCartWithServer();
   }
 
   async handleCheckout() {
     const items = this.cartStore.items().map((item) => ({
-      bookId: item.book.id,
+      bookId: item.product.id,
       quantity: item.quantity,
     }));
 

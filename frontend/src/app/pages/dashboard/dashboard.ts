@@ -4,7 +4,7 @@ import { BookListItem } from '../../components/book-list-item/book-list-item';
 import { FilterBar } from '../../components/filter-bar/filter-bar';
 import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
-import { LucideGrid3x3 as LucideGrid, LucideList } from '@lucide/angular';
+import { LucideGrid3x3 as LucideGrid, LucideList, LucideSearchAlert, LucideTrash2 } from '@lucide/angular';
 import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
@@ -16,6 +16,7 @@ import { Pagination } from '../../components/pagination/pagination';
     LucideList,
     FilterBar,
     Pagination,
+    LucideSearchAlert,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',

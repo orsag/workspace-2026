@@ -85,7 +85,6 @@ CREATE TABLE "Game" (
     "playersMax" INTEGER NOT NULL,
     "playTimeMinutes" INTEGER NOT NULL,
     "producer" TEXT NOT NULL,
-    "item_weight" INTEGER NOT NULL,
 
     CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
 );
@@ -95,11 +94,11 @@ CREATE TABLE "Gastro" (
     "id" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "producer" TEXT NOT NULL,
-    "item_category" TEXT NOT NULL,
-    "item_brand" TEXT NOT NULL,
-    "item_binding" TEXT NOT NULL,
-    "item_edition" TEXT NOT NULL,
-    "item_weight" INTEGER NOT NULL,
+    "category" TEXT NOT NULL,
+    "brand" TEXT NOT NULL,
+    "binding" TEXT NOT NULL,
+    "edition" INTEGER NOT NULL,
+    "weight" INTEGER NOT NULL,
 
     CONSTRAINT "Gastro_pkey" PRIMARY KEY ("id")
 );

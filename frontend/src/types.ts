@@ -1,10 +1,11 @@
-import { Book as IBook } from '@test-monorepo/libs';
+import { Product as IProduct, ProductType } from '@test-monorepo/libs';
 
 export interface BookFilters {
+  type: ProductType;
   search: string;
-  isAvailable: boolean;
-  isBestSeller: boolean;
-  isNewRelease: boolean;
+  // isAvailable: boolean;
+  // isBestSeller: boolean;
+  // isNewRelease: boolean;
   isDiscounted: boolean;
   category: string | null;
 }
@@ -14,8 +15,8 @@ export type QuickFilterState = {
   sortBy: 'price_asc' | 'price_desc' | null;
 };
 
-export interface PaginatedBooks {
-  data: IBook[];
+export interface PaginatedProducts {
+  data: IProduct[];
   meta: {
     total: number;
     page: number;

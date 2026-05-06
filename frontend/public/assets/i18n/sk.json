@@ -121,6 +121,8 @@
   "book_table": {
     "title": "Názov a autor",
     "publisher": "Vydavateľ a dátum",
+    "brand": "Značka",
+    "category": "Kategória",
     "availability": "Sklad",
     "price": "Cena",
     "status": "Stav",
@@ -131,10 +133,12 @@
     "delete": "Vymazať",
     "edit": "Upraviť",
     "edit_cover": "Upraviť obálku",
-    "detail": "Detail"
+    "detail": "Detail",
+    "isbn": "ISBN"
   },
   "filters": {
     "sections": {
+      "type": "Produkt",
       "search": "Hľadať",
       "status": "Stav",
       "sort": "Zoradiť podľa",

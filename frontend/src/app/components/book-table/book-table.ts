@@ -1,5 +1,5 @@
-import { Component, inject, output } from '@angular/core';
-import { Book as IBook } from '@test-monorepo/shared-models';
+import { Component, computed, inject, output, Signal } from '@angular/core';
+import { Product } from '@test-monorepo/shared-models';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { AppStore } from '../../store/app-store';
@@ -28,30 +28,37 @@ import {
 })
 export class BookTable {
   store = inject(AppStore);
-  edit = output<IBook>();
-  remove = output<IBook>();
-  editCover = output<IBook>();
+  edit = output<Product>();
+  remove = output<Product>();
+  editCover = output<Product>();
 
-  books = this.store.books;
+  products: Signal<Product[]> = this.store.products;
 
-  isRecentlyUpdated(updatedAt?: string | Date): boolean {
-    if (!updatedAt) return false;
+  dynamicColumns = computed(() => {
+    const productType = this.store.filters()?.type;
 
-    const updatedDate = new Date(updatedAt).getTime();
-    const twelveHoursAgo = Date.now() - 12 * 60 * 60 * 1000;
+    if (productType === 'BOOK') {
+      return {
+        columnOne: 'book_table.publisher',
+        columnTwo: 'book_table.isbn',
+      };
+    } else {
+      return {
+        columnOne: 'book_table.brand',
+        columnTwo: 'book_table.category',
+      };
+    }
+  });
 
-    return updatedDate > twelveHoursAgo;
-  }
-
-  handleEdit(book: IBook) {
+  handleEdit(book: Product) {
     this.edit.emit(book);
   }
 
-  handleEditCover(book: IBook) {
+  handleEditCover(book: Product) {
     this.editCover.emit(book);
   }
 
-  handleDelete(book: IBook) {
+  handleDelete(book: Product) {
     this.remove.emit(book);
   }
 }

@@ -33,29 +33,31 @@ export class Filter implements OnInit {
   showHistory = signal(false);
   activeIndex = signal(-1); // For keyboard navigation
   toggles = [
-    { key: 'isAvailable', label: 'available' },
-    { key: 'isNewRelease', label: 'newReleases' },
+    //   { key: 'isAvailable', label: 'available' },
+    //   { key: 'isNewRelease', label: 'newReleases' },
     { key: 'isDiscounted', label: 'discounted' },
-    { key: 'isBestSeller', label: 'bestsellers' },
+    //   { key: 'isBestSeller', label: 'bestsellers' },
   ] as const;
 
   // Initialize from store instead of hardcoded defaults
   filters = signal<BookFilters>({
+    type: 'BOOK',
     search: '',
     category: null,
-    isAvailable: false,
-    isBestSeller: false,
-    isNewRelease: false,
+    // isAvailable: false,
+    // isBestSeller: false,
+    // isNewRelease: false,
     isDiscounted: false,
   });
 
   ngOnInit() {
     this.filters.set({
+      type: this.store.filters.type(),
       search: this.store.filters.search(),
       category: this.store.filters.category(),
-      isAvailable: this.store.filters.isAvailable(),
-      isBestSeller: this.store.filters.isBestSeller(),
-      isNewRelease: this.store.filters.isNewRelease(),
+      // isAvailable: this.store.filters.isAvailable(),
+      // isBestSeller: this.store.filters.isBestSeller(),
+      // isNewRelease: this.store.filters.isNewRelease(),
       isDiscounted: this.store.filters.isDiscounted(),
     });
   }
@@ -63,12 +65,15 @@ export class Filter implements OnInit {
   // Update helper
   updateFilter<K extends keyof BookFilters>(key: K, value: BookFilters[K]) {
     this.filters.update((f) => ({ ...f, [key]: value }));
+    if (key === 'type') {
+      this.onSubmit();
+    }
   }
 
   selectHistory(term: string) {
     this.updateFilter('search', term);
     this.showHistory.set(false);
-    // this.onSubmit(); // Auto-submit when picking from history
+    this.onSubmit(); // Auto-submit when picking from history
   }
 
   onKeyDown(event: KeyboardEvent) {

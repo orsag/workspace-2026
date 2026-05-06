@@ -76,10 +76,10 @@
       <div class="badge badge-secondary badge-lg">{{ store.favoriteCount() }}</div>
     </h3>
 
-    @if (favoriteBooks().length > 0) {
+    @if (favoriteProducts().length > 0) {
       <div class="grid grid-cols-1 md:grid-cols-6 gap-2">
-        @for (book of favoriteBooks(); track book.id) {
-          <app-card-small [data]="book"></app-card-small>
+        @for (book of favoriteProducts(); track book.id) {
+          <app-card-small [product]="book"></app-card-small>
         }
       </div>
     } @else {

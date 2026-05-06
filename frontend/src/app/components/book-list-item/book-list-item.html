@@ -2,12 +2,12 @@
      class="flex items-stretch gap-5 group max-h-[400px] py-1">
 
   <!-- LEFT: Bigger Picture (120x175 instead of 80x110) -->
-  <div class="shrink-0 cursor-pointer overflow-hidden rounded-md" [routerLink]="['/book', data.id]">
-    <img [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
+  <div class="shrink-0 cursor-pointer overflow-hidden rounded-md" [routerLink]="['/product', product.id]">
+    <img [ngSrc]="product.coverUrl || 'images/placeholder.webp'"
          width="120" height="175"
          class="object-cover shadow-sm transition-all duration-300 ease-in-out
               hover:shadow-xl hover:scale-105 hover:contrast-105"
-         [alt]="t('list_item.cover', { title: data.title })">
+         [alt]="t('list_item.cover', { title: product.name })">
   </div>
 
   <!-- RIGHT: All elements in a flex column -->
@@ -15,38 +15,34 @@
 
     <!-- Row 1: Badges & Category -->
     <div class="flex flex-wrap gap-1 mb-1.5 items-center">
-      @if (data.isNewArticle) {
-        <span class="badge badge-secondary badge-xs font-bold uppercase">{{ t('list_item.news') }}</span>
-      }
-      @if (data.isBestSeller) {
-        <span class="badge badge-accent badge-xs font-bold uppercase">{{ t('list_item.best') }}</span>
-      }
-      @if (data.discount > 0) {
+      @if (product.discount > 0) {
         <span class="badge badge-error badge-xs font-bold text-white uppercase">{{ t('list_item.sale') }}</span>
       }
       <!-- Moved category here to save vertical space -->
-      <div class="badge badge-outline badge-xs opacity-60 uppercase tracking-tighter">
-        {{ data.category }}
+      <div class="badge badge-outline badge-xs opacity-60 uppercase tracking-tighter" [class]="ux.isGradientClass()">
+        {{ ux.category() }}
       </div>
     </div>
 
     <!-- Row 2: Title & Author -->
     <h3 class="font-bold text-lg text-base-content leading-tight group-hover:text-primary transition-colors cursor-pointer line-clamp-2"
-        [routerLink]="['/book', data.id]">
-      {{ data.title }}
+        [routerLink]="['/product', product.id]">
+      {{ product.name }}
     </h3>
-    <p class="text-sm text-base-content/70 mt-0.5 truncate">{{ data.author }}</p>
+    <p class="text-sm text-base-content/70 mt-0.5 truncate">{{ ux.author() }}</p>
 
     <!-- Row 3: Metadata -->
-    <div class="flex items-center gap-2 text-[11px] text-base-content/40 mt-1 uppercase font-semibold">
-      <span>{{ data.pageCount }} {{ t('list_item.pages') }}</span>
-      <span>•</span>
-      <span>ISBN: {{ data.isbn }}</span>
-    </div>
+    @if (ux.isBook()) {
+      <div class="flex items-center gap-2 text-[11px] text-base-content/40 mt-1 uppercase font-semibold">
+        <span>{{ product.bookDetails?.pageCount }} {{ t('list_item.pages') }}</span>
+        <span>•</span>
+        <span>ISBN: {{ product.bookDetails?.isbn }}</span>
+      </div>
+    }
 
     <!-- Row 4: Description (Truncated so it doesn't break max-height) -->
     <p class="text-sm text-base-content/70 mt-2 line-clamp-2">
-      {{ data.description }}
+      {{ product.description }}
     </p>
 
     <!-- Row 5: Price & Button (mt-auto pushes this to the absolute bottom) -->
@@ -54,32 +50,32 @@
 
       <!-- Price Details -->
       <div class="flex flex-col gap-0.5">
-        @if (data.discount > 0) {
+        @if (product.discount > 0) {
           <span class="text-[10px] line-through opacity-40">
-            {{ data.price | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
+            {{ product.price | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
           </span>
         }
 
         <span class="text-xl font-extrabold text-primary leading-none">
-          {{ (data.price * (1 - data.discount)) | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
+          {{ (product.price * (1 - product.discount)) | currency:'EUR':'symbol':'1.2-2':'sk-SK' }}
         </span>
 
         <span class="text-[10px] font-medium mt-0.5"
-              [class.text-success]="data.availableCount > 0"
-              [class.text-error]="data.availableCount === 0">
-          {{ data.availableCount > 0 ? t('list_item.stock', { items: data.availableCount }) : t('list_item.soldOut') }}
+              [class.text-success]="product.availableCount > 0"
+              [class.text-error]="product.availableCount === 0">
+          {{ product.availableCount > 0 ? t('list_item.stock', { items: product.availableCount }) : t('list_item.soldOut') }}
         </span>
       </div>
 
       <!-- Button -->
-      @if (!data.isSoldOut) {
+      @if (product.availableCount !== 0) {
         <button
           class="btn btn-sm"
-          [class.btn-error]="isInCart()"
-          [class.btn-primary]="!isInCart()"
+          [class.btn-error]="ux.isInCart()"
+          [class.btn-primary]="!ux.isInCart()"
           (click)="$event.stopPropagation(); handleCartAction()"
         >
-          @if (isInCart()) {
+          @if (ux.isInCart()) {
             <span>{{ t('cart.remove_from_cart') }}</span>
           } @else {
             <span>{{ t('cart.add_to_cart') }}</span>

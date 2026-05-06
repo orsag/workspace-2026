@@ -1,56 +1,37 @@
-import { Component, signal, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { AppStore } from '../../store/app-store';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-banner',
-  imports: [RouterLink, TranslocoPipe],
+  imports: [CommonModule, RouterLink, TranslocoPipe],
   templateUrl: './banner.html',
   styleUrl: './banner.css',
 })
-export class BannerComponent implements OnInit, OnDestroy {
-  // Signals
-  days = signal(15);
-  hours = signal(10);
-  minutes = signal(24);
-  seconds = signal(59);
+export class BannerComponent {
+  store = inject(AppStore);
 
-  private intervalId: any;
-
-  // The target date for the sale/event
-  private targetDate = new Date().getTime() + 15 * 24 * 60 * 60 * 1000; // e.g. 15 days from now
-
-  ngOnInit() {
-    this.startCountdown();
-  }
-
-  ngOnDestroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
+  // 1. Compute the gradient style
+  readonly gradientStyle = computed(() => {
+    if (this.store.isBook()) {
+      return 'linear-gradient(to bottom right, #fee2e2, #fbcfe8, #ddd6fe)';
     }
-  }
+    if (this.store.isGame()) {
+      return 'linear-gradient(to bottom right, #6d28d9, #4c1d95, #a855f7)';
+    }
+    if (this.store.isGastro()) {
+      return 'linear-gradient(to bottom right, #a7f3d0, #ccfbf1, #99f6e4)';
+    }
+    return 'transparent';
+  });
 
-  private startCountdown() {
-    this.intervalId = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = this.targetDate - now;
-
-      if (distance < 0) {
-        clearInterval(this.intervalId);
-        this.days.set(0);
-        this.hours.set(0);
-        this.minutes.set(0);
-        this.seconds.set(0);
-        return;
-      }
-
-      // Calculate time remaining and update signals
-      this.days.set(Math.floor(distance / (1000 * 60 * 60 * 24)));
-      this.hours.set(
-        Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-      );
-      this.minutes.set(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
-      this.seconds.set(Math.floor((distance % (1000 * 60)) / 1000));
-    }, 1000);
-  }
+  // 2. Compute the text color class
+  readonly textColorClass = computed(() => {
+    if (this.store.isBook()) return 'text-purple-900';
+    if (this.store.isGame()) return 'text-white';
+    if (this.store.isGastro()) return 'text-emerald-900';
+    return '';
+  });
 }

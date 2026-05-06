@@ -1,5 +1,5 @@
 import { computed, effect, inject } from '@angular/core';
-import { Book as IBook } from '@test-monorepo/shared-models';
+import { Product } from '@test-monorepo/shared-models';
 import {
   signalStore,
   withState,
@@ -11,7 +11,7 @@ import {
 import { BookService } from '../services/book-service';
 
 export interface CartItem {
-  book: IBook;
+  product: Product;
   quantity: number;
 }
 
@@ -39,7 +39,7 @@ export const CartStore = signalStore(
     // Opravený subtotal, ktorý berie do úvahy zľavu
     subtotal: computed(() =>
       Object.values(itemsMap()).reduce((acc, item) => {
-        const discountedPrice = item.book.price * (1 - item.book.discount);
+        const discountedPrice = item.product.price * (1 - item.product.discount);
         return acc + discountedPrice * item.quantity;
       }, 0),
     ),
@@ -50,8 +50,8 @@ export const CartStore = signalStore(
 
     totalSavings: computed(() =>
       Object.values(itemsMap()).reduce((acc, item) => {
-        if (item.book.discount > 0) {
-          const savingsPerItem = item.book.price * item.book.discount;
+        if (item.product.discount > 0) {
+          const savingsPerItem = item.product.price * item.product.discount;
           return acc + savingsPerItem * item.quantity;
         }
         return acc;
@@ -66,15 +66,15 @@ export const CartStore = signalStore(
 
   // 2. Methods (actions)
   withMethods((store, bookService = inject(BookService)) => ({
-    addToCart(book: IBook) {
+    addToCart(product: Product) {
       const currentMap = store.itemsMap();
-      const existing = currentMap[book.id];
+      const existing = currentMap[product.id];
 
       patchState(store, {
         itemsMap: {
           ...currentMap,
-          [book.id]: {
-            book,
+          [product.id]: {
+            product,
             quantity: existing ? existing.quantity + 1 : 1,
           },
         },
@@ -128,10 +128,10 @@ export const CartStore = signalStore(
             const item = currentMap[freshBook.id];
             if (item) {
               if (
-                item.book.price !== freshBook.price ||
-                item.book.discount !== freshBook.discount
+                item.product.price !== freshBook.price ||
+                item.product.discount !== freshBook.discount
               ) {
-                currentMap[freshBook.id] = { ...item, book: freshBook };
+                currentMap[freshBook.id] = { ...item, product: freshBook };
                 hasChanges = true;
               }
             }

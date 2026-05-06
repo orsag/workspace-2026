@@ -72,13 +72,13 @@
 </div>
 
 @if (isDeleteModalOpen()) {
-  <app-delete-modal [selectedBook]="selectedBook()" (closeModal)="closeModals()"></app-delete-modal>
+  <app-delete-modal [selectedBook]="selectedProduct()" (closeModal)="closeModals()"></app-delete-modal>
 }
 
 @if (isCoverModalOpen()) {
-  <app-cover-modal [selectedBook]="selectedBook()" (closeModal)="closeModals()"></app-cover-modal>
+  <app-cover-modal [selectedBook]="selectedProduct()" (closeModal)="closeModals()"></app-cover-modal>
 }
 
 @if (isEditModalOpen()) {
-  <app-edit-modal [selectedBook]="selectedBook()" (closeModal)="closeModals()"></app-edit-modal>
+  <app-edit-modal [selectedBook]="selectedProduct()" (closeModal)="closeModals()"></app-edit-modal>
 }

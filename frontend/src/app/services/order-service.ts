@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Book, OrderStatus } from '@test-monorepo/shared-models';
+import { Product, OrderStatus } from '@test-monorepo/shared-models';
 import { Observable } from 'rxjs';
 
 export interface OrderItem {
@@ -22,7 +22,7 @@ export interface CreatedOrder {
     bookId: string;
     quantity: number;
     price: number; // The price locked at purchase
-    book: Book; // Full book details included via relation
+    product: Product; // Full book details included via relation
   }[];
 }
 

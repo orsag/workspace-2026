@@ -24,13 +24,13 @@ export class OrderService {
 
       for (const item of createOrderDto.items) {
         // 1. Fetch current price directly from DB (never trust frontend prices!)
-        const book = await tx.book.findUnique({ where: { id: item.bookId } });
+        const book = await tx.product.findUnique({ where: { id: item.bookId } });
         if (!book) throw new NotFoundException(`Book ${item.bookId} not found`);
 
         // 🛡️ STOCK CHECK: Prevent ordering more than available
         if (book.availableCount < item.quantity) {
           throw new BadRequestException(
-            `Insufficient stock for "${book.title}". Available: ${book.availableCount}`,
+            `Insufficient stock for "${book.name}". Available: ${book.availableCount}`,
           );
         }
 
@@ -47,7 +47,7 @@ export class OrderService {
         });
 
         // 2. DECREASE STOCK: Use atomic decrement to avoid race conditions
-        await tx.book.update({
+        await tx.product.update({
           where: { id: item.bookId },
           data: {
             availableCount: {
@@ -69,7 +69,7 @@ export class OrderService {
         },
         include: {
           items: {
-            include: { book: true }, // Return book details for the "Thank You" page
+            include: { product: true }, // Return book details for the "Thank You" page
           },
         },
       });
@@ -86,7 +86,7 @@ export class OrderService {
   findOne(id: string) {
     return this.prisma.client.order.findUnique({
       where: { id },
-      include: { items: { include: { book: true } } },
+      include: { items: { include: { product: true } } },
     });
   }
 
@@ -109,7 +109,7 @@ export class OrderService {
       where: { userId },
       include: {
         items: {
-          include: { book: true },
+          include: { product: true },
         },
       },
       orderBy: { createdAt: 'desc' },

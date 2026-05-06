@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { CommonModule, NgOptimizedImage, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -12,6 +12,7 @@ import {
 } from '@lucide/angular';
 import { CartStore } from '../../store/cart-store';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { UXService } from '../../services/ux-service';
 
 @Component({
   selector: 'app-detail',
@@ -25,21 +26,14 @@ import { TranslocoDirective } from '@jsverse/transloco';
     TranslocoDirective,
   ],
   templateUrl: './detail.html',
+  providers: [UXService],
 })
 export class Detail {
   private route = inject(ActivatedRoute);
   private bookService = inject(BookService);
   private cartStore = inject(CartStore);
   readonly store = inject(AppStore);
-
-  // Use optional chaining and a fallback to an empty string (or skip if null)
-  isInCart = computed(() => {
-    const currentBook = this.book();
-    if (!currentBook || !currentBook.id) {
-      return false;
-    }
-    return !!this.cartStore.itemsMap()[currentBook.id];
-  });
+  ux = inject(UXService);
 
   // 1. Reactively fetch the book based on the URL ID
   book = toSignal(
@@ -55,24 +49,26 @@ export class Detail {
     ),
   );
 
+  // 2. Initialize your effect
+  constructor() {
+    effect(() => {
+      const currentBook = this.book();
+
+      // Check if the book data is loaded
+      if (currentBook) {
+        this.ux.setProduct(currentBook);
+      }
+    });
+  }
+
   handleCartAction() {
     const currentBook = this.book();
     if (currentBook) {
-      if (this.isInCart()) {
-        // If it's there, remove it
+      if (this.ux.isInCart()) {
         this.cartStore.removeItem(currentBook.id);
       } else {
-        // If it's not, add it
         this.cartStore.addToCart(currentBook);
       }
     }
   }
-
-  readingHours = computed(() => {
-    const pages = this.book()?.pageCount || 0;
-    if (pages === 0) return 0;
-
-    // Using 30 pages/hour as a baseline, rounded to 1 decimal place
-    return Math.round((pages / 30) * 10) / 10;
-  });
 }

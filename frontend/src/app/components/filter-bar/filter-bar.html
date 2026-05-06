@@ -36,7 +36,7 @@
   }
 
   @if (store.isLoggedIn()) {
-    <button routerLink="/compare"
+    <button routerLink="/wip"
             class="btn btn-soft btn-sm rounded-full transition-all"
             [class.ml-auto]="cartStore.itemCount() === 0"
             [disabled]="isCoolingDown()">

@@ -12,17 +12,16 @@ import { CommonModule } from '@angular/common';
 import {
   form,
   min,
-  max,
   required,
   maxLength,
   minLength,
   FormField,
 } from '@angular/forms/signals';
 import {
-  Book,
-  Book as IBook,
-  BookWithoutId,
+  Product,
+  UpdateProductDto,
   EMPTY_BOOK,
+  BookDetails,
 } from '@test-monorepo/libs';
 import { CATEGORIES } from '@test-monorepo/shared-models';
 import { BookService } from '../../services/book-service';
@@ -35,6 +34,10 @@ import { AppStore } from '../../store/app-store';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 const BOOK_STORAGE_KEY = 'bookSaved';
+
+type UpdateProductDtoFrontend = Omit<UpdateProductDto, 'bookDetails'> & {
+  bookDetails: NonNullable<UpdateProductDto['bookDetails']>;
+};
 
 @Component({
   selector: 'app-edit-modal',
@@ -58,17 +61,33 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               appNoFocusJump
               type="text"
               [id]="'title-' + idBook"
-              [formField]="editForm.title"
+              [formField]="editForm.name"
               class="input input-bordered w-full"
               [class.input-error]="
-                editForm.title().touched() && editForm.title().invalid()
+                editForm.name().touched() && editForm.name().invalid()
               "
             />
-            @if (editForm.title().touched() && editForm.title().invalid()) {
+            @if (editForm.name().touched() && editForm.name().invalid()) {
               <span class="text-error text-xs mt-1">{{
                 t('edit_modal.name_min')
               }}</span>
             }
+          </div>
+
+          <!-- alternativeHeadline -->
+          <div class="form-control">
+            <label class="label" [attr.for]="'alternativeHeadline-' + idBook">
+              <span class="label-text font-semibold">{{
+                t('edit_modal.alternativeHeadline')
+              }}</span>
+            </label>
+            <input
+              appNoFocusJump
+              type="text"
+              [id]="'alternativeHeadline-' + idBook"
+              [formField]="editForm.alternativeHeadline"
+              class="input input-bordered w-full"
+            />
           </div>
 
           <!-- Author -->
@@ -82,7 +101,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               appNoFocusJump
               type="text"
               [id]="'author-' + idBook"
-              [formField]="editForm.author"
+              [formField]="editForm.bookDetails.author"
               class="input input-bordered w-full"
             />
           </div>
@@ -96,9 +115,9 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               appNoFocusJump
               type="text"
               [id]="'isbn-' + idBook"
-              [formField]="editForm.isbn"
+              [formField]="editForm.bookDetails.isbn"
               class="input input-bordered w-full"
-              [class.input-error]="editForm.isbn().invalid()"
+              [class.input-error]="editForm.bookDetails.isbn().invalid()"
             />
           </div>
 
@@ -144,7 +163,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
             <select
               appNoFocusJump
               [id]="'category-' + idBook"
-              [formField]="editForm.category"
+              [formField]="editForm.bookDetails.category"
               class="select select-bordered w-full"
             >
               <option value="" disabled selected>
@@ -185,23 +204,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               appNoFocusJump
               type="number"
               [id]="'pageCount-' + idBook()"
-              [formField]="editForm.pageCount"
-              class="input input-bordered w-full"
-            />
-          </div>
-
-          <!-- Popularity -->
-          <div class="form-control">
-            <label class="label" [attr.for]="'popularity-' + idBook">
-              <span class="label-text font-semibold">
-                {{ t('edit_modal.popularity') }}
-              </span>
-            </label>
-            <input
-              appNoFocusJump
-              type="number"
-              [id]="'popularity-' + idBook()"
-              [formField]="editForm.popularity"
+              [formField]="editForm.bookDetails.pageCount"
               class="input input-bordered w-full"
             />
           </div>
@@ -217,7 +220,7 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               appNoFocusJump
               type="text"
               [id]="'publisher-' + idBook()"
-              [formField]="editForm.publisher"
+              [formField]="editForm.bookDetails.publisher"
               class="input input-bordered w-full"
             />
           </div>
@@ -233,7 +236,37 @@ const BOOK_STORAGE_KEY = 'bookSaved';
               appNoFocusJump
               type="date"
               [id]="'publishedDate-' + idBook()"
-              [formField]="editForm.publishedDate"
+              [formField]="editForm.bookDetails.publishedDate"
+              class="input input-bordered w-full"
+            />
+          </div>
+
+          <div class="form-control">
+            <label class="label" [attr.for]="'audioBook-' + idBook">
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.audioBook') }}
+              </span>
+            </label>
+            <input
+              appNoFocusJump
+              type="checkbox"
+              [id]="'audioBook-' + idBook()"
+              [formField]="editForm.bookDetails.audioBook"
+              class="input input-bordered w-full"
+            />
+          </div>
+
+          <div class="form-control">
+            <label class="label" [attr.for]="'audioLength-' + idBook">
+              <span class="label-text font-semibold">
+                {{ t('edit_modal.audioLength') }}
+              </span>
+            </label>
+            <input
+              appNoFocusJump
+              type="number"
+              [id]="'audioLength-' + idBook()"
+              [formField]="editForm.bookDetails.audioLength"
               class="input input-bordered w-full"
             />
           </div>
@@ -289,12 +322,14 @@ const BOOK_STORAGE_KEY = 'bookSaved';
 })
 export class EditModalComponent {
   closeModal = output<void>();
-  readonly selectedBook = input.required<Book | null>();
+  readonly selectedBook = input.required<Product | null>();
   store = inject(AppStore);
   bookService = inject(BookService);
   errorService = inject(ErrorHandlerService);
 
-  editModel = signal<BookWithoutId>({ ...EMPTY_BOOK });
+  editModel = signal<UpdateProductDtoFrontend>({
+    ...(EMPTY_BOOK as UpdateProductDtoFrontend),
+  });
   readonly idBook = computed(() => this.selectedBook()?.id);
 
   bookCategories = CATEGORIES;
@@ -310,11 +345,24 @@ export class EditModalComponent {
 
         // Execute your logic
         untracked(() => {
-          const { id, ...editableFields } = book;
+          const descriptor = book.description ? book.description : '';
+          const quality = book.product_quality ? book.product_quality : 'new';
+          const details = book.bookDetails
+            ? book.bookDetails
+            : (EMPTY_BOOK.bookDetails as BookDetails);
+
           this.editModel.set({
-            ...editableFields,
-            coverUrl: editableFields.coverUrl ?? '',
-            description: editableFields.description ?? '',
+            name: book.name,
+            alternativeHeadline: book.alternativeHeadline,
+            price: book.price,
+            discount: book.discount,
+            availableCount: book.availableCount,
+            availability: book.availability,
+            deliveryLeadTime: book.deliveryLeadTime,
+            productType: book.productType,
+            description: descriptor,
+            product_quality: quality,
+            bookDetails: { ...details },
           });
         });
       }
@@ -322,29 +370,23 @@ export class EditModalComponent {
   }
 
   editForm = form(this.editModel, (schemaPath) => {
-    required(schemaPath.title, {
+    required(schemaPath.name, {
       message: 'Title is required',
     });
-    required(schemaPath.author, {
+    required(schemaPath.bookDetails.author, {
       message: 'Author is required',
     });
-    minLength(schemaPath.title, 3, {
+    minLength(schemaPath.name, 3, {
       message: 'Title must be min 3 chars',
     });
-    maxLength(schemaPath.title, 50, {
+    maxLength(schemaPath.name, 50, {
       message: 'Title must be max 50 chars',
     });
-    maxLength(schemaPath.isbn, 20, {
+    maxLength(schemaPath.bookDetails.isbn, 20, {
       message: 'ISBN must be max 20 chars',
     });
-    min(schemaPath.pageCount, 1, {
+    min(schemaPath.bookDetails.pageCount, 1, {
       message: 'Page count must be min 1 pages',
-    });
-    min(schemaPath.popularity, 0, {
-      message: 'Popularity must be min 0',
-    });
-    max(schemaPath.popularity, 10, {
-      message: 'Popularity must be max 10',
     });
     min(schemaPath.availableCount, 0, {
       message: 'Available count must be min 0',
@@ -360,7 +402,7 @@ export class EditModalComponent {
   }
 
   handleSaveLocalStorage() {
-    const formData: Partial<IBook> = this.editForm().value();
+    const formData: Partial<Product> = this.editForm().value();
     const newBook = {
       id: this.idBook() ?? null,
       ...formData,
@@ -372,20 +414,13 @@ export class EditModalComponent {
   handleSave() {
     if (this.editForm().invalid()) return;
 
-    const value = this.idBook();
+    const id = this.idBook();
 
     // In your Angular Dialog
-    const {
-      createdAt,
-      isSoldOut,
-      isAvailable,
-      updatedAt,
-      coverUrl,
-      ...dataToSave
-    } = this.editForm().value();
+    const dataToSave = this.editForm().value();
 
-    if (value) {
-      this.bookService.update(value, dataToSave).subscribe({
+    if (id) {
+      this.bookService.update(id, dataToSave).subscribe({
         next: (updatedBook) => {
           this.errorService.handleSuccess(SuccessCodes.BOOK_UPDATE);
           this.store.loadBooks();

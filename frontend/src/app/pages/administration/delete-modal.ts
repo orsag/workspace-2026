@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { ActionResponse, Book } from '@test-monorepo/libs';
+import { ActionResponse, Product } from '@test-monorepo/libs';
 import {
   ErrorCodes,
   ErrorHandlerService,
@@ -22,7 +22,7 @@ import { AppStore } from '../../store/app-store';
         </h3>
         <p class="py-4">
           {{ t('administration.delete_book2') }}
-          <strong>{{ selectedBook()?.title }}</strong
+          <strong>{{ selectedBook()?.name }}</strong
           >?
         </p>
         <div class="modal-action">
@@ -48,7 +48,7 @@ import { AppStore } from '../../store/app-store';
 })
 export class DeleteModalComponent {
   closeModal = output<void>();
-  readonly selectedBook = input.required<Book | null>();
+  readonly selectedBook = input.required<Product | null>();
 
   store = inject(AppStore);
   bookService = inject(BookService);

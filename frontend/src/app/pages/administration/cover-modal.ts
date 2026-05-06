@@ -7,7 +7,7 @@ import {
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Book } from '@test-monorepo/libs';
+import { Product } from '@test-monorepo/libs';
 import { AppStore } from '../../store/app-store';
 import { BookService } from '../../services/book-service';
 import { ErrorCodes, ErrorHandlerService } from '../../core/error.handler';
@@ -108,7 +108,7 @@ import { LucideImageUp } from '@lucide/angular';
 export class CoverModalComponent {
   // Inputs & Outputs
   closeModal = output<void>();
-  readonly selectedBook = input.required<Book | null>();
+  readonly selectedBook = input.required<Product | null>();
 
   // Injections
   store = inject(AppStore);

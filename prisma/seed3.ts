@@ -11,7 +11,6 @@ async function main() {
       );
       const availableCount = faker.number.int({ min: 0, max: 50 });
       const isBestSeller = Math.random() > 0.85; // 15% chance
-      const isNewArticle = Math.random() > 0.8; // 20% chance
 
       return {
         title: faker.book.title(),
@@ -34,7 +33,7 @@ async function main() {
         ]),
 
         price: price,
-        discount: faker.helpers.arrayElement([0, 0, 0, 0.1, 0.2, 0.3, 0.5]), // Most have 0, some have big deals
+        discount: faker.helpers.arrayElement([0, 0, 0, 0, 0.1, 0.2]), // Most have 0, some have big deals
         popularity: isBestSeller
           ? faker.number.int({ min: 8, max: 10 })
           : faker.number.int({ min: 0, max: 7 }),
@@ -42,12 +41,11 @@ async function main() {
         isAvailable: availableCount > 0,
         isSoldOut: availableCount === 0,
         isBestSeller: isBestSeller,
-        isNewArticle: isNewArticle,
         coverUrl: `https://picsum.photos/seed/${faker.string.uuid()}/400/600`,
       };
     });
 
-    await prisma.book.createMany({ data: books });
+    // await prisma.product.createMany({ data: books });
     console.log('✅ Seeded 1000 books.');
   } else {
     console.log(`ℹ️ Skipping book seed: ${bookCount} books already exist.`);

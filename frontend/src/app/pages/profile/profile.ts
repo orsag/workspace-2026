@@ -61,7 +61,7 @@ export class Profile {
   toast = inject(ToastService);
   private isFormInitialized = false;
   OrderStatus = OSEnum;
-  favoriteBooks = this.store.favoriteBooks;
+  favoriteProducts = this.store.favoriteProducts;
 
   constructor() {
     effect(() => {

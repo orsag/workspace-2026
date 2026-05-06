@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ActionResponse, Book as IBook } from '@test-monorepo/libs';
+import { ActionResponse, Product as IProduct } from '@test-monorepo/libs';
 import { Observable } from 'rxjs';
-import { PaginatedBooks } from '../../types';
+import { PaginatedProducts } from '../../types';
 import { AppState } from '../store/app-store';
 
 @Injectable({
@@ -10,29 +10,31 @@ import { AppState } from '../store/app-store';
 })
 export class BookService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/book';
+  private apiUrl = '/api/products';
 
   // Pure fetcher used by the Store
-  fetchBooks(p: Partial<AppState['filters']>): Observable<PaginatedBooks> {
+  fetchProducts(
+    p: Partial<AppState['filters']>,
+  ): Observable<PaginatedProducts> {
     let params = new HttpParams();
     Object.entries(p).forEach(([k, v]) => {
       if (v !== null && v !== undefined && v !== '') {
         params = params.set(k, v.toString());
       }
     });
-    return this.http.get<PaginatedBooks>(this.apiUrl, { params });
+    return this.http.get<PaginatedProducts>(this.apiUrl, { params });
   }
 
-  getOne(id: string): Observable<IBook> {
-    return this.http.get<IBook>(`${this.apiUrl}/${id}`);
+  getOne(id: string): Observable<IProduct> {
+    return this.http.get<IProduct>(`${this.apiUrl}/${id}`);
   }
 
-  create(book: Partial<IBook>): Observable<IBook> {
-    return this.http.post<IBook>(this.apiUrl, book);
+  create(product: Partial<IProduct>): Observable<IProduct> {
+    return this.http.post<IProduct>(this.apiUrl, product);
   }
 
-  update(id: string, book: Partial<IBook>): Observable<IBook> {
-    return this.http.patch<IBook>(`${this.apiUrl}/${id}`, book);
+  update(id: string, product: Partial<IProduct>): Observable<IProduct> {
+    return this.http.patch<IProduct>(`${this.apiUrl}/${id}`, product);
   }
 
   delete(id: string): Observable<ActionResponse> {
@@ -40,7 +42,7 @@ export class BookService {
   }
 
   // Fetches multiple books by their IDs for the favorites list
-  getFavorites(ids: string[]): Observable<IBook[]> {
-    return this.http.post<IBook[]>(`${this.apiUrl}/list`, { ids });
+  getFavorites(ids: string[]): Observable<IProduct[]> {
+    return this.http.post<IProduct[]>(`${this.apiUrl}/list`, { ids });
   }
 }

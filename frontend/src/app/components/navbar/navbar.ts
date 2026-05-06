@@ -16,6 +16,7 @@ import {
 } from '@lucide/angular';
 import { NoBtnHoverDirective } from '../../core/no-btn-hover.directive';
 import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
+import { ScrollService } from '../../services/scroll-service';
 
 @Component({
   selector: 'app-navbar',
@@ -39,6 +40,7 @@ import { NoFocusJumpDirective } from '../../core/no-focus-jump.directive';
 export class Navbar {
   private translocoService = inject(TranslocoService);
   config = inject(ConfigurationService);
+  scroller = inject(ScrollService);
   private router = inject(Router);
   private store = inject(AppStore);
   cartStore = inject(CartStore);
@@ -119,6 +121,15 @@ export class Navbar {
     this.store.updateFilters({
       search: value,
     });
+    this.store.addToHistory(value);
+
+    const allowedRoutes = ['/', '/home', '/administration'];
+
+    if (allowedRoutes.includes(this.router.url)) {
+      this.scroller.scrollToTop();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   onClearSearchbar(): void {

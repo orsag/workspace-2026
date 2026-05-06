@@ -1,45 +1,9 @@
-<div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 bg-secondary text-secondary-content px-4 py-2 w-full text-sm shadow-md">
+<div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-2 w-full text-sm shadow-md"
+  [style.background]="gradientStyle()"
+  [ngClass]="textColorClass()">
 
-  <!-- LINK SECTION -->
   <a routerLink="/blog"
-     class="font-bold tracking-wide flex items-center gap-1 hover:underline hover:opacity-80 transition-all uppercase text-[14px]">
+     class="font-bold tracking-wide flex items-center gap-1 hover:underline transition-all uppercase text-[14px]">
     <span>{{ 'banner.title' | transloco }}</span>
   </a>
-
-  <!-- COUNTDOWN SECTION -->
-  <div class="flex items-center gap-2">
-
-    <!-- Smaller DaisyUI Countdown powered by Signals -->
-    <div class="flex gap-2">
-      <div class="flex items-baseline gap-0.5">
-        <span class="countdown font-mono text-base font-bold">
-          <span [style.--value]="days()" [attr.aria-label]="days()"></span>
-        </span>
-        <span class="text-[10px] opacity-75 font-semibold">d</span>
-      </div>
-
-      <div class="flex items-baseline gap-0.5">
-        <span class="countdown font-mono text-base font-bold">
-          <span [style.--value]="hours()" [attr.aria-label]="hours()"></span>
-        </span>
-        <span class="text-[10px] opacity-75 font-semibold">h</span>
-      </div>
-
-      <div class="flex items-baseline gap-0.5">
-        <span class="countdown font-mono text-base font-bold">
-          <span [style.--value]="minutes()" [attr.aria-label]="minutes()"></span>
-        </span>
-        <span class="text-[10px] opacity-75 font-semibold">m</span>
-      </div>
-
-      <div class="flex items-baseline gap-0.5">
-        <span class="countdown font-mono text-base font-bold">
-          <span [style.--value]="seconds()" [attr.aria-label]="seconds()"></span>
-        </span>
-        <span class="text-[10px] opacity-75 font-semibold">s</span>
-      </div>
-    </div>
-
-  </div>
 </div>
-

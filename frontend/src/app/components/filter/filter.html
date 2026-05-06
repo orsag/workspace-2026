@@ -15,6 +15,41 @@
     <section>
       <div class="flex justify-between items-center mb-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">
+          {{ t('filters.sections.type') }}
+        </h3>
+      </div>
+
+      <div class="join w-full">
+        <button
+          type="button"
+          (click)="updateFilter('type', 'BOOK')"
+          [class.btn-primary]="filters().type === 'BOOK'"
+          class="btn join-item flex-1"
+        >
+          Books
+        </button>
+        <button
+          type="button"
+          (click)="updateFilter('type', 'GAME')"
+          [class.btn-primary]="filters().type === 'GAME'"
+          class="btn join-item flex-1"
+        >
+          Games
+        </button>
+        <button
+          type="button"
+          (click)="updateFilter('type', 'GASTRO')"
+          [class.btn-primary]="filters().type === 'GASTRO'"
+          class="btn join-item flex-1"
+        >
+          Gastro
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/40">
           {{ t('filters.sections.search') }}
         </h3>
         <button
@@ -71,8 +106,7 @@
           <input
             type="checkbox"
             class="toggle toggle-sm"
-            [class.toggle-success]="item.key === 'isAvailable'"
-            [class.toggle-primary]="item.key !== 'isAvailable'"
+            [class.toggle-success]="item.key === 'isDiscounted'"
             [checked]="$any(filters())[item.key]"
             (change)="updateFilter($any(item.key), $any($event.target).checked)"
           />
@@ -97,14 +131,14 @@
         </button>
       </div>
       <div class="flex flex-row gap-2">
-        <button
-          (click)="store.toggleSort('popularity')"
-          [class.btn-active]="store.filters.sortBy() === 'popularity'"
-          class="btn btn-sm rounded-full btn-ghost justify-between font-medium px-2"
-        >
-          <span>🔥 {{ t('filters.sort_options.popularity') }}</span>
-          <span class="badge badge-ghost badge-xs">↓</span>
-        </button>
+<!--        <button-->
+<!--          (click)="store.toggleSort('popularity')"-->
+<!--          [class.btn-active]="store.filters.sortBy() === 'popularity'"-->
+<!--          class="btn btn-sm rounded-full btn-ghost justify-between font-medium px-2"-->
+<!--        >-->
+<!--          <span>🔥 {{ t('filters.sort_options.popularity') }}</span>-->
+<!--          <span class="badge badge-ghost badge-xs">↓</span>-->
+<!--        </button>-->
 
         <button
           (click)="store.toggleSort('price')"
@@ -120,47 +154,49 @@
       </div>
     </section>
 
-    <section>
-      <div class="flex justify-between items-center mb-3">
-        <h3
-          class="text-xs font-bold uppercase tracking-widest text-base-content/40"
-        >
-          {{ t('filters.sections.categories') }}
-          <span class="badge badge-ghost badge-xs ml-2"
-            >{{ store.books().length }} / {{ store.totalBooks() }}</span
+    @if (filters().type === 'BOOK') {
+      <section>
+        <div class="flex justify-between items-center mb-3">
+          <h3
+            class="text-xs font-bold uppercase tracking-widest text-base-content/40"
           >
-        </h3>
-        <button
-          type="button"
-          (click)="updateFilter('category', null)"
-          class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none px-1 transition-all"
-        >
-          {{ 'filters.actions.clear' | transloco }}
-        </button>
-      </div>
-      <div class="flex flex-col">
-        @for (cat of bookCategories; track cat) {
-        <label
-          [class.bg-base-300]="filters().category === cat"
-          class="flex items-center gap-5 px-2 py-2 rounded-lg hover:bg-base-200 cursor-pointer group transition-colors"
-        >
-          <input
-            type="radio"
-            name="bookCategory"
-            class="radio radio-sm border-slate-300 text-slate-400 focus:ring-slate-300"
-            [checked]="filters().category === cat"
-            (change)="updateFilter('category', cat)"
-          />
-          <div class="flex items-center gap-2">
+            {{ t('filters.sections.categories') }}
+            <span class="badge badge-ghost badge-xs ml-2"
+            >{{ store.products().length }} / {{ store.totalProducts() }}</span
+            >
+          </h3>
+          <button
+            type="button"
+            (click)="updateFilter('category', null)"
+            class="text-[10px] uppercase font-bold tracking-tight link link-hover opacity-50 hover:opacity-100 focus:outline-none px-1 transition-all"
+          >
+            {{ 'filters.actions.clear' | transloco }}
+          </button>
+        </div>
+        <div class="flex flex-col">
+          @for (cat of bookCategories; track cat) {
+            <label
+              [class.bg-base-300]="filters().category === cat"
+              class="flex items-center gap-5 px-2 py-2 rounded-lg hover:bg-base-200 cursor-pointer group transition-colors"
+            >
+              <input
+                type="radio"
+                name="bookCategory"
+                class="radio radio-sm border-slate-300 text-slate-400 focus:ring-slate-300"
+                [checked]="filters().category === cat"
+                (change)="updateFilter('category', cat)"
+              />
+              <div class="flex items-center gap-2">
             <span
               class="text-sm font-medium text-base-content/70 group-hover:text-base-content"
-              >{{ cat }}</span
+            >{{ cat }}</span
             >
-          </div>
-        </label>
-        }
-      </div>
-    </section>
+              </div>
+            </label>
+          }
+        </div>
+      </section>
+    }
 
     <div class="sticky bottom-0 bg-base-100 pt-4 pb-2 border-t border-base-200">
       <button

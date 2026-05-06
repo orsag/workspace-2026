@@ -1,11 +1,12 @@
-import { Component, computed, inject, Input } from '@angular/core';
-import { Book } from '@test-monorepo/shared-models';
+import { Component, inject, Input } from '@angular/core';
+import { Product } from '@test-monorepo/shared-models';
 import { RouterLink } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AppStore } from '../../store/app-store';
 import { CartStore } from '../../store/cart-store';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { LucideHeart } from '@lucide/angular';
+import { UXService } from '../../services/ux-service';
 
 @Component({
   selector: 'app-card-small',
@@ -18,18 +19,17 @@ import { LucideHeart } from '@lucide/angular';
   ],
   templateUrl: './card-small.html',
   styleUrl: './card-small.css',
+  providers: [UXService],
 })
 export class CardSmall {
-  @Input({ required: true }) data!: Book;
+  @Input({ required: true }) product!: Product;
   private readonly cartStore = inject(CartStore);
   readonly store = inject(AppStore);
+  ux = inject(UXService);
 
-  // Reactive check: is this book in the user's favorite array?
-  isFavorite = computed(
-    () => this.store.user()?.favorites?.includes(this.data.id) ?? false,
-  );
-
-  isInCart = computed(() => !!this.cartStore.itemsMap()[this.data.id]);
+  constructor() {
+    this.ux.setProduct(this.product);
+  }
 
   toggleFavorite(bookId: string) {
     if (!this.store.isLoggedIn()) {
@@ -41,12 +41,12 @@ export class CardSmall {
   }
 
   handleCartAction() {
-    if (this.isInCart()) {
+    if (this.ux.isInCart()) {
       // If it's there, remove it
-      this.cartStore.removeItem(this.data.id);
+      this.cartStore.removeItem(this.product.id);
     } else {
       // If it's not, add it
-      this.cartStore.addToCart(this.data);
+      this.cartStore.addToCart(this.product);
     }
   }
 }

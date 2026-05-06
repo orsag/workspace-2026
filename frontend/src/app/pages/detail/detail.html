@@ -11,7 +11,7 @@
       >
         <img
           [ngSrc]="data.coverUrl || 'images/placeholder.webp'"
-          [alt]="data.title"
+          [alt]="data.name"
           width="100"
           height="200"
           class="w-full h-auto max-w-[300px] object-contain drop-shadow-2xl rounded-sm"
@@ -22,16 +22,11 @@
     <div class="md:w-2/3 space-y-6">
       <div>
         <div class="flex gap-2 mb-4">
-          @if (data.isBestSeller) {
-          <span class="badge badge-warning font-bold">Bestseller</span>
-          } @if (data.isNewArticle) {
-          <span class="badge badge-primary font-bold">Novinka</span>
-          }
-          <span class="badge badge-outline">{{ data.category }}</span>
+          <span class="badge badge-outline">{{ ux.category() }}</span>
         </div>
 
-        <h1 class="text-5xl font-black mb-2 leading-tight">{{ data.title }}</h1>
-        <p class="text-xl text-base-content/60 italic">od {{ data.author }}</p>
+        <h1 class="text-5xl font-black mb-2 leading-tight">{{ data.name }}</h1>
+        <p class="text-xl text-base-content/60 italic">od {{ ux.author() }}</p>
       </div>
 
       <div class="card bg-base-100 border border-base-300 p-6 shadow-sm">
@@ -50,12 +45,12 @@
             <button
               (click)="$event.stopPropagation(); handleCartAction()"
               class="btn btn-lg px-12 font-bold"
-              [class.btn-primary]="!isInCart()"
-              [class.btn-error]="isInCart()"
-              [disabled]="data.isSoldOut"
+              [class.btn-primary]="!ux.isInCart()"
+              [class.btn-error]="ux.isInCart()"
+              [disabled]="!data.isAvailable"
             >
               <span>
-                {{ isInCart() ? t('cart.remove_from_cart') :
+                {{ ux.isInCart() ? t('cart.remove_from_cart') :
                 t('cart.add_to_cart') }}
               </span>
             </button>
@@ -81,55 +76,51 @@
   <div
     class="stats stats-vertical lg:stats-horizontal shadow-md border border-base-300 w-full bg-base-100 mt-12 mb-12 flex max-w-[1100px]"
   >
-    <div class="stat p-8 flex flex-row items-center gap-6 w-full lg:w-1/4">
-      <div class="flex flex-col gap-1 min-w-0">
-        <div class="stat-title text-xs uppercase font-bold tracking-widest opacity-60">
-          Vydavateľ
-        </div>
-        <div class="stat-value text-[16px] font-black truncate">
-          {{ data.publisher }}
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="stat p-8 flex flex-row items-center border-l border-base-200 lg:w-1/4"
-    >
-      <div class="p-4 rounded-2xl bg-secondary/10 text-secondary">
-        <svg lucideBookOpenText size="28"></svg>
-      </div>
-      <div class="flex flex-col gap-3">
-        <div
-          class="stat-title text-xs uppercase font-bold tracking-widest opacity-60"
-        >
-          Počet strán
-        </div>
-        <div class="stat-value text-2xl font-black leading-none">
-          {{ data.pageCount }}
-        </div>
-        <div class="stat-desc font-semibold text-secondary">
-          ~ {{ readingHours() }} hodín čítania
+    @if (ux.isBook()) {
+      <div class="stat p-8 flex flex-row items-center gap-6 w-full lg:w-1/4">
+        <div class="flex flex-col gap-1 min-w-0">
+          <div class="stat-title text-xs uppercase font-bold tracking-widest opacity-60">
+            Vydavateľ
+          </div>
+          <div class="stat-value text-[16px] font-black truncate">
+            {{ data.bookDetails?.publisher }}
+          </div>
         </div>
       </div>
-    </div>
-
-    <div
-      class="stat p-8 flex flex-row items-center border-l border-base-200 lg:w-1/4"
-    >
-      <div class="p-4 rounded-2xl bg-accent/10 text-accent">
-        <svg lucideCalendarDays size="28"></svg>
-      </div>
-      <div class="flex flex-col gap-4">
-        <div
-          class="stat-title text-xs uppercase font-bold tracking-widest opacity-60"
-        >
-          Vydané
+      <div class="stat p-8 flex flex-row items-center border-l border-base-200 lg:w-1/4">
+        <div class="p-4 rounded-2xl bg-secondary/10 text-secondary">
+          <svg lucideBookOpenText size="28"></svg>
         </div>
-        <div class="stat-value text-2xl font-black leading-none">
-          {{ data.publishedDate | date:'yyyy' }}
+        <div class="flex flex-col gap-3">
+          <div class="stat-title text-xs uppercase font-bold tracking-widest opacity-60">
+            Počet strán
+          </div>
+          <div class="stat-value text-2xl font-black leading-none">
+            {{ data.bookDetails?.pageCount }}
+          </div>
+          <div class="stat-desc font-semibold text-secondary">
+            ~ {{ ux.readingHours() }} hodín čítania
+          </div>
         </div>
       </div>
-    </div>
+      <div
+        class="stat p-8 flex flex-row items-center border-l border-base-200 lg:w-1/4"
+      >
+        <div class="p-4 rounded-2xl bg-accent/10 text-accent">
+          <svg lucideCalendarDays size="28"></svg>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div
+            class="stat-title text-xs uppercase font-bold tracking-widest opacity-60"
+          >
+            Vydané
+          </div>
+          <div class="stat-value text-2xl font-black leading-none">
+            {{ data.bookDetails?.publishedDate | date:'yyyy' }}
+          </div>
+        </div>
+      </div>
+    }
 
     <div
       class="stat p-8 flex flex-row items-center border-l border-base-200 lg:w-1/4"
@@ -144,7 +135,7 @@
           Popularita
         </div>
         <div class="stat-value text-2xl font-black leading-none text-warning">
-          {{ data.popularity }}/10
+          PAPA
         </div>
       </div>
     </div>

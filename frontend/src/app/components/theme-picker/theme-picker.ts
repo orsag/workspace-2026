@@ -16,11 +16,14 @@ export class ThemePicker {
 
   currentTheme = this.config.theme;
 
-  // only part that needs "logic"
   availableThemes = computed(() => {
     return this.config.flags().INFINITE_COLOR_THEMES
       ? DAISY_THEMES
       : DAISY_THEMES.filter((t) => ['light', 'dark'].includes(t.name));
+  });
+
+  isTwoColumns = computed(() => {
+    return this.availableThemes().length <= 2;
   });
 
   changeTheme(theme: string) {

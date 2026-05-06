@@ -9,11 +9,12 @@ import {
 import { computed, effect, inject } from '@angular/core';
 import {
   PremiumStatus,
+  ProductType,
   User,
   UserDetail,
   UserDetailSmall,
 } from '@test-monorepo/shared-models';
-import { Book as IBook } from '@test-monorepo/shared-models';
+import { Product as IProduct } from '@test-monorepo/shared-models';
 import { AuthService } from '../services/auth-service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tap, map, filter, of, distinctUntilChanged } from 'rxjs';
@@ -42,22 +43,23 @@ export interface AppState {
   token: string | null;
   premiumStatus: PremiumStatus | null;
   // --- 📚 Book State ---
-  books: IBook[];
-  favoriteBooks: IBook[];
-  totalBooks: number;
+  products: IProduct[];
+  favoriteProducts: IProduct[];
+  totalProducts: number;
   isLoading: boolean;
   viewLayout: 'grid' | 'list';
   searchHistory: string[];
   // --- 🔍 Filter State ---
   filters: {
+    type: ProductType;
     page: number;
     limit: number;
     search: string;
     category: string | null;
     sortBy: string | null;
-    isAvailable: boolean;
-    isBestSeller: boolean;
-    isNewRelease: boolean;
+    // isAvailable: boolean;
+    // isBestSeller: boolean;
+    // isNewRelease: boolean;
     isDiscounted: boolean;
   };
 }
@@ -67,21 +69,22 @@ const initialState: AppState = {
   userDetail: null,
   token: null,
   premiumStatus: null,
-  books: [],
-  favoriteBooks: [],
-  totalBooks: 0,
+  products: [],
+  favoriteProducts: [],
+  totalProducts: 0,
   isLoading: false,
   viewLayout: 'grid' as 'grid' | 'list',
   searchHistory: [],
   filters: {
+    type: 'BOOK' as ProductType,
     page: 1,
     limit: 20,
     search: '',
     category: null,
     sortBy: null,
-    isAvailable: false,
-    isBestSeller: false,
-    isNewRelease: false,
+    // isAvailable: false,
+    // isBestSeller: false,
+    // isNewRelease: false,
     isDiscounted: false,
   },
 };
@@ -91,16 +94,20 @@ export const AppStore = signalStore(
   withState(initialState),
 
   // 1. Computed Values (Like Selectors)
-  withComputed(({ user, totalBooks, filters }) => ({
+  withComputed(({ user, totalProducts, products, filters }) => ({
+    isBook: computed(() => filters().type === 'BOOK'),
+    isGame: computed(() => filters().type === 'GAME'),
+    isGastro: computed(() => filters().type === 'GASTRO'),
     isLoggedIn: computed(() => !!user()),
     isAdmin: computed(() => user()?.isAdmin ?? false),
+    isEmpty: computed(() => products().length == 0),
     favoriteCount: computed(() => user()?.favorites?.length ?? 0),
     cartCount: computed(() => user()?.cartItems?.length ?? 0),
-    totalPages: computed(() => Math.ceil(totalBooks() / filters().limit)),
+    totalPages: computed(() => Math.ceil(totalProducts() / filters().limit)),
 
     // FIX: Compare current page against the corrected totalPages calculation
     hasMorePage: computed(
-      () => filters.page() < Math.ceil(totalBooks() / filters().limit),
+      () => filters.page() < Math.ceil(totalProducts() / filters().limit),
     ),
   })),
 
@@ -122,16 +129,17 @@ export const AppStore = signalStore(
       },
 
       // Explicitly call this ONLY when needed
-      async loadBooks(append = false) {
+      loadBooks(append = false) {
         patchState(store, { isLoading: true });
+        // const productType: ProductType = store.filters().type;
 
         const params: Partial<AppState['filters']> = store.filters();
-        bookService.fetchBooks(params).subscribe({
+        bookService.fetchProducts(params).subscribe({
           next: (res) =>
             patchState(store, {
               // If append is true, concat the arrays. Otherwise, replace.
-              books: append ? [...store.books(), ...res.data] : res.data,
-              totalBooks: res.meta.total,
+              products: append ? [...store.products(), ...res.data] : res.data,
+              totalProducts: res.meta.total,
               isLoading: false,
             }),
           error: () => {
@@ -167,14 +175,17 @@ export const AppStore = signalStore(
           ),
           switchMap((ids) => {
             if (ids.length === 0) {
-              patchState(store, { favoriteBooks: [], isLoading: false });
+              patchState(store, { favoriteProducts: [], isLoading: false });
               return of([]);
             }
 
             patchState(store, { isLoading: true });
             return bookService.getFavorites(ids).pipe(
               tap((books) => {
-                patchState(store, { favoriteBooks: books, isLoading: false });
+                patchState(store, {
+                  favoriteProducts: books,
+                  isLoading: false,
+                });
               }),
               catchError(() => {
                 patchState(store, { isLoading: false });
@@ -408,14 +419,12 @@ export const AppStore = signalStore(
       },
 
       // In app-store.ts
-      toggleSort(type: 'price' | 'popularity' | null) {
+      toggleSort(type: 'price' | null) {
         const current = store.filters().sortBy;
         let next: string | null = null;
 
         if (type === 'price') {
           next = current === 'price_asc' ? 'price_desc' : 'price_asc';
-        } else if (type === 'popularity') {
-          next = 'popularity';
         } else {
           next = null;
         }
@@ -449,8 +458,8 @@ export const AppStore = signalStore(
       const savedHistory = localStorage.getItem(SEARCH_HISTORY_KEY);
 
       // Automatically react to user favorite ID changes
-      const favoriteIds = computed(() => store.user()?.favorites || []);
-      store._syncFavorites(favoriteIds);
+      // const favoriteIds = computed(() => store.user()?.favorites || []);
+      // store._syncFavorites(favoriteIds);
 
       if (savedUser && savedToken) {
         patchState(store, {

@@ -19,13 +19,15 @@
   </div>
 
   <div tabindex="0"
-       class="dropdown-content bg-base-200 text-base-content rounded-box z-[100] w-144 p-4 shadow-2xl border border-base-300 mt-4">
+       class="dropdown-content bg-base-200 text-base-content rounded-box z-100 p-4 shadow-2xl border border-base-300 mt-4"
+       [class.w-96]="isTwoColumns()" [class.w-144]="!isTwoColumns()"
+  >
 
     <div class="px-1 mb-3 text-[10px] font-bold uppercase tracking-widest opacity-50">
       Select Theme
     </div>
 
-    <div class="grid grid-cols-3 gap-2">
+    <div class="grid gap-2" [class.grid-cols-2]="isTwoColumns()" [class.grid-cols-3]="!isTwoColumns()">
       @for (theme of availableThemes(); track theme.name) {
         <button
           (click)="changeTheme(theme.name)"

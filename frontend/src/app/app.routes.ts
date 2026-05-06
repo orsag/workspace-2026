@@ -7,7 +7,6 @@ import { Features } from './pages/features/features';
 import { Administration } from './pages/administration/administration';
 import { Shopping } from './pages/shopping/shopping';
 import { Success } from './pages/success/success';
-import { Comparison } from './pages/comparison/comparison';
 // ======================================================================
 import { authGuard } from './core/auth.guard';
 import { adminGuard } from './core/admin.guard';
@@ -40,10 +39,9 @@ export const appRoutes: Route[] = [
     path: '',
     component: SimpleLayoutComponent,
     children: [
-      { path: 'book/:id', component: Detail },
+      { path: 'product/:id', component: Detail },
       { path: 'profile', component: Profile, canActivate: [authGuard] },
       { path: 'features', component: Features, canActivate: [authGuard] },
-      { path: 'compare', component: Comparison },
       { path: 'shopping', component: Shopping },
       { path: 'success/:id', component: Success },
       { path: 'wip', component: PageNotFound },
