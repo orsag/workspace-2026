@@ -4,4 +4,4 @@ export * from './shared-models/category.model';
 export * from './shared-models/order.model';
 export * from './constants/themes.constant';
 export * from './constants/flags.constant';
-export * from './constants/utils';
+export * from './utils';

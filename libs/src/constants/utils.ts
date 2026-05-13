@@ -1,5 +1,5 @@
 // Initialisation
-import { UpdateProductDto } from './shared-models/product.model';
+import { UpdateProductDto } from '../shared-models/product.model';
 
 export const EMPTY_BOOK: UpdateProductDto = {
   name: '',

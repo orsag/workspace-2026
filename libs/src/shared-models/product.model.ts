@@ -1,6 +1,3 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { Prisma } from '../../../generated/prisma/client';
-
 export type ProductType = 'BOOK' | 'GAME' | 'GASTRO' | 'GIFT_CARD';
 
 export interface Product {
